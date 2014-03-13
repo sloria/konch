@@ -1,0 +1,4 @@
+pytest
+invoke
+ipython==1.2.1
+bpython==0.12
