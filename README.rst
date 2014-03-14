@@ -2,7 +2,14 @@
 konch
 =====
 
-**konch** is a utility libary and command line interface for creating custom Python shells.
+Tired of importing things whenever you start your Python shell? **konch can help.**
+
+.. code-block:: bash
+
+    $ pip install konch
+    $ konch init
+    Initialized konch. Edit .konchrc to your needs and run `konch` to start an interactive session.
+    $ konch
 
 - Automatically import any object upon startup
 - Per-project configuration
@@ -15,32 +22,21 @@ Screencast
 .. image:: https://dl.dropboxusercontent.com/u/1693233/github/Screenshot%202014-03-14%2001.21.31.png
   :target: http://showterm.io/12e3b0f27a6a77b7e47e0#fast
 
-Get it now
-----------
 
-.. code-block:: bash
-
-    $ pip install konch
-
-
-Get started
------------
-
-Just use the ``konch`` command to run your interactive Python interpreter.
+Usage
+-----
 
 .. code-block:: bash
 
     $ konch init
-    $ konch
 
-
-To customize your shell environment, edit the ``.konchrc`` file created when you ran ``konch init``.
+creates a ``.konchrc`` file in your current directory.
 
 ``.konchrc`` is just a regular Python file that calls the ``konch.config(config_dict)`` function.
 
 You can pass any of the following options:
 
-- ``context``: A dictionary of objects that will be available to you in your shell session.
+- ``context``: A list or dictionary of objects that will be immediately available to you in your shell session.
 - ``shell``: Default shell to use. May be ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PythonShell``, or ``konch.AutoShell`` (default).
 - ``banner``: Custom banner text to show.
 

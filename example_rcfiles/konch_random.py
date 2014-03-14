@@ -4,12 +4,6 @@ import random
 
 import konch
 
-context = {
-    'randint': random.randint,
-    'random': random.random,
-    'choice': random.choice,
-}
-
 banner = '''
 "Probability is not a mere computation of odds on the dice or more complicated
 variants; it is the acceptance of the lack of certainty in our knowledge and
@@ -18,7 +12,7 @@ the development of methods for dealing with our ignorance."
 '''
 
 konch.config({
-    'context': context,
+    'context': [random.randint, random.random, random.choice],
     'banner': banner,
     'shell': konch.IPythonShell,
 })
