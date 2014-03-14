@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''konch: Custom Python Shell
+'''konch: Customizes your Python shell.
 
 Usage:
   konch
@@ -52,8 +52,7 @@ DEFAULT_BANNER_TEXT = 'Welcome to the konch shell. Happy hacking!'
 
 DEFAULT_CONFIG_FILE = '.konchrc'
 
-INIT_TEMPLATE = """#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 import os
 import random
 
@@ -65,11 +64,11 @@ context = {
     'random': random,
 }
 
-# Available options: "context", "banner", "shell"
+# Available options: 'context', 'banner', 'shell'
 konch.config({
     'context': context,
 })
-"""
+'''
 
 
 def execute_file(fname, globals_=None, locals_=None):
@@ -214,12 +213,18 @@ def reset_config():
     cfg = copy.deepcopy(DEFAULT_OPTIONS)
     return cfg
 
+def __ensure_cwd_in_path():
+    cwd = os.getcwd()
+    if cwd not in sys.path:
+        logger.debug('Adding current working directory to sys.path')
+        sys.path.insert(0, cwd)
 
 def __update_cfg_from_args(args):
     # First update cfg by executing the config file
     config_file = args['--file'] or DEFAULT_CONFIG_FILE
     if os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
+        __ensure_cwd_in_path()
         execute_file(config_file)
     else:
         warnings.warn('"{0}" not found.'.format(config_file))

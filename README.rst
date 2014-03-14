@@ -7,6 +7,7 @@ konch
 - Automatically import any object upon startup
 - Per-project configuration
 - Compatible with IPython and BPython (automatically falls back to built-in interpreter)
+- No hard dependencies
 
 Screencast
 ----------
