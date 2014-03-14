@@ -1,20 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''arbok
+'''arbok: Custom Python Shell
 
 Usage:
   arbok
   arbok init
-  arbok [--shell=<shell_name>] [--file=<filepath>] [-q] [-d]
+  arbok init [<config_file>] [-d]
+  arbok [--file=<file>] [--shell=<shell_name>] [-d]
 
 Options:
   -h --help                  Show this screen.
   --version                  Show version.
+  init                       Creates a starter .arbokrc file.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
                               "bpy" (BPython), or "py" (built-in Python shell),
                                or "auto" (try to use IPython or Bpython and
                                fallback to built-in shell).
-  -f --file=<filepath>       File path of arbok file to execute.
+  -f --file=<file>       File path of arbok file to execute.
   -d --debug                 Enable debugging/verbose mode.
 '''
 
@@ -167,15 +169,9 @@ class ShellNotAvailableError(ArbokError):
     pass
 
 SHELL_MAP = {
-    'ipy': IPythonShell,
-    'ipython': IPythonShell,
-
-    'bpy': BPythonShell,
-    'bpython': BPythonShell,
-
-    'py': PythonShell,
-    'python': PythonShell,
-
+    'ipy': IPythonShell, 'ipython': IPythonShell,
+    'bpy': BPythonShell, 'bpython': BPythonShell,
+    'py': PythonShell, 'python': PythonShell,
     'auto': AutoShell,
 }
 
@@ -214,16 +210,32 @@ def reset_config():
 
 
 def __update_cfg_from_args(args):
+    # First update cfg by executing the config file
     config_file = args['--file'] or DEFAULT_CONFIG_FILE
     if os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
         execfile(config_file)
     else:
-        warnings.warn('{0!r} not found.'.format(config_file))
+        warnings.warn('"{0}" not found.'.format(config_file))
+    # Allow default shell to be overriden by command-line argument
     shell_name = args['--shell']
     if shell_name:
         cfg['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
     return cfg
+
+
+def init_config(config_file=None):
+    if not os.path.exists(config_file):
+        with open(config_file, 'w') as fp:
+            fp.write(INIT_TEMPLATE)
+        print('Initialized arbok. Edit {0} to your needs and run `arbok` '
+                'to start an interactive session.'
+                .format(config_file))
+        sys.exit(0)
+    else:
+        print('{0} already exists in this directory.'
+                .format(config_file))
+        sys.exit(1)
 
 
 def main():
@@ -237,16 +249,8 @@ def main():
     logger.debug(args)
 
     if args['init']:
-        if not os.path.exists(DEFAULT_CONFIG_FILE):
-            with open(DEFAULT_CONFIG_FILE, 'w') as fp:
-                fp.write(INIT_TEMPLATE)
-            print('Initialized arbok. Edit {0} to your needs.'
-                    .format(DEFAULT_CONFIG_FILE))
-            sys.exit(0)
-        else:
-            print('{0} already exists in this directory.'
-                    .format(DEFAULT_CONFIG_FILE))
-            sys.exit(1)
+        config_file = args['<config_file>'] or DEFAULT_CONFIG_FILE
+        init_config(config_file)
     __update_cfg_from_args(args)
     start(**cfg)
     sys.exit(0)
