@@ -4,6 +4,25 @@ arbok
 
 Awesome, customized, interactive Python shells.
 
+Get it now
+----------
+
+.. code-block:: bash
+
+    $ pip install arbok
+
+
+Get started
+-----------
+
+Just use the ``arbok`` command to run your interactive Python interpreter.
+
+.. code-block:: bash
+
+    $ arbok init
+    $ arbok
+
+
 Requirements
 ------------
 
