@@ -72,10 +72,12 @@ konch.config({
 
 
 def execute_file(fname, globals_=None, locals_=None):
+    """Executes code in a file. Python 2/3-compatible."""
     exec(compile(open(fname, "rb").read(), fname, 'exec'), globals_, locals_)
 
 
 def format_context(context):
+    """Output the a context dictionary as a string."""
     if context is None:
         return ''
     line_format = '{name}: {obj!r}'
@@ -86,6 +88,9 @@ def format_context(context):
 
 
 def make_banner(text=None, context=None):
+    """Generates a full banner with version info, the given text, and a
+    formatted list of context variables.
+    """
     banner_text = text or DEFAULT_BANNER_TEXT
     out = BANNER_TEMPLATE.format(version=sys.version, text=banner_text)
     if context:
@@ -213,18 +218,23 @@ def reset_config():
     cfg = copy.deepcopy(DEFAULT_OPTIONS)
     return cfg
 
-def __ensure_cwd_in_path():
-    cwd = os.getcwd()
-    if cwd not in sys.path:
-        logger.debug('Adding current working directory to sys.path')
-        sys.path.insert(0, cwd)
+
+def get_file_directory(filename):
+    return os.path.dirname(os.path.abspath(filename))
+
+def __ensure_directory_in_path(filename):
+    directory = get_file_directory(filename)
+    if directory not in sys.path:
+        logger.debug('Adding {0} to sys.path'.format(directory))
+        sys.path.insert(0, directory)
 
 def __update_cfg_from_args(args):
     # First update cfg by executing the config file
     config_file = args['--file'] or DEFAULT_CONFIG_FILE
     if os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
-        __ensure_cwd_in_path()
+        # Ensure that relative imports are possible
+        __ensure_directory_in_path(config_file)
         execute_file(config_file)
     else:
         warnings.warn('"{0}" not found.'.format(config_file))
