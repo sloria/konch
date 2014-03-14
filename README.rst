@@ -26,7 +26,7 @@ Just use the ``konch`` command to run your interactive Python interpreter.
 Requirements
 ------------
 
-- Python 2 or 3 (tested on 2.7 and 3.3)
+- Python 2 or 3 (tested on 2.6, 2.7, 3.2, 3.3)
 
 License
 -------
