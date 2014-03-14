@@ -6,13 +6,19 @@ import os
 import pytest
 from scripttest import TestFileEnvironment
 
-py2_only = pytest.mark.skipif(sys.version_info[0] >= 3, reason='not working on py3')
+import konch
+
+
+def assert_in_output(s, res):
+    """Assert that a string is in either stdout or std err.
+    Included because banners are sometimes outputted to stderr.
+    """
+    assert any([s in res.stdout, res.stdout, s in res.stderr])
+
 
 @pytest.fixture
 def env():
     return TestFileEnvironment(ignore_hidden=False)
-
-import konch
 
 
 def teardown_function(func):
@@ -91,11 +97,6 @@ def test_konch_with_no_config_file(env):
     res = env.run('konch', expect_stderr=True)
     assert res.returncode == 0
 
-def test_konch_with_config_file(env):
-    env.run('konch', 'init')
-    res = env.run('konch', expect_stderr=False)
-    assert res.returncode == 0
-
 
 def test_konch_init_when_config_file_exists(env):
     env.run('konch', 'init')
@@ -106,9 +107,10 @@ def test_konch_init_when_config_file_exists(env):
 
 def test_default_banner(env):
     env.run('konch', 'init')
-    res = env.run('konch')
-    assert konch.DEFAULT_BANNER_TEXT in res.stdout
-    assert str(sys.version) in res.stdout
+    res = env.run('konch', expect_stderr=True)
+    # In virtualenvs, banners output to stderr
+    assert_in_output(konch.DEFAULT_BANNER_TEXT, res)
+    assert_in_output(str(sys.version), res)
 
 
 def test_config_file_not_found(env):
@@ -128,8 +130,8 @@ konch.config({
 def test_custom_banner(env):
     with open(os.path.join(env.base_path, 'testrc'), 'w') as fp:
         fp.write(TEST_CONFIG)
-    res = env.run('konch', '-f', 'testrc')
-    assert 'Test banner' in res.stdout
+    res = env.run('konch', '-f', 'testrc', expect_stderr=True)
+    assert_in_output('Test banner', res)
 
 
 def test_version(env):
