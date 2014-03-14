@@ -16,7 +16,9 @@ Options:
                               "bpy" (BPython), or "py" (built-in Python shell),
                                or "auto" (try to use IPython or Bpython and
                                fallback to built-in shell).
-  -f --file=<file>           File path of konch file to execute.
+  -f --file=<file>           File path of konch config file to execute. If not provided,
+                               konch will use the .konchrc file in the current
+                               directory.
   -d --debug                 Enable debugging/verbose mode.
 '''
 

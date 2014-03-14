@@ -12,5 +12,4 @@ konch.config({
         'env': env
     },
     'banner': 'The konch shell for the konch package',
-    'shell': konch.PythonShell
 })
