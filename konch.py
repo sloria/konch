@@ -38,10 +38,6 @@ __license__ = 'MIT'
 
 logger = logging.getLogger(__name__)
 
-
-def execute_file(fname, globals_=None, locals_=None):
-    exec(compile(open(fname, "rb").read(), fname, 'exec'), globals_, locals_)
-
 BANNER_TEMPLATE = """{version}
 
 {text}
@@ -74,6 +70,10 @@ konch.config({
     'context': context,
 })
 """
+
+
+def execute_file(fname, globals_=None, locals_=None):
+    exec(compile(open(fname, "rb").read(), fname, 'exec'), globals_, locals_)
 
 
 def format_context(context):
@@ -167,11 +167,11 @@ class AutoShell(Shell):
         return None
 
 
-class ArbokError(Exception):
+class KonchError(Exception):
     pass
 
 
-class ShellNotAvailableError(ArbokError):
+class ShellNotAvailableError(KonchError):
     pass
 
 SHELL_MAP = {
