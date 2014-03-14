@@ -5,10 +5,6 @@ from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
 
-REQUIRES = [
-    'docopt',
-]
-
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -48,12 +44,12 @@ def read(fname):
 setup(
     name='konch',
     version="0.1.0",
-    description='Awesome, customized Python shells',
+    description='Customizes your Python shell.',
     long_description=read("README.rst"),
     author='Steven Loria',
     author_email='sloria1@gmail.com',
     url='https://github.com/sloria/konch',
-    install_requires=REQUIRES,
+    install_requires=[],
     license=read("LICENSE"),
     zip_safe=False,
     keywords='konch shell custom ipython bpython repl',
@@ -62,14 +58,14 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
-    py_modules=["konch"],
+    py_modules=['konch', 'docopt'],
     entry_points={
         'console_scripts': [
             "konch = konch:main"
