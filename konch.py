@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''arbok: Custom Python Shell
+'''konch: Custom Python Shell
 
 Usage:
-  arbok
-  arbok init
-  arbok init [<config_file>] [-d]
-  arbok [--file=<file>] [--shell=<shell_name>] [-d]
+  konch
+  konch init
+  konch init [<config_file>] [-d]
+  konch [--file=<file>] [--shell=<shell_name>] [-d]
 
 Options:
   -h --help                  Show this screen.
   --version                  Show version.
-  init                       Creates a starter .arbokrc file.
+  init                       Creates a starter .konchrc file.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
                               "bpy" (BPython), or "py" (built-in Python shell),
                                or "auto" (try to use IPython or Bpython and
                                fallback to built-in shell).
-  -f --file=<file>       File path of arbok file to execute.
+  -f --file=<file>           File path of konch file to execute.
   -d --debug                 Enable debugging/verbose mode.
 '''
 
@@ -46,16 +46,16 @@ Context:
 {context}
 """
 
-DEFAULT_BANNER_TEXT = 'Welcome to the arbok shell. Happy hacking!'
+DEFAULT_BANNER_TEXT = 'Welcome to the konch shell. Happy hacking!'
 
-DEFAULT_CONFIG_FILE = '.arbokrc'
+DEFAULT_CONFIG_FILE = '.konchrc'
 
 INIT_TEMPLATE = """#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
 import random
 
-import arbok
+import konch
 
 # TODO: Edit me
 context = {
@@ -64,7 +64,7 @@ context = {
 }
 
 # Available options: "context", "banner", "shell"
-arbok.config({
+konch.config({
     'context': context,
 })
 """
@@ -187,13 +187,13 @@ cfg = copy.deepcopy(DEFAULT_OPTIONS)
 
 
 def start(context, banner=None, shell=AutoShell):
-    """Start up the arbok shell with a given context."""
+    """Start up the konch shell with a given context."""
     shell(context, banner).start()
 
 
 def config(config_dict):
-    """Configures the arbok shell. This function should be called in your
-    .arbokrc file.
+    """Configures the konch shell. This function should be called in your
+    .konchrc file.
 
     :param dict config_dict: Dict that may contain 'context', 'banner', and/or
         'shell' (default shell class to use).
@@ -228,7 +228,7 @@ def init_config(config_file=None):
     if not os.path.exists(config_file):
         with open(config_file, 'w') as fp:
             fp.write(INIT_TEMPLATE)
-        print('Initialized arbok. Edit {0} to your needs and run `arbok` '
+        print('Initialized konch. Edit {0} to your needs and run `konch` '
                 'to start an interactive session.'
                 .format(config_file))
         sys.exit(0)
@@ -239,7 +239,7 @@ def init_config(config_file=None):
 
 
 def main():
-    """Main entry point for the arbok CLI."""
+    """Main entry point for the konch CLI."""
     global cfg
     args = docopt(__doc__, version=__version__)
     if args['--debug']:

@@ -15,7 +15,7 @@ def test():
 def clean():
     run("rm -rf build")
     run("rm -rf dist")
-    run("rm -rf arbok.egg-info")
+    run("rm -rf konch.egg-info")
     clean_docs()
     print("Cleaned up.")
 

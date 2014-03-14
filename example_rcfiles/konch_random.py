@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import random
 
-import arbok
+import konch
 
 context = {
     'randint': random.randint,
@@ -17,8 +17,8 @@ the development of methods for dealing with our ignorance."
 - Nassim Nickolas Taleb
 '''
 
-arbok.config({
+konch.config({
     'context': context,
     'banner': banner,
-    'shell': arbok.IPythonShell,
+    'shell': konch.IPythonShell,
 })

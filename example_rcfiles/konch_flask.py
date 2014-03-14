@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 import flask
 
-import arbok
+import konch
 
-arbok.config({
+konch.config({
     'context': {
         'request': flask.request,
         'url_for': flask.url_for,

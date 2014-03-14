@@ -37,7 +37,7 @@ def find_version(fname):
         raise RuntimeError('Cannot find version information')
     return version
 
-__version__ = find_version("arbok.py")
+__version__ = find_version("konch.py")
 
 
 def read(fname):
@@ -46,17 +46,17 @@ def read(fname):
     return content
 
 setup(
-    name='arbok',
+    name='konch',
     version="0.1.0",
     description='Awesome, customized Python shells',
     long_description=read("README.rst"),
     author='Steven Loria',
     author_email='sloria1@gmail.com',
-    url='https://github.com/sloria/arbok',
+    url='https://github.com/sloria/konch',
     install_requires=REQUIRES,
     license=read("LICENSE"),
     zip_safe=False,
-    keywords='arbok shell custom ipython bpython repl',
+    keywords='konch shell custom ipython bpython repl',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -69,10 +69,10 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
-    py_modules=["arbok"],
+    py_modules=["konch"],
     entry_points={
         'console_scripts': [
-            "arbok = arbok:main"
+            "konch = konch:main"
         ]
     },
     tests_require=['pytest'],
