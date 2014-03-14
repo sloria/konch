@@ -10,7 +10,7 @@ Usage:
 
 Options:
   -h --help                  Show this screen.
-  --version                  Show version.
+  -v --version               Show version.
   init                       Creates a starter .konchrc file.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
                               "bpy" (BPython), or "py" (built-in Python shell),
@@ -35,6 +35,10 @@ __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
 logger = logging.getLogger(__name__)
+
+
+def execute_file(fname, globals_=None, locals_=None):
+    exec(compile(open(fname, "rb").read(), fname, 'exec'), globals_, locals_)
 
 BANNER_TEMPLATE = """{version}
 
@@ -214,7 +218,7 @@ def __update_cfg_from_args(args):
     config_file = args['--file'] or DEFAULT_CONFIG_FILE
     if os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
-        execfile(config_file)
+        execute_file(config_file)
     else:
         warnings.warn('"{0}" not found.'.format(config_file))
     # Allow default shell to be overriden by command-line argument

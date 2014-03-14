@@ -3,11 +3,14 @@
 import os
 
 import konch
+from test_konch import env
 
 konch.config({
     'context': {
         'os': os,
-        'konch': konch
+        'konch': konch,
+        'env': env
     },
-    'banner': 'The konch shell for the konch package'
+    'banner': 'The konch shell for the konch package',
+    'shell': konch.PythonShell
 })

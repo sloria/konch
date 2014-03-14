@@ -4,6 +4,7 @@ import sys
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
+TESTS_REQUIRE = ['pytest', 'scripttest']
 
 class PyTest(TestCommand):
     def finalize_options(self):
@@ -71,6 +72,6 @@ setup(
             "konch = konch:main"
         ]
     },
-    tests_require=['pytest'],
+    tests_require=TESTS_REQUIRE,
     cmdclass={'test': PyTest}
 )
