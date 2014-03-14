@@ -44,9 +44,10 @@ def read(fname):
 
 setup(
     name='konch',
-    version="0.1.0",
+    version=__version__,
     description='Customizes your Python shell.',
-    long_description=read("README.rst"),
+    long_description=(read("README.rst") + '\n\n' +
+                        read("HISTORY.rst")),
     author='Steven Loria',
     author_email='sloria1@gmail.com',
     url='https://github.com/sloria/konch',
