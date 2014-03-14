@@ -9,11 +9,11 @@ from scripttest import TestFileEnvironment
 import konch
 
 
-def assert_in_output(s, res):
+def assert_in_output(s, res, message=None):
     """Assert that a string is in either stdout or std err.
     Included because banners are sometimes outputted to stderr.
     """
-    assert any([s in res.stdout, res.stdout, s in res.stderr])
+    assert any([s in res.stdout, res.stdout, s in res.stderr]), message
 
 
 @pytest.fixture
@@ -79,6 +79,28 @@ def test_reset_config():
     assert konch.cfg == konch.DEFAULT_OPTIONS
 
 
+def test_context_list2dict():
+    import math
+    class MyClass:
+        pass
+    def my_func():
+        pass
+
+    my_objects = [math, MyClass, my_func]
+    expected = {'my_func': my_func, 'MyClass': MyClass, 'math': math}
+    assert konch.context_list2dict(my_objects) == expected
+
+
+def test_config_list():
+    assert konch.cfg == konch.DEFAULT_OPTIONS
+    def my_func():
+        return
+    konch.config({
+        'context': [my_func]
+    })
+    assert konch.cfg['context']['my_func'] == my_func
+
+
 ##### Command tests #####
 
 
@@ -139,3 +161,5 @@ def test_version(env):
     assert konch.__version__ in res.stdout
     res = env.run('konch', '-v')
     assert konch.__version__ in res.stdout
+
+

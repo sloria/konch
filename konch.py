@@ -97,6 +97,14 @@ def make_banner(text=None, context=None):
         out += CONTEXT_TEMPLATE.format(context=format_context(context))
     return out
 
+def context_list2dict(context_list):
+    """Converts a list of objects (functions, classes, or modules) to a
+    dictionary mapping the object names to the objects.
+    """
+    return dict(
+        (obj.__name__, obj) for obj in context_list
+    )
+
 
 class Shell(object):
     """Base shell class.
@@ -209,6 +217,9 @@ def config(config_dict):
         'shell' (default shell class to use).
     """
     global cfg
+    context = config_dict.get('context')
+    if isinstance(config_dict.get('context'), (list, tuple)):
+        config_dict['context'] = context_list2dict(context)
     cfg.update(config_dict)
     return cfg
 
@@ -222,11 +233,13 @@ def reset_config():
 def get_file_directory(filename):
     return os.path.dirname(os.path.abspath(filename))
 
+
 def __ensure_directory_in_path(filename):
     directory = get_file_directory(filename)
     if directory not in sys.path:
         logger.debug('Adding {0} to sys.path'.format(directory))
         sys.path.insert(0, directory)
+
 
 def __update_cfg_from_args(args):
     # First update cfg by executing the config file
