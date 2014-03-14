@@ -9,7 +9,8 @@ python:
   - "2.6"
   - "pypy"
 
-install: pip install -U .
-
+install:
+    - "pip install -U ."
+    - "pip install pytest scripttest"
 # command to run tests, e.g. python setup.py test
 script: py.test
