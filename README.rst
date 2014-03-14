@@ -4,12 +4,15 @@ konch
 
 **konch** is a utility libary and command line interface for creating custom Python shells.
 
-Features
---------
-
 - Automatically import any object upon startup
 - Per-project configuration
 - Compatible with IPython and BPython (automatically falls back to built-in interpreter)
+
+Screencast
+----------
+
+.. image:: https://dl.dropboxusercontent.com/u/1693233/github/Screenshot%202014-03-14%2001.21.31.png
+  :target: http://showterm.io/12e3b0f27a6a77b7e47e0#fast
 
 Get it now
 ----------
