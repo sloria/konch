@@ -13,8 +13,8 @@ Tired of importing things whenever you start your Python shell? **konch can help
 
 - Automatically import any object upon startup
 - Per-project configuration
-- Compatible with IPython and BPython (automatically falls back to built-in interpreter)
 - No hard dependencies
+- Compatible with IPython and BPython (automatically falls back to built-in interpreter)
 
 Screencast
 ----------
@@ -31,11 +31,11 @@ Install/Upgrade
     $ pip install -U konch
 
 
-Supported on Python 2 or 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no external dependencies.
+Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no external dependencies.
 
 
-Basic Usage
------------
+The ``konch`` command
+---------------------
 
 .. code-block:: bash
 
@@ -68,12 +68,12 @@ Here is an example ``.konchrc`` file that includes some functions from the `requ
         'banner': 'A humanistic HTTP shell'
     })
 
-For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tree/master/example_rcfiles>`_ directory.
-
-For more info on available command-line options, run ``konch --help``.
 
 Named Configs
 -------------
+
+*Named configs* allow you to have multiple configurations in the same ``.konchrc``
+file.
 
 .. code-block:: python
 
@@ -108,6 +108,14 @@ To use a named config:
 .. code-block:: bash
 
     $ konch -n flask
+
+
+More
+----
+
+For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tree/master/example_rcfiles>`_ directory.
+
+For more info on available command-line options, run ``konch --help``.
 
 
 License

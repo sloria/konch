@@ -58,13 +58,11 @@ INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 import konch
 
 # TODO: Edit me
-context = {
-    'speak': konch.speak
-}
-
 # Available options: 'context', 'banner', 'shell'
 konch.config({
-    'context': context,
+    'context': {
+        'speak': konch.speak
+    }
 })
 '''
 
