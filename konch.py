@@ -6,7 +6,8 @@ Usage:
   konch
   konch init
   konch init [<config_file>] [-d]
-  konch [--file=<file>] [--shell=<shell_name>] [-d]
+  konch [--name=<name>] [-d]
+  konch [--name=<name>] [--file=<file>] [--shell=<shell_name>] [-d]
 
 Options:
   -h --help                  Show this screen.
@@ -16,6 +17,7 @@ Options:
                               "bpy" (BPython), or "py" (built-in Python shell),
                                or "auto" (try to use IPython or Bpython and
                                fallback to built-in shell).
+  -n --name=<name>           Named config to use.
   -f --file=<file>           File path of konch config file to execute. If not provided,
                                konch will use the .konchrc file in the current
                                directory.
@@ -27,7 +29,6 @@ import logging
 import os
 import sys
 import code
-import copy
 import warnings
 import random
 
@@ -191,12 +192,6 @@ SHELL_MAP = {
 }
 
 
-DEFAULT_OPTIONS = {
-    'shell': AutoShell,
-    'banner': None,
-    'context': {}
-}
-
 CONCHES = [
     ('"My conch told me to come save you guys."\n'
     '"Hooray for the magic conches!"'),
@@ -227,12 +222,42 @@ CONCHES = [
 def speak():
     return random.choice(CONCHES)
 
-#: Global configuration object. Defines default options for start().
-cfg = copy.deepcopy(DEFAULT_OPTIONS)
+
+class Config(dict):
+    """A dict-like config object. Behaves like a normal dict except that
+    the ``context`` will always be converted from a list to a dict.
+    """
+
+    def __init__(self, context=None, banner=None, shell=AutoShell):
+        if isinstance(context, (list, tuple)):
+            ctx = context_list2dict(context)
+        else:
+            ctx = context or {}
+        super(Config, self).__init__(context=ctx, banner=banner, shell=shell)
+
+    def __setitem__(self, key, value):
+        if key == 'context' and isinstance(value, (list, tuple)):
+            val = context_list2dict(value)
+        else:
+            val = value
+        super(Config, self).__setitem__(key, val)
+
+    def update(self, d):
+        for key in d.keys():
+            self[key] = d[key]
+
+# cfg and config_registry are global variables that may be mutated by a
+# .konchrc file
+cfg = Config()
+config_registry = {
+    'default': cfg
+}
 
 
 def start(context, banner=None, shell=AutoShell):
     """Start up the konch shell with a given context."""
+    logger.debug('Using shell...')
+    logger.debug(shell)
     if banner is None:
         banner = speak()
     shell(context, banner).start()
@@ -246,16 +271,18 @@ def config(config_dict):
         'shell' (default shell class to use).
     """
     global cfg
-    context = config_dict.get('context')
-    if isinstance(config_dict.get('context'), (list, tuple)):
-        config_dict['context'] = context_list2dict(context)
     cfg.update(config_dict)
     return cfg
 
 
+def named_config(name, config_dict):
+    global config_registry
+    config_registry[name] = Config(**config_dict)
+
+
 def reset_config():
     global cfg
-    cfg = copy.deepcopy(DEFAULT_OPTIONS)
+    cfg = Config()
     return cfg
 
 
@@ -315,7 +342,14 @@ def main():
         config_file = args['<config_file>'] or DEFAULT_CONFIG_FILE
         init_config(config_file)
     __update_cfg_from_args(args)
-    start(**cfg)
+
+    if args['--name']:
+        config = config_registry.get(args['--name'], cfg)
+        logger.debug('config is...')
+        logger.debug(config)
+    else:
+        config = cfg
+    start(**config)
     sys.exit(0)
 
 if __name__ == '__main__':

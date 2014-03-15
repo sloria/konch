@@ -31,6 +31,9 @@ Install/Upgrade
     $ pip install -U konch
 
 
+Supported on Python 2 or 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no external dependencies outside the Python standard library.
+
+
 Usage
 -----
 
@@ -69,11 +72,37 @@ For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tre
 
 For more info on available command-line options, run ``konch --help``.
 
+Advanced Usage
+--------------
 
-Requirements
-------------
 
-- Python 2 or 3 (tested on 2.6, 2.7, 3.2, 3.3)
+.. code-block:: python
+
+    import konch
+    import requests
+    import flask
+
+    konch.named_config('http', {
+        'context': {
+            'httpget': requests.get,
+            'httppost': requests.post
+        }
+    })
+
+    konch.named_config('flask', {
+        'context': {
+            'request': flask.request,
+            'Flask': flask.Flask,
+            'url_for': flask.url_for
+        }
+    })
+
+To use a named config:
+
+.. code-block:: bash
+
+    $ konch -n flask
+
 
 License
 -------

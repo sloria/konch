@@ -57,13 +57,13 @@ def test_make_banner_with_context():
 
 
 def test_cfg_defaults():
-    assert konch.DEFAULT_OPTIONS['shell'] == konch.AutoShell
-    assert konch.DEFAULT_OPTIONS['banner'] == konch.DEFAULT_BANNER_TEXT
-    assert konch.DEFAULT_OPTIONS['context'] == {}
+    assert konch.cfg['shell'] == konch.AutoShell
+    assert konch.cfg['banner'] is None
+    assert konch.cfg['context'] == {}
 
 
 def test_config():
-    assert konch.cfg == konch.DEFAULT_OPTIONS
+    assert konch.cfg == konch.Config()
     konch.config({
         'banner': 'Foo bar'
     })
@@ -71,12 +71,12 @@ def test_config():
 
 
 def test_reset_config():
-    assert konch.cfg == konch.DEFAULT_OPTIONS
+    assert konch.cfg == konch.Config()
     konch.config({
         'banner': 'Foo bar'
     })
     konch.reset_config()
-    assert konch.cfg == konch.DEFAULT_OPTIONS
+    assert konch.cfg == konch.Config()
 
 
 def test_context_list2dict():
@@ -92,13 +92,35 @@ def test_context_list2dict():
 
 
 def test_config_list():
-    assert konch.cfg == konch.DEFAULT_OPTIONS
+    assert konch.cfg == konch.Config()
     def my_func():
         return
     konch.config({
         'context': [my_func]
     })
     assert konch.cfg['context']['my_func'] == my_func
+
+
+def test_config_converts_list_context():
+    import math
+    config = konch.Config(context=[math])
+    assert config['context'] == {'math': math}
+
+
+def test_config_set_context_converts_list():
+    import math
+    config = konch.Config()
+    config['context'] = [math]
+    assert config['context'] == {'math': math}
+
+
+def test_config_update_context_converts_list():
+    import math
+    config = konch.Config()
+    config.update({
+        'context': [math]
+    })
+    assert config['context'] == {'math': math}
 
 
 ##### Command tests #####
