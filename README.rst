@@ -23,6 +23,14 @@ Screencast
   :target: http://showterm.io/12e3b0f27a6a77b7e47e0#fast
 
 
+Install/Upgrade
+---------------
+
+.. code-block:: bash
+
+    $ pip install -U konch
+
+
 Usage
 -----
 
