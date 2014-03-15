@@ -26,7 +26,7 @@ Install/Upgrade
 
     $ pip install -U konch
 
-Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no external dependencies.
+Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no other dependencies.
 
 Usage
 =====
