@@ -7,5 +7,4 @@ from test_konch import env
 
 konch.config({
     'context': [konch, env, os],
-    'banner': 'The konch shell for the konch package',
 })

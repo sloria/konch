@@ -29,6 +29,7 @@ import sys
 import code
 import copy
 import warnings
+import random
 
 from docopt import docopt
 
@@ -48,20 +49,16 @@ Context:
 {context}
 """
 
-DEFAULT_BANNER_TEXT = 'Welcome to the konch shell. Happy hacking!'
+DEFAULT_BANNER_TEXT = 'This is your konch shell. Happy hacking.'
 
 DEFAULT_CONFIG_FILE = '.konchrc'
 
 INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
-import os
-import random
-
 import konch
 
 # TODO: Edit me
 context = {
-    'os': os,
-    'random': random,
+    'speak': konch.speak
 }
 
 # Available options: 'context', 'banner', 'shell'
@@ -196,9 +193,39 @@ SHELL_MAP = {
 
 DEFAULT_OPTIONS = {
     'shell': AutoShell,
-    'banner': DEFAULT_BANNER_TEXT,
+    'banner': None,
     'context': {}
 }
+
+CONCHES = [
+    ('"My conch told me to come save you guys."\n'
+    '"Hooray for the magic conches!"'),
+    '"All hail the Magic Conch!"',
+    '"Hooray for the magic conches!"',
+    '"Uh, hello there. Magic Conch, I was wondering... '
+    'should I have the spaghetti or the turkey?"',
+    '"This copyrighted conch is the cornerstone of our organization."',
+    '"Praise the Magic Conch!"',
+    '"the conch exploded into a thousand white fragments and ceased to exist."',
+    '"S\'right. It\'s a shell!"',
+    '"Ralph felt a kind of affectionate reverence for the conch"',
+    '"Conch! Conch!"',
+    '"That’s why you got the conch out of the water"',
+    '"the summons of the conch"',
+    '"Whoever holds the conch gets to speak."',
+    '"They’ll come when they hear us—"',
+    '"We gotta drop the load!"',
+    '"Dude, we\'re falling right out the sky!!"',
+    ('"Oh, Magic Conch Shell, what do we need to do to get out of the Kelp Forest?"\n'
+        '"Nothing."'),
+    '"The shell knows all!"',
+    '"we must never question the wisdom of the Magic Conch."',
+    '"The Magic Conch! A club member!"'
+]
+
+
+def speak():
+    return random.choice(CONCHES)
 
 #: Global configuration object. Defines default options for start().
 cfg = copy.deepcopy(DEFAULT_OPTIONS)
@@ -206,6 +233,8 @@ cfg = copy.deepcopy(DEFAULT_OPTIONS)
 
 def start(context, banner=None, shell=AutoShell):
     """Start up the konch shell with a given context."""
+    if banner is None:
+        banner = speak()
     shell(context, banner).start()
 
 
