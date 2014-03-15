@@ -15,10 +15,8 @@ Options:
   init                       Creates a starter .konchrc file.
   -n --name=<name>           Named config to use.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
-                              "bpy" (BPython), or "py" (built-in Python shell),
-                               or "auto" (try to use IPython or Bpython and
-                               fallback to built-in shell). Overrides the 'shell'
-                               option in .konchrc.
+                              "bpy" (BPython), "py" (built-in Python shell),
+                               or "auto". Overrides the 'shell' option in .konchrc.
   -f --file=<file>           File path of konch config file to execute. If not provided,
                                konch will use the .konchrc file in the current
                                directory.
