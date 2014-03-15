@@ -31,11 +31,11 @@ Install/Upgrade
     $ pip install -U konch
 
 
-Supported on Python 2 or 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no external dependencies outside the Python standard library.
+Supported on Python 2 or 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no external dependencies.
 
 
-Usage
------
+Basic Usage
+-----------
 
 .. code-block:: bash
 
@@ -43,13 +43,13 @@ Usage
 
 creates a ``.konchrc`` file in your current directory.
 
-``.konchrc`` is just a regular Python file that calls the ``konch.config(config_dict)`` function.
+``.konchrc`` is just a Python file that calls the ``konch.config(config_dict)`` function.
 
 You can pass any of the following options:
 
 - ``context``: A list or dictionary of objects that will be immediately available to you in your shell session.
 - ``shell``: Default shell to use. May be ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PythonShell``, or ``konch.AutoShell`` (default).
-- ``banner``: Custom banner text to show.
+- ``banner``: Custom banner text.
 
 Here is an example ``.konchrc`` file that includes some functions from the `requests <http://docs.python-requests.org/en/latest/>`_ library in its context.
 
@@ -72,15 +72,21 @@ For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tre
 
 For more info on available command-line options, run ``konch --help``.
 
-Advanced Usage
---------------
-
+Named Configs
+-------------
 
 .. code-block:: python
 
     import konch
+    import os
+    import sys
     import requests
     import flask
+
+    # The default config
+    konch.config({
+        'context': [os, sys]
+    })
 
     konch.named_config('http', {
         'context': {

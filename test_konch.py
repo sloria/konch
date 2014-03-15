@@ -185,3 +185,48 @@ def test_version(env):
     assert konch.__version__ in res.stdout
 
 
+TEST_CONFIG_WITH_NAMES = """
+import konch
+
+konch.config({
+    'context': {
+        'foo': 42,
+    },
+    'banner': 'Default'
+})
+
+konch.named_config('conf2', {
+    'context': {
+        'bar': 24
+    },
+    'banner': 'Conf2'
+})
+"""
+
+
+@pytest.fixture
+def fileenv(request, env):
+    fpath = os.path.join(env.base_path, '.konchrc')
+    with open(fpath, 'w') as fp:
+        fp.write(TEST_CONFIG_WITH_NAMES)
+    def finalize():
+        os.remove(fpath)
+    request.addfinalizer(finalize)
+    return env
+
+
+def test_default_config(fileenv):
+    res = fileenv.run('konch', expect_stderr=True)
+    assert_in_output('Default', res)
+    assert_in_output('foo', res)
+
+
+def test_selecting_named_config(fileenv):
+    res = fileenv.run('konch', '-n', 'conf2', expect_stderr=True)
+    assert_in_output('Conf2', res)
+    assert_in_output('bar', res)
+
+
+def test_selecting_name_that_doesnt_exist(fileenv):
+    res = fileenv.run('konch', '-n', 'doesntexist', expect_stderr=True)
+    assert_in_output('Default', res)
