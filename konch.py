@@ -191,7 +191,6 @@ SHELL_MAP = {
     'auto': AutoShell,
 }
 
-
 CONCHES = [
     ('"My conch told me to come save you guys."\n'
     '"Hooray for the magic conches!"'),
@@ -205,10 +204,10 @@ CONCHES = [
     '"S\'right. It\'s a shell!"',
     '"Ralph felt a kind of affectionate reverence for the conch"',
     '"Conch! Conch!"',
-    '"That’s why you got the conch out of the water"',
+    '"That\'s why you got the conch out of the water"',
     '"the summons of the conch"',
     '"Whoever holds the conch gets to speak."',
-    '"They’ll come when they hear us—"',
+    '"They\'ll come when they hear us--"',
     '"We gotta drop the load!"',
     '"Dude, we\'re falling right out the sky!!"',
     ('"Oh, Magic Conch Shell, what do we need to do to get out of the Kelp Forest?"\n'
@@ -344,7 +343,7 @@ def main():
 
     if args['--name']:
         config = config_registry.get(args['--name'], cfg)
-        logger.debug('config is...')
+        logger.debug('Using named config...')
         logger.debug(config)
     else:
         config = cfg

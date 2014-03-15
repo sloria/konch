@@ -6,5 +6,9 @@ import konch
 from test_konch import env
 
 konch.config({
-    'context': [konch, env, os],
+    'context': {
+        'konch': konch,
+        'env': env,
+        'os': os
+    },
 })
