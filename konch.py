@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''konch: Customizes your Python shell.
+'''konch: The customizable Python shell.
 
 Usage:
   konch
@@ -13,11 +13,12 @@ Options:
   -h --help                  Show this screen.
   -v --version               Show version.
   init                       Creates a starter .konchrc file.
+  -n --name=<name>           Named config to use.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
                               "bpy" (BPython), or "py" (built-in Python shell),
                                or "auto" (try to use IPython or Bpython and
-                               fallback to built-in shell).
-  -n --name=<name>           Named config to use.
+                               fallback to built-in shell). Overrides the 'shell'
+                               option in .konchrc.
   -f --file=<file>           File path of konch config file to execute. If not provided,
                                konch will use the .konchrc file in the current
                                directory.
@@ -34,7 +35,7 @@ import random
 
 from docopt import docopt
 
-__version__ = '0.1.0'
+__version__ = '0.2.0-dev'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -92,6 +93,7 @@ def make_banner(text=None, context=None):
     if context:
         out += CONTEXT_TEMPLATE.format(context=format_context(context))
     return out
+
 
 def context_list2dict(context_list):
     """Converts a list of objects (functions, classes, or modules) to a
@@ -262,7 +264,7 @@ def start(context, banner=None, shell=AutoShell):
 
 
 def config(config_dict):
-    """Configures the konch shell. This function should be called in your
+    """Configures the konch shell. This function should be called in a
     .konchrc file.
 
     :param dict config_dict: Dict that may contain 'context', 'banner', and/or
@@ -274,6 +276,9 @@ def config(config_dict):
 
 
 def named_config(name, config_dict):
+    """Adds a named config to the config registry.
+    This function should be called in a .konchrc file.
+    """
     global config_registry
     config_registry[name] = Config(**config_dict)
 
