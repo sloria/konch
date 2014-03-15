@@ -11,6 +11,7 @@ The customizable Python shell
 
 - **Automatically import** any object upon startup
 - **Simple** configuration syntax (it's just Python code)
+- Written in **pure Python**
 - **No hard dependencies**
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
 - Can have multiple configurations per project using **named configs**
@@ -109,7 +110,7 @@ file.
         }
     })
 
-To use the flask config, you would run:
+To use the ``flask`` config, you would run:
 
 .. code-block:: bash
 
@@ -120,6 +121,11 @@ To use the flask config, you would run:
 
 overrides the default shell. Choose between ``ipy``, ``bpy``, or ``py``.
 
+
+``$ konch -f <file>``
+---------------------
+
+starts a session using ``<file>`` as its config file instead of the default ``.konchrc``.
 
 
 ..
