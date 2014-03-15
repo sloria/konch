@@ -229,18 +229,18 @@ class Config(dict):
     """
 
     def __init__(self, context=None, banner=None, shell=AutoShell):
-        if isinstance(context, (list, tuple)):
-            ctx = context_list2dict(context)
-        else:
-            ctx = context or {}
+        ctx = Config.transform_val(context) or {}
         super(Config, self).__init__(context=ctx, banner=banner, shell=shell)
 
     def __setitem__(self, key, value):
-        if key == 'context' and isinstance(value, (list, tuple)):
-            val = context_list2dict(value)
-        else:
-            val = value
+        val = Config.transform_val(value)
         super(Config, self).__setitem__(key, val)
+
+    @staticmethod
+    def transform_val(val):
+        if isinstance(val, (list, tuple)):
+            return context_list2dict(val)
+        return val
 
     def update(self, d):
         for key in d.keys():

@@ -1,4 +1,13 @@
-"""Example with named configs."""
+"""Example .konchrc with named configs.
+
+To use a named config, run:
+
+    $ konch --name=trig
+
+or
+
+    $ konch -n trig
+"""
 import os
 import sys
 import math
@@ -13,8 +22,6 @@ konch.config({
 })
 
 # A named config
-# To use, run:
-#   $ konch -n trig
 konch.named_config('trig', {
     'context': [math.sin, math.tan, math.cos],
     'banner': 'The trig shell'
