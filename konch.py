@@ -297,9 +297,9 @@ def __ensure_directory_in_path(filename):
         sys.path.insert(0, directory)
 
 
-def __update_cfg_from_args(args):
+def use_file(filename):
     # First update cfg by executing the config file
-    config_file = args['--file'] or DEFAULT_CONFIG_FILE
+    config_file = filename or DEFAULT_CONFIG_FILE
     if os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
         # Ensure that relative imports are possible
@@ -307,10 +307,6 @@ def __update_cfg_from_args(args):
         execute_file(config_file)
     else:
         warnings.warn('"{0}" not found.'.format(config_file))
-    # Allow default shell to be overriden by command-line argument
-    shell_name = args['--shell']
-    if shell_name:
-        cfg['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
     return cfg
 
 
@@ -341,7 +337,7 @@ def main():
     if args['init']:
         config_file = args['<config_file>'] or DEFAULT_CONFIG_FILE
         init_config(config_file)
-    __update_cfg_from_args(args)
+    use_file(args['--file'])
 
     if args['--name']:
         config = config_registry.get(args['--name'], cfg)
@@ -349,6 +345,10 @@ def main():
         logger.debug(config)
     else:
         config = cfg
+    # Allow default shell to be overriden by command-line argument
+    shell_name = args['--shell']
+    if shell_name:
+        config['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
     start(**config)
     sys.exit(0)
 
