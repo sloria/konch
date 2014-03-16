@@ -14,6 +14,7 @@ The customizable Python shell
 
 .. image:: https://dl.dropboxusercontent.com/u/1693233/github/konchdemo-optim.gif
     :alt: Demo
+    :target: http://konch.readthedocs.org
 
 
 `http://konch.readthedocs.org <http://konch.readthedocs.org>`_
