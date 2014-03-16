@@ -300,13 +300,16 @@ def __ensure_directory_in_path(filename):
 def use_file(filename):
     # First update cfg by executing the config file
     config_file = filename or resolve_path(DEFAULT_CONFIG_FILE)
-    if os.path.exists(config_file):
+    if config_file and os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
         # Ensure that relative imports are possible
         __ensure_directory_in_path(config_file)
         execute_file(config_file)
     else:
-        warnings.warn('"{0}" not found.'.format(config_file))
+        if not config_file:
+            warnings.warn('No config file found.')
+        else:
+            warnings.warn('"{fname}" not found.'.format(fname=config_file))
     return cfg
 
 
