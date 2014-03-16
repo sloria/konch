@@ -299,7 +299,7 @@ def __ensure_directory_in_path(filename):
 
 def use_file(filename):
     # First update cfg by executing the config file
-    config_file = filename or DEFAULT_CONFIG_FILE
+    config_file = filename or resolve_path(DEFAULT_CONFIG_FILE)
     if os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
         # Ensure that relative imports are possible
@@ -308,6 +308,22 @@ def use_file(filename):
     else:
         warnings.warn('"{0}" not found.'.format(config_file))
     return cfg
+
+
+def __get_home_directory():
+    return os.path.expanduser('~')
+
+
+def resolve_path(filename):
+    """Find a file by walking up parent directories until the file is found.
+    Return the absolute path of the file.
+    """
+    while os.getcwd() != __get_home_directory():
+        if os.path.exists(filename):
+            return os.path.abspath(filename)
+        else:
+            os.chdir(os.path.pardir)
+    return False
 
 
 def init_config(config_file=None):

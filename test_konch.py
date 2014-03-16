@@ -215,6 +215,16 @@ def fileenv(request, env):
     return env
 
 
+@pytest.fixture
+def folderenv(request, env):
+    folder = os.path.abspath(os.path.join(env.base_path, 'testdir'))
+    os.makedirs(folder)
+    def finalize():
+        os.removedirs(folder)
+    request.addfinalizer(finalize)
+    return env
+
+
 def test_default_config(fileenv):
     res = fileenv.run('konch', expect_stderr=True)
     assert_in_output('Default', res)
@@ -230,3 +240,12 @@ def test_selecting_named_config(fileenv):
 def test_selecting_name_that_doesnt_exist(fileenv):
     res = fileenv.run('konch', '-n', 'doesntexist', expect_stderr=True)
     assert_in_output('Default', res)
+
+
+def test_resolve_path(folderenv):
+    folderenv.run('konch', 'init')
+    fpath = os.path.abspath(os.path.join(folderenv.base_path, '.konchrc'))
+    assert os.path.exists(fpath)
+    folder = os.path.abspath(os.path.join(folderenv.base_path, 'testdir'))
+    os.chdir(folder)
+    assert konch.resolve_path('.konchrc') == fpath
