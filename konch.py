@@ -130,16 +130,11 @@ class IPythonShell(Shell):
     """The IPython shell."""
 
     def start(self):
-        try:  # Backwards compatibility
-            from IPython.Shell import IPShellEmbed
-            ipshell = IPShellEmbed(banner=self.banner)
-            ipshell(global_ns={}, local_ns=self.context)
+        try:
+            from IPython import embed
+            embed(banner1=self.banner, user_ns=self.context)
         except ImportError:
-            try:
-                from IPython import embed
-                embed(banner1=self.banner, user_ns=self.context)
-            except ImportError:
-                raise ShellNotAvailableError('IPython shell not available.')
+            raise ShellNotAvailableError('IPython shell not available.')
         return None
 
 
