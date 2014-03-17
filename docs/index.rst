@@ -48,6 +48,7 @@ You can pass any of the following options:
 - ``context``: A dictionary or list of objects that will be immediately available to you in your shell session.
 - ``shell``: Default shell. May be ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PythonShell``, or ``konch.AutoShell`` (default).
 - ``banner``: Custom banner text.
+- ``prompt``: The input prompt (not supported with BPython).
 
 Here is an example ``.konchrc`` file that includes some functions from the `requests <http://docs.python-requests.org/en/latest/>`_ library in its context.
 

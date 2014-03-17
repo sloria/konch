@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 - Smarter path resolution. konch will search parent directories until it finds a .konchrc file to use.
+- Make prompt configurable on IPython and built-in shell. Output template is also supported on IPython.
 - *Backwards-incompatible*: Remove support for old (<=0.10.x--released 3 years ago!) versions of IPython.
 
 0.2.0 (2014-03-15)
