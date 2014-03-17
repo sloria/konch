@@ -6,8 +6,8 @@ Customizes your Python shell
 ============================
 
 - **Automatically import** any object upon startup
-- **Simple**, per-project configuration (it's just Python code)
-- Python is the only dependency
+- **Simple**, per-project configuration in a single file (it's just Python code)
+- No dependencies
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
 - Can have multiple configurations per project using **named configs**
 

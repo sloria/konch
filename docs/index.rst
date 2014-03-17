@@ -10,8 +10,8 @@ Customizes your Python shell
 ============================
 
 - **Automatically import** any object upon startup
-- **Simple**, per-project configuration (it's just Python code)
-- Python is the only dependency
+- **Simple**, per-project configuration in a single file (it's just Python code)
+- No dependencies
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
 - Can have multiple configurations per project using **named configs**
 
@@ -76,6 +76,11 @@ Here is an example ``.konchrc`` file that includes some functions from the `requ
         },
         'banner': 'A humanistic HTTP shell'
     })
+
+Now, when you run ``konch`` again:
+
+.. image:: https://dl.dropboxusercontent.com/u/1693233/github/konch-requsts.gif
+    :alt: konch with requests
 
 .. seealso::
 
