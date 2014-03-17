@@ -57,7 +57,7 @@ INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 import konch
 
 # TODO: Edit me
-# Available options: 'context', 'banner', 'shell'
+# Available options: 'context', 'banner', 'shell', 'prompt'
 konch.config({
     'context': {
         'speak': konch.speak
@@ -110,9 +110,12 @@ class Shell(object):
     :param str banner: Banner text that appears on startup.
     """
 
-    def __init__(self, context, banner=DEFAULT_BANNER_TEXT):
+    def __init__(self, context, banner=DEFAULT_BANNER_TEXT,
+            prompt=None, output=None):
         self.context = context
         self.banner = make_banner(banner, context)
+        self.prompt = prompt
+        self.output = output
 
     def start(self):
         raise NotImplementedError
@@ -122,6 +125,10 @@ class PythonShell(Shell):
     """The built-in Python shell."""
 
     def start(self):
+        if self.prompt:
+            sys.ps1 = self.prompt
+        if self.output:
+            warnings.warn('Custom output templates not supported by PythonShell.')
         code.interact(self.banner, local=self.context)
         return None
 
@@ -132,9 +139,18 @@ class IPythonShell(Shell):
     def start(self):
         try:
             from IPython import embed
-            embed(banner1=self.banner, user_ns=self.context)
+            from IPython.config.loader import Config
         except ImportError:
             raise ShellNotAvailableError('IPython shell not available.')
+        ipy_config = Config()
+        prompt_config = ipy_config.PromptManager
+        if self.prompt:
+            prompt_config.in_template = self.prompt
+        if self.output:
+            prompt_config.out_template = self.output
+        embed(banner1=self.banner,
+            user_ns=self.context,
+            config=ipy_config)
         return None
 
 
@@ -144,9 +160,13 @@ class BPythonShell(Shell):
     def start(self):
         try:
             from bpython import embed
-            embed(banner=self.banner, locals_=self.context)
         except ImportError:
             raise ShellNotAvailableError('BPython shell not available.')
+        if self.prompt:
+            warnings.warn('Custom prompts not supported by BPythonShell.')
+        if self.output:
+            warnings.warn('Custom output templates not supported by BPythonShell.')
+        embed(banner=self.banner, locals_=self.context)
         return None
 
 
@@ -155,18 +175,23 @@ class AutoShell(Shell):
     Python shell.
     """
 
-    def __init__(self, context, banner=DEFAULT_BANNER_TEXT):
+    def __init__(self, context, banner=DEFAULT_BANNER_TEXT, *args, **kwargs):
         self.context = context
         self.banner = banner
+        self.args = args
+        self.kwargs = kwargs
 
     def start(self):
         try:
-            return IPythonShell(self.context, self.banner).start()
+            return IPythonShell(self.context, self.banner,
+                *self.args, **self.kwargs).start()
         except ShellNotAvailableError:
             try:
-                return BPythonShell(self.context, self.banner).start()
+                return BPythonShell(self.context, self.banner,
+                    *self.args, **self.kwargs).start()
             except ShellNotAvailableError:
-                return PythonShell(self.context, self.banner).start()
+                return PythonShell(self.context, self.banner,
+                    *self.args, **self.kwargs).start()
         return None
 
 
@@ -218,11 +243,14 @@ def speak():
 class Config(dict):
     """A dict-like config object. Behaves like a normal dict except that
     the ``context`` will always be converted from a list to a dict.
+    Defines the default configuration.
     """
 
-    def __init__(self, context=None, banner=None, shell=AutoShell):
+    def __init__(self, context=None, banner=None, shell=AutoShell,
+            prompt=None, output=None):
         ctx = Config.transform_val(context) or {}
-        super(Config, self).__init__(context=ctx, banner=banner, shell=shell)
+        super(Config, self).__init__(context=ctx, banner=banner, shell=shell,
+            prompt=prompt, output=output)
 
     def __setitem__(self, key, value):
         val = Config.transform_val(value)
@@ -246,13 +274,13 @@ config_registry = {
 }
 
 
-def start(context, banner=None, shell=AutoShell):
+def start(context, banner=None, shell=AutoShell, *args, **kwargs):
     """Start up the konch shell with a given context."""
     logger.debug('Using shell...')
     logger.debug(shell)
     if banner is None:
         banner = speak()
-    shell(context, banner).start()
+    shell(context, banner, *args, **kwargs).start()
 
 
 def config(config_dict):
@@ -263,6 +291,7 @@ def config(config_dict):
         'shell' (default shell class to use).
     """
     global cfg
+    logger.debug('Updating with {0}'.format(config_dict))
     cfg.update(config_dict)
     return cfg
 
@@ -363,6 +392,7 @@ def main():
     shell_name = args['--shell']
     if shell_name:
         config['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
+    logger.debug('Starting with config {0}'.format(config))
     start(**config)
     sys.exit(0)
 

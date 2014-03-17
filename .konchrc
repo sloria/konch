@@ -11,4 +11,5 @@ konch.config({
         'env': env,
         'os': os
     },
+    'prompt': '[\\#] >>> ',
 })

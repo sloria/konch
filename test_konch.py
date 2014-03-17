@@ -171,15 +171,30 @@ import konch
 
 konch.config({
     'banner': 'Test banner'
+    'prompt': 'myprompt >>>'
 })
 """
 
 
-def test_custom_banner(env):
-    with open(os.path.join(env.base_path, 'testrc'), 'w') as fp:
-        fp.write(TEST_CONFIG)
-    res = env.run('konch', '-f', 'testrc', expect_stderr=True)
+@pytest.fixture
+def fileenv(request, env):
+    fpath = os.path.join(env.base_path, 'testrc')
+    with open(fpath, 'w') as fp:
+        fp.write(TEST_CONFIG_WITH_NAMES)
+    def finalize():
+        os.remove(fpath)
+    request.addfinalizer(finalize)
+    return env
+
+
+def test_custom_banner(fileenv):
+    res = fileenv.run('konch', '-f', 'testrc', expect_stderr=True)
     assert_in_output('Test banner', res)
+
+
+def test_custom_prompt(fileenv):
+    res = fileenv.run('konch', '-f', 'testrc', expect_stderr=True)
+    assert_in_output('myprompt >>>', res)
 
 
 def test_version(env):
@@ -209,7 +224,7 @@ konch.named_config('conf2', {
 
 
 @pytest.fixture
-def fileenv(request, env):
+def fileenv2(request, env):
     fpath = os.path.join(env.base_path, '.konchrc')
     with open(fpath, 'w') as fp:
         fp.write(TEST_CONFIG_WITH_NAMES)
@@ -229,20 +244,20 @@ def folderenv(request, env):
     return env
 
 
-def test_default_config(fileenv):
-    res = fileenv.run('konch', expect_stderr=True)
+def test_default_config(fileenv2):
+    res = fileenv2.run('konch', expect_stderr=True)
     assert_in_output('Default', res)
     assert_in_output('foo', res)
 
 
-def test_selecting_named_config(fileenv):
-    res = fileenv.run('konch', '-n', 'conf2', expect_stderr=True)
+def test_selecting_named_config(fileenv2):
+    res = fileenv2.run('konch', '-n', 'conf2', expect_stderr=True)
     assert_in_output('Conf2', res)
     assert_in_output('bar', res)
 
 
-def test_selecting_name_that_doesnt_exist(fileenv):
-    res = fileenv.run('konch', '-n', 'doesntexist', expect_stderr=True)
+def test_selecting_name_that_doesnt_exist(fileenv2):
+    res = fileenv2.run('konch', '-n', 'doesntexist', expect_stderr=True)
     assert_in_output('Default', res)
 
 
