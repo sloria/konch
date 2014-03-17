@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.2.1 (2014-03-16)
+0.3.0 (2014-03-16)
 ------------------
 
 - Smarter path resolution. konch will search parent directories until it finds a .konchrc file to use.
