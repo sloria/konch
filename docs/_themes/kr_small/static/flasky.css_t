@@ -10,8 +10,8 @@
  */
 
 @import url("basic.css");
-@import url(//fonts.googleapis.com/css?family=Varela+Round);
-@import url(//fonts.googleapis.com/css?family=PT+Serif);
+@import url(//fonts.googleapis.com/css?family=PT+Serif:400,700|Varela+Round);
+
 
 /* -- page layout ----------------------------------------------------------- */
 
