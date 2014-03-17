@@ -6,18 +6,27 @@ konch
 `pypi <http://pypi.python.org/pypi/konch>`_ //
 `issues <http://github.com/sloria/konch/issues>`_
 
-The customizable Python shell
-=============================
+Customizes your Python shell
+============================
 
 - **Automatically import** any object upon startup
-- **Simple** configuration syntax (it's just Python code)
-- Written in **pure Python**
-- **No external dependencies**
+- **Simple**, per-project configuration (it's just Python code)
+- Python is the only dependency
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
 - Can have multiple configurations per project using **named configs**
 
 .. image:: https://dl.dropboxusercontent.com/u/1693233/github/konchdemo-optim.gif
     :alt: Demo
+
+
+Example Use Cases
+-----------------
+
+- If you're building a web app, you can have all your models in your shell namespace without having to import them individually. You can also run any necessary database or app setup.
+- If you're building a Python package, you can automatically import all of its modules.
+- In a live demo, you can skip the imports.
+- Immediately have test objects to work with in interactive sessions.
+
 
 Install/Upgrade
 ===============

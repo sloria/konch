@@ -2,13 +2,12 @@
 konch
 =====
 
-The customizable Python shell
-=============================
+Customizes your Python shell
+============================
 
 - **Automatically import** any object upon startup
-- **Simple** configuration syntax (it's just Python code)
-- Written in **pure Python**
-- **No external dependencies**
+- **Simple**, per-project configuration (it's just Python code)
+- Python is the only dependency
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
 - Can have multiple configurations per project using **named configs**
 
