@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.3.1 (unreleased)
+0.3.1 (2014-03-17)
 ------------------
 
 - Doesn't change current working directory.

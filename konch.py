@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''konch: The customizable Python shell.
+'''konch: Customizes your Python shell.
 
 Usage:
   konch
@@ -33,7 +33,7 @@ import random
 
 from docopt import docopt
 
-__version__ = '0.3.1-dev'
+__version__ = '0.3.1'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
