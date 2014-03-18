@@ -3,10 +3,10 @@ konch
 =====
 
 
-**konch** is a CLI and configuration utility for the Python shell.
+Configures your Python shell
+============================
 
-Simple, productive, and fun
-===========================
+**konch** is a CLI and configuration utility for the Python shell, optimized for simplicity and productivity.
 
 - **Automatically import** any object upon startup
 - **Simple**, per-project configuration in a single file (it's just Python code)

@@ -7,6 +7,7 @@ Changelog
 
 - Doesn't change current working directory.
 - Less magicks.
+- Tested on Python 3.4.
 
 
 0.3.0 (2014-03-16)

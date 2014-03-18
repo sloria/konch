@@ -45,7 +45,8 @@ def read(fname):
 setup(
     name='konch',
     version=__version__,
-    description='Customizes your Python shell.',
+    description=('CLI and configuration utility for the Python shell, optimized '
+                'for simplicity and productivity.'),
     long_description=(read("README.rst") + '\n\n' +
                         read("HISTORY.rst")),
     author='Steven Loria',
@@ -64,6 +65,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],

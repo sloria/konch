@@ -6,10 +6,11 @@ konch
 `pypi <http://pypi.python.org/pypi/konch>`_ //
 `issues <http://github.com/sloria/konch/issues>`_
 
-**konch** is a CLI and configuration utility for the Python shell.
 
-Simple, productive, and fun
-===========================
+Configures your Python shell
+============================
+
+**konch** is a CLI and configuration utility for the Python shell, optimized for simplicity and productivity.
 
 - **Automatically import** any object upon startup
 - **Simple**, per-project configuration in a single file (it's just Python code)
@@ -37,7 +38,7 @@ Install/Upgrade
 
     $ pip install -U konch
 
-Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3). There are no other dependencies.
+Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3, 3.4). There are no other dependencies.
 
 Usage
 =====
