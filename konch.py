@@ -175,23 +175,21 @@ class AutoShell(Shell):
     Python shell.
     """
 
-    def __init__(self, context, banner=DEFAULT_BANNER_TEXT, *args, **kwargs):
-        self.context = context
+    def __init__(self, context, banner, *args, **kwargs):
+        Shell.__init__(self, context, *args, **kwargs)
         self.banner = banner
-        self.args = args
-        self.kwargs = kwargs
 
     def start(self):
         try:
             return IPythonShell(self.context, self.banner,
-                *self.args, **self.kwargs).start()
+                self.prompt, self.output).start()
         except ShellNotAvailableError:
             try:
                 return BPythonShell(self.context, self.banner,
-                    *self.args, **self.kwargs).start()
+                    self.prompt, self.output).start()
             except ShellNotAvailableError:
                 return PythonShell(self.context, self.banner,
-                    *self.args, **self.kwargs).start()
+                    self.prompt, self.output).start()
         return None
 
 

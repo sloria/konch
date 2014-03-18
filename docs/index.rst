@@ -6,12 +6,14 @@ konch
 `pypi <http://pypi.python.org/pypi/konch>`_ //
 `issues <http://github.com/sloria/konch/issues>`_
 
-Customizes your Python shell
-============================
+**konch** is a CLI and configuration utility for the Python shell.
+
+Simple, productive, and fun
+===========================
 
 - **Automatically import** any object upon startup
 - **Simple**, per-project configuration in a single file (it's just Python code)
-- No dependencies
+- **No dependencies**
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
 - Can have multiple configurations per project using **named configs**
 
