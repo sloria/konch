@@ -290,7 +290,6 @@ def config(config_dict):
     :param dict config_dict: Dict that may contain 'context', 'banner', and/or
         'shell' (default shell class to use).
     """
-    global cfg
     logger.debug('Updating with {0}'.format(config_dict))
     cfg.update(config_dict)
     return cfg
@@ -300,7 +299,6 @@ def named_config(name, config_dict):
     """Adds a named config to the config registry.
     This function should be called in a .konchrc file.
     """
-    global config_registry
     config_registry[name] = Config(**config_dict)
 
 
@@ -315,6 +313,8 @@ def get_file_directory(filename):
 
 
 def __ensure_directory_in_path(filename):
+    """Ensures that a file's directory is in the Python path.
+    """
     directory = get_file_directory(filename)
     if directory not in sys.path:
         logger.debug('Adding {0} to sys.path'.format(directory))
@@ -369,7 +369,6 @@ def init_config(config_file=None):
 
 def main():
     """Main entry point for the konch CLI."""
-    global cfg
     args = docopt(__doc__, version=__version__)
     if args['--debug']:
         logging.basicConfig(
