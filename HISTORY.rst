@@ -2,6 +2,13 @@
 Changelog
 *********
 
+0.3.1 (unreleased)
+------------------
+
+- Doesn't change current working directory.
+- Less magicks.
+
+
 0.3.0 (2014-03-16)
 ------------------
 

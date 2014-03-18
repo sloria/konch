@@ -343,11 +343,13 @@ def resolve_path(filename):
     """Find a file by walking up parent directories until the file is found.
     Return the absolute path of the file.
     """
-    while os.getcwd() != __get_home_directory():
-        if os.path.exists(filename):
-            return os.path.abspath(filename)
+    current = os.getcwd()
+    while current != __get_home_directory():
+        target = os.path.join(current, filename)
+        if os.path.exists(target):
+            return os.path.abspath(target)
         else:
-            os.chdir(os.path.pardir)
+            current = os.path.join(current, '..')
     return False
 
 
