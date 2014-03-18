@@ -33,7 +33,7 @@ import random
 
 from docopt import docopt
 
-__version__ = '0.3.0'
+__version__ = '0.3.1-dev'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -139,10 +139,10 @@ class IPythonShell(Shell):
     def start(self):
         try:
             from IPython import embed
-            from IPython.config.loader import Config
+            from IPython.config.loader import Config as IPyConfig
         except ImportError:
             raise ShellNotAvailableError('IPython shell not available.')
-        ipy_config = Config()
+        ipy_config = IPyConfig()
         prompt_config = ipy_config.PromptManager
         if self.prompt:
             prompt_config.in_template = self.prompt
@@ -382,17 +382,17 @@ def main():
     use_file(args['--file'])
 
     if args['--name']:
-        config = config_registry.get(args['--name'], cfg)
+        config_dict = config_registry.get(args['--name'], cfg)
         logger.debug('Using named config...')
         logger.debug(config)
     else:
-        config = cfg
+        config_dict = cfg
     # Allow default shell to be overriden by command-line argument
     shell_name = args['--shell']
     if shell_name:
-        config['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
-    logger.debug('Starting with config {0}'.format(config))
-    start(**config)
+        config_dict['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
+    logger.debug('Starting with config {0}'.format(config_dict))
+    start(**config_dict)
     sys.exit(0)
 
 if __name__ == '__main__':
