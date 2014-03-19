@@ -2,10 +2,10 @@
 Changelog
 *********
 
-0.3.2 (unreleased)
+0.3.2 (2014-03-18)
 ------------------
 
-- Changes to make it easier to use konch programatically.
+- Some changes to make it easier to use konch programatically.
 - ``konch.start()`` can be called with no arguments.
 - Expose docopt argument parsing via ``knoch.parse_args()``.
 
