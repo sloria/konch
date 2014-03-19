@@ -264,11 +264,11 @@ class Config(dict):
         for key in d.keys():
             self[key] = d[key]
 
-# cfg and config_registry are global variables that may be mutated by a
+# _cfg and _config_registry are global variables that may be mutated by a
 # .konchrc file
-cfg = Config()
-config_registry = {
-    'default': cfg
+_cfg = Config()
+_config_registry = {
+    'default': _cfg
 }
 
 
@@ -281,11 +281,11 @@ def start(context=None, banner=None, shell=AutoShell,
     if banner is None:
         banner = speak()
     # Default to global config
-    context_ = context or cfg['context']
-    banner_ = banner or cfg['banner']
-    shell_ = shell or cfg['shell']
-    prompt_ = prompt or cfg['prompt']
-    output_ = output or cfg['output']
+    context_ = context or _cfg['context']
+    banner_ = banner or _cfg['banner']
+    shell_ = shell or _cfg['shell']
+    prompt_ = prompt or _cfg['prompt']
+    output_ = output or _cfg['output']
     shell_(context=context_, banner=banner_,
         prompt=prompt_, output=output_).start()
 
@@ -298,21 +298,21 @@ def config(config_dict):
         'shell' (default shell class to use).
     """
     logger.debug('Updating with {0}'.format(config_dict))
-    cfg.update(config_dict)
-    return cfg
+    _cfg.update(config_dict)
+    return _cfg
 
 
 def named_config(name, config_dict):
     """Adds a named config to the config registry.
     This function should be called in a .konchrc file.
     """
-    config_registry[name] = Config(**config_dict)
+    _config_registry[name] = Config(**config_dict)
 
 
 def reset_config():
-    global cfg
-    cfg = Config()
-    return cfg
+    global _cfg
+    _cfg = Config()
+    return _cfg
 
 
 def get_file_directory(filename):
@@ -329,7 +329,7 @@ def __ensure_directory_in_path(filename):
 
 
 def use_file(filename):
-    # First update cfg by executing the config file
+    # First update _cfg by executing the config file
     config_file = filename or resolve_path(DEFAULT_CONFIG_FILE)
     if config_file and os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
@@ -341,7 +341,7 @@ def use_file(filename):
             warnings.warn('No config file found.')
         else:
             warnings.warn('"{fname}" not found.'.format(fname=config_file))
-    return cfg
+    return _cfg
 
 
 def __get_home_directory():
@@ -391,11 +391,11 @@ def main():
     use_file(args['--file'])
 
     if args['--name']:
-        config_dict = config_registry.get(args['--name'], cfg)
+        config_dict = _config_registry.get(args['--name'], _cfg)
         logger.debug('Using named config...')
         logger.debug(config)
     else:
-        config_dict = cfg
+        config_dict = _cfg
     # Allow default shell to be overriden by command-line argument
     shell_name = args['--shell']
     if shell_name:

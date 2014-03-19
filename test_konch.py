@@ -57,26 +57,26 @@ def test_make_banner_with_context():
 
 
 def test_cfg_defaults():
-    assert konch.cfg['shell'] == konch.AutoShell
-    assert konch.cfg['banner'] is None
-    assert konch.cfg['context'] == {}
+    assert konch._cfg['shell'] == konch.AutoShell
+    assert konch._cfg['banner'] is None
+    assert konch._cfg['context'] == {}
 
 
 def test_config():
-    assert konch.cfg == konch.Config()
+    assert konch._cfg == konch.Config()
     konch.config({
         'banner': 'Foo bar'
     })
-    assert konch.cfg['banner'] == 'Foo bar'
+    assert konch._cfg['banner'] == 'Foo bar'
 
 
 def test_reset_config():
-    assert konch.cfg == konch.Config()
+    assert konch._cfg == konch.Config()
     konch.config({
         'banner': 'Foo bar'
     })
     konch.reset_config()
-    assert konch.cfg == konch.Config()
+    assert konch._cfg == konch.Config()
 
 
 def test_context_list2dict():
@@ -92,13 +92,13 @@ def test_context_list2dict():
 
 
 def test_config_list():
-    assert konch.cfg == konch.Config()
+    assert konch._cfg == konch.Config()
     def my_func():
         return
     konch.config({
         'context': [my_func]
     })
-    assert konch.cfg['context']['my_func'] == my_func
+    assert konch._cfg['context']['my_func'] == my_func
 
 
 def test_config_converts_list_context():
@@ -121,6 +121,15 @@ def test_config_update_context_converts_list():
         'context': [math]
     })
     assert config['context'] == {'math': math}
+
+
+def test_named_config_adds_to_registry():
+    assert konch._config_registry['default'] == konch._cfg
+    assert len(konch._config_registry.keys()) == 1
+    konch.named_config('mynamespace', {'context': {'foo': 42}})
+    assert len(konch._config_registry.keys()) == 2
+    # reset config_registry
+    konch._config_registry = {'default': konch._cfg}
 
 
 ##### Command tests #####
