@@ -272,13 +272,22 @@ config_registry = {
 }
 
 
-def start(context, banner=None, shell=AutoShell, *args, **kwargs):
-    """Start up the konch shell with a given context."""
+def start(context=None, banner=None, shell=AutoShell,
+        prompt=None, output=None):
+    """Start up the konch shell. Takes the same parameters as Shell.__init__.
+    """
     logger.debug('Using shell...')
     logger.debug(shell)
     if banner is None:
         banner = speak()
-    shell(context, banner, *args, **kwargs).start()
+    # Default to global config
+    context_ = context or cfg['context']
+    banner_ = banner or cfg['banner']
+    shell_ = shell or cfg['shell']
+    prompt_ = prompt or cfg['prompt']
+    output_ = output or cfg['output']
+    shell_(context=context_, banner=banner_,
+        prompt=prompt_, output=output_).start()
 
 
 def config(config_dict):
