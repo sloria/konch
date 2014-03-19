@@ -376,9 +376,16 @@ def init_config(config_file=None):
         sys.exit(1)
 
 
+def parse_args():
+    """Exposes the docopt command-line arguments parser.
+    Return a dictionary of arguments.
+    """
+    return docopt(__doc__, version=__version__)
+
+
 def main():
     """Main entry point for the konch CLI."""
-    args = docopt(__doc__, version=__version__)
+    args = parse_args()
     if args['--debug']:
         logging.basicConfig(
             format='%(levelname)s %(filename)s: %(message)s',

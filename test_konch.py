@@ -78,6 +78,13 @@ def test_reset_config():
     konch.reset_config()
     assert konch._cfg == konch.Config()
 
+def test_parse_args():
+    args = konch.parse_args()
+    assert '--shell' in args
+    assert 'init' in args
+    assert '<config_file>' in args
+    assert '--name' in args
+
 
 def test_context_list2dict():
     import math
