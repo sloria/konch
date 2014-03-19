@@ -27,7 +27,7 @@ Example Use Cases
 
 - If you're building a web app, you can have all your models in your shell namespace without having to import them individually. You can also run any necessary database or app setup.
 - If you're building a Python package, you can automatically import all of its modules.
-- In a live demo, you can skip the imports.
+- In a live demo, skip the imports.
 - Immediately have test objects to work with in interactive sessions.
 
 
@@ -82,7 +82,7 @@ Here is an example ``.konchrc`` file that includes some functions from the `requ
 
 Now, when you run ``konch`` again:
 
-.. image:: https://dl.dropboxusercontent.com/u/1693233/github/konch-requsts.gif
+.. image:: https://dl.dropboxusercontent.com/u/1693233/github/konch-requests.gif
     :alt: konch with requests
 
 .. seealso::
@@ -146,8 +146,66 @@ overrides the default shell. Choose between ``ipy``, ``bpy``, or ``py``.
 starts a session using ``<file>`` as its config file instead of the default ``.konchrc``.
 
 
-..
+Programmatic Usage
+==================
 
+Want to use konch within a Python script? konch exposes many of its high-level functions.
+
+.. code-block:: python
+
+    import konch
+    from mypackage import cheese
+
+    # Start the shell
+    konch.start(
+        context={
+            'cheese': cheese
+        },
+        shell=konch.AutoShell
+    )
+
+To use a config file:
+
+.. code-block:: python
+
+    import konch
+
+    konch.use_file('~/path/to/.mykonchrc')
+    konch.start()
+
+Get command-line arguments using ``konch.parse_args()``. ``konch`` uses `docopt`_ for arguments parsing.
+
+
+
+.. code-block:: python
+
+    import konch
+    from myapp import app, db
+
+    args = konch.parse_args()
+    if args['--name'] == 'db':
+        # ...expensive database setup...
+        konch.start(context={
+            'db': db,
+            'app': app
+        })
+    else:
+        konch.start(context={
+            'app': app
+        })
+
+.. _docopt: http://docopt.org
+
+You can also use shell objects directly:
+
+.. code-block:: python
+
+    import konch
+
+    my_shell = konch.AutoShell(context={'foo': 42}, banner='My foo shell')
+    my_shell.start()
+
+..
 
     "Praise the Magic Conch!"
 
