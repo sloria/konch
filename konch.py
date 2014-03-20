@@ -49,7 +49,6 @@ Context:
 {context}
 """
 
-DEFAULT_BANNER_TEXT = 'This is your konch shell. Happy hacking.'
 
 DEFAULT_CONFIG_FILE = '.konchrc'
 
@@ -86,7 +85,7 @@ def make_banner(text=None, context=None):
     """Generates a full banner with version info, the given text, and a
     formatted list of context variables.
     """
-    banner_text = text or DEFAULT_BANNER_TEXT
+    banner_text = text or speak()
     out = BANNER_TEMPLATE.format(version=sys.version, text=banner_text)
     if context:
         out += CONTEXT_TEMPLATE.format(context=format_context(context))
@@ -110,7 +109,7 @@ class Shell(object):
     :param str banner: Banner text that appears on startup.
     """
 
-    def __init__(self, context, banner=DEFAULT_BANNER_TEXT,
+    def __init__(self, context, banner=None,
             prompt=None, output=None):
         self.context = context
         self.banner = make_banner(banner, context)

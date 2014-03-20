@@ -37,11 +37,6 @@ def test_format_context():
     ])
 
 
-def test_default_make_banner():
-    result = konch.make_banner()
-    assert sys.version in result
-    assert konch.DEFAULT_BANNER_TEXT in result
-
 
 def test_make_banner_custom():
     text = 'I want to be the very best'
@@ -172,8 +167,6 @@ def test_konch_init_when_config_file_exists(env):
 def test_default_banner(env):
     env.run('konch', 'init')
     res = env.run('konch', expect_stderr=True)
-    # In virtualenvs, banners output to stderr
-    assert_in_output(konch.DEFAULT_BANNER_TEXT, res)
     assert_in_output(str(sys.version), res)
 
 
