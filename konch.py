@@ -81,13 +81,13 @@ def format_context(context):
     ])
 
 
-def make_banner(text=None, context=None):
+def make_banner(text=None, context=None, hide_context=False):
     """Generates a full banner with version info, the given text, and a
     formatted list of context variables.
     """
     banner_text = text or speak()
     out = BANNER_TEMPLATE.format(version=sys.version, text=banner_text)
-    if context:
+    if context and not hide_context:
         out += CONTEXT_TEMPLATE.format(context=format_context(context))
     return out
 
@@ -107,12 +107,15 @@ class Shell(object):
     :param dict context: Dictionary that defines what variables will be
         available when the shell is run.
     :param str banner: Banner text that appears on startup.
+    :param str prompt: Custom input prompt.
+    :param str output: Custom output prompt.
     """
 
-    def __init__(self, context, banner=None,
-            prompt=None, output=None):
+    def __init__(self, context, banner=None, prompt=None,
+            output=None, hide_context=False):
         self.context = context
-        self.banner = make_banner(banner, context)
+        self.hide_context = hide_context
+        self.banner = make_banner(banner, context, hide_context=hide_context)
         self.prompt = prompt
         self.output = output
 
@@ -179,16 +182,20 @@ class AutoShell(Shell):
         self.banner = banner
 
     def start(self):
+        shell_args = {
+            'context': self.context,
+            'banner': self.banner,
+            'prompt': self.prompt,
+            'output': self.output,
+            'hide_context': self.hide_context,
+        }
         try:
-            return IPythonShell(self.context, self.banner,
-                self.prompt, self.output).start()
+            return IPythonShell(**shell_args).start()
         except ShellNotAvailableError:
             try:
-                return BPythonShell(self.context, self.banner,
-                    self.prompt, self.output).start()
+                return BPythonShell(**shell_args).start()
             except ShellNotAvailableError:
-                return PythonShell(self.context, self.banner,
-                    self.prompt, self.output).start()
+                return PythonShell(**shell_args).start()
         return None
 
 
@@ -244,10 +251,10 @@ class Config(dict):
     """
 
     def __init__(self, context=None, banner=None, shell=AutoShell,
-            prompt=None, output=None):
+            prompt=None, output=None, hide_context=False):
         ctx = Config.transform_val(context) or {}
         super(Config, self).__init__(context=ctx, banner=banner, shell=shell,
-            prompt=prompt, output=output)
+            prompt=prompt, output=output, hide_context=hide_context)
 
     def __setitem__(self, key, value):
         val = Config.transform_val(value)
@@ -272,7 +279,7 @@ _config_registry = {
 
 
 def start(context=None, banner=None, shell=AutoShell,
-        prompt=None, output=None):
+        prompt=None, output=None, hide_context=False):
     """Start up the konch shell. Takes the same parameters as Shell.__init__.
     """
     logger.debug('Using shell...')
@@ -285,8 +292,9 @@ def start(context=None, banner=None, shell=AutoShell,
     shell_ = shell or _cfg['shell']
     prompt_ = prompt or _cfg['prompt']
     output_ = output or _cfg['output']
+    hide_context_ = hide_context or _cfg['hide_context']
     shell_(context=context_, banner=banner_,
-        prompt=prompt_, output=output_).start()
+        prompt=prompt_, output=output_, hide_context=hide_context_).start()
 
 
 def config(config_dict):

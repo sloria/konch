@@ -61,6 +61,7 @@ You can pass any of the following options:
 - ``shell``: Default shell. May be ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PythonShell``, or ``konch.AutoShell`` (default).
 - ``banner``: Custom banner text.
 - ``prompt``: The input prompt (not supported with BPython).
+- ``hide_context``: If ``True``, don't show the context variables in the banner. Defaults to ``False``.
 
 Here is an example ``.konchrc`` file that includes some functions from the `requests <http://docs.python-requests.org/en/latest/>`_ library in its context.
 

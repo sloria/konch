@@ -7,6 +7,7 @@ Changelog
 
 - Fix bug in resolve_path that caused infinite loop if config file not found.
 - Fix bug with initializing konch in home directory.
+- Add ``hide_context`` option.
 
 0.3.2 (2014-03-18)
 ------------------

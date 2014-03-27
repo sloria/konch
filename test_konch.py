@@ -37,7 +37,6 @@ def test_format_context():
     ])
 
 
-
 def test_make_banner_custom():
     text = 'I want to be the very best'
     result = konch.make_banner(text)
@@ -51,10 +50,17 @@ def test_make_banner_with_context():
     assert konch.format_context(context) in result
 
 
+def test_make_banner_hide_context():
+    context = {'foo': 42}
+    result = konch.make_banner(context=context, hide_context=True)
+    assert konch.format_context(context) not in result
+
+
 def test_cfg_defaults():
     assert konch._cfg['shell'] == konch.AutoShell
     assert konch._cfg['banner'] is None
     assert konch._cfg['context'] == {}
+    assert konch._cfg['hide_context'] is False
 
 
 def test_config():
