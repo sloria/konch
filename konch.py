@@ -362,7 +362,8 @@ def resolve_path(filename):
 
     if current == __get_home_directory():
         target = os.path.join(current, filename)
-        return os.path.abspath(target)
+        if os.path.exists(target):
+            return os.path.abspath(target)
 
     return False
 
