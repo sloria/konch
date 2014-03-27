@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.3.3 (unreleased)
+0.3.3 (2014-03-27)
 ------------------
 
 - Fix bug in resolve_path that caused infinite loop if config file not found.
