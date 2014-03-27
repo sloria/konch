@@ -5,7 +5,8 @@ Changelog
 0.3.3 (unreleased)
 ------------------
 
-- Fix bug in resolve_path that caused inifinite loop if config file not found.
+- Fix bug in resolve_path that caused infinite loop if config file not found.
+- Fix bug with initializing konch in home directory.
 
 0.3.2 (2014-03-18)
 ------------------
