@@ -357,7 +357,7 @@ def resolve_path(filename):
         if os.path.exists(target):
             return os.path.abspath(target)
         else:
-            current = os.path.join(current, '..')
+            current = os.path.abspath(os.path.join(current, '..'))
     return False
 
 
