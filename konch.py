@@ -352,17 +352,13 @@ def resolve_path(filename):
     Return the absolute path of the file.
     """
     current = os.getcwd()
-    while current != __get_home_directory():
+    sentinal_dir = os.path.join(__get_home_directory(), '..')
+    while current != sentinal_dir:
         target = os.path.join(current, filename)
         if os.path.exists(target):
             return os.path.abspath(target)
         else:
             current = os.path.abspath(os.path.join(current, '..'))
-
-    if current == __get_home_directory():
-        target = os.path.join(current, filename)
-        if os.path.exists(target):
-            return os.path.abspath(target)
 
     return False
 
