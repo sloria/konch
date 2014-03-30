@@ -67,7 +67,7 @@ konch.config({
 
 def execute_file(fname, globals_=None, locals_=None):
     """Executes code in a file. Python 2/3-compatible."""
-    exec(compile(open(fname, "rb").read(), fname, 'exec'), globals_, locals_)
+    exec(compile(open(fname).read(), fname, 'exec'), globals_, locals_)
 
 
 def format_context(context):
