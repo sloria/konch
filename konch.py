@@ -56,7 +56,7 @@ INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 import konch
 
 # TODO: Edit me
-# Available options: 'context', 'banner', 'shell', 'prompt'
+# Available options: 'context', 'banner', 'shell', 'prompt', 'hide_context'
 konch.config({
     'context': {
         'speak': konch.speak
