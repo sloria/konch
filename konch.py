@@ -33,7 +33,7 @@ import random
 
 from docopt import docopt
 
-__version__ = '0.3.4-dev'
+__version__ = '0.3.4'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
