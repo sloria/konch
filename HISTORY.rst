@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.3.4 (unreleased)
+0.3.4 (2013-04-06)
 ------------------
 
 - Fix bug that raised `SyntaxError` when executing konch on Windows.
