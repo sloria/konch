@@ -381,7 +381,7 @@ def init_config(config_file=None):
         sys.exit(0)
     else:
         print('{0} already exists in this directory.'
-                .format(config_file))
+                .format(config_file), file=sys.stderr)
         sys.exit(1)
 
 

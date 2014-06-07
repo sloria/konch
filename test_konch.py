@@ -171,7 +171,7 @@ def test_konch_with_no_config_file(env):
 def test_konch_init_when_config_file_exists(env):
     env.run('konch', 'init')
     res = env.run('konch', 'init', expect_error=True)
-    assert 'already exists' in res.stdout
+    assert 'already exists' in res.stderr
     assert res.returncode == 1
 
 
