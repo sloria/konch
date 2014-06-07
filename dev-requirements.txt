@@ -4,3 +4,4 @@ tox
 scripttest
 ipython==1.2.1
 bpython==0.12
+Sphinx>=1.2.2
