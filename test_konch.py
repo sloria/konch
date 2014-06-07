@@ -4,6 +4,7 @@ import sys
 import os
 
 import pytest
+from docopt import DocoptExit
 from scripttest import TestFileEnvironment
 
 import konch
@@ -79,12 +80,16 @@ def test_reset_config():
     konch.reset_config()
     assert konch._cfg == konch.Config()
 
+
 def test_parse_args():
-    args = konch.parse_args()
-    assert '--shell' in args
-    assert 'init' in args
-    assert '<config_file>' in args
-    assert '--name' in args
+    try:
+        args = konch.parse_args()
+        assert '--shell' in args
+        assert 'init' in args
+        assert '<config_file>' in args
+        assert '--name' in args
+    except DocoptExit:
+        pass
 
 
 def test_context_list2dict():
