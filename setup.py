@@ -9,7 +9,7 @@ TESTS_REQUIRE = ['pytest', 'scripttest']
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = []
+        self.test_args = ['--verbose']
         self.test_suite = True
 
     def run_tests(self):
