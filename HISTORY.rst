@@ -2,10 +2,11 @@
 Changelog
 *********
 
-0.3.5 (unreleased)
+0.4.0 (unreleased)
 ------------------
 
-- Minor bug fixes.
+- Add ``edit`` command for editing .konchrc file.
+- Properly output error messages to stderr.
 - Tested on Python 3.4.
 
 0.3.4 (2013-04-06)
