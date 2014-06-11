@@ -2,14 +2,14 @@
 Changelog
 *********
 
-0.4.0 (unreleased)
+0.4.0 (2014-04-10)
 ------------------
 
 - Add ``edit`` command for editing .konchrc file.
 - Properly output error messages to stderr.
 - Tested on Python 3.4.
 
-0.3.4 (2013-04-06)
+0.3.4 (2014-04-06)
 ------------------
 
 - Fix bug that raised `SyntaxError` when executing konch on Windows.
