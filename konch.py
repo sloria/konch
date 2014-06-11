@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''konch: Customizes your Python shell.
+"""konch: Customizes your Python shell.
 
 Usage:
   konch
   konch init
   konch init [<config_file>] [-d]
+  konch edit [-d]
   konch [--name=<name>] [-d]
   konch [--name=<name>] [--file=<file>] [--shell=<shell_name>] [-d]
 
@@ -13,6 +14,7 @@ Options:
   -h --help                  Show this screen.
   -v --version               Show version.
   init                       Creates a starter .konchrc file.
+  edit                       Edit your .konchrc file.
   -n --name=<name>           Named config to use.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
                               "bpy" (BPython), "py" (built-in Python shell),
@@ -21,7 +23,7 @@ Options:
                                konch will use the .konchrc file in the current
                                directory.
   -d --debug                 Enable debugging/verbose mode.
-'''
+"""
 
 from __future__ import unicode_literals, print_function
 import logging
@@ -30,10 +32,11 @@ import sys
 import code
 import warnings
 import random
+import subprocess
 
 from docopt import docopt
 
-__version__ = '0.3.5-dev'
+__version__ = '0.4.0-dev'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -370,6 +373,30 @@ def resolve_path(filename):
 
     return False
 
+def get_editor():
+    for key in 'VISUAL', 'EDITOR':
+        ret = os.environ.get(key)
+        if ret:
+            return ret
+    if sys.playform.startswith('win'):
+        return 'notepad'
+    for editor in 'vim', 'nano':
+        if os.system('which %s &> /dev/null' % editor) == 0:
+            return editor
+    return 'vi'
+
+def edit_file(filename, editor=None):
+    editor = editor or get_editor()
+    try:
+        result = subprocess.Popen('{0} "{1}"'.format(editor, filename), shell=True)
+        exit_code = result.wait()
+        if exit_code != 0:
+            print('{0}: Editing failed!'.format(editor), file=sys.stderr)
+            sys.exit(1)
+    except OSError as err:
+        print('{0}: Editing failed: {1}'.format(editor, err), file=sys.stderr)
+        sys.exit(1)
+
 
 def init_config(config_file=None):
     if not os.path.exists(config_file):
@@ -384,6 +411,11 @@ def init_config(config_file=None):
                 .format(config_file), file=sys.stderr)
         sys.exit(1)
 
+def edit_config(config_file=None, editor=None):
+    filename = config_file or resolve_path(DEFAULT_CONFIG_FILE)
+    print('Editing file: "{0}"'.format(filename))
+    edit_file(filename, editor=None)
+    sys.exit(0)
 
 def parse_args():
     """Exposes the docopt command-line arguments parser.
@@ -395,6 +427,7 @@ def parse_args():
 def main():
     """Main entry point for the konch CLI."""
     args = parse_args()
+
     if args['--debug']:
         logging.basicConfig(
             format='%(levelname)s %(filename)s: %(message)s',
@@ -404,6 +437,9 @@ def main():
     if args['init']:
         config_file = args['<config_file>'] or DEFAULT_CONFIG_FILE
         init_config(config_file)
+    elif args['edit']:
+        edit_config(args['<config_file>'])
+
     use_file(args['--file'])
 
     if args['--name']:

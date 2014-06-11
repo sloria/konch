@@ -14,4 +14,4 @@ install:
     - "pip install -U ."
     - "pip install pytest scripttest"
 # command to run tests, e.g. python setup.py test
-script: py.test
+script: python setup.py test
