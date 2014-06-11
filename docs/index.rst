@@ -91,6 +91,11 @@ Now, when you run ``konch`` again:
     For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tree/master/example_rcfiles>`_ directory.
 
 
+``$ konch edit``
+----------------
+
+opens the current config file in your editor.
+
 
 ``$ konch -n <name>``
 ---------------------
