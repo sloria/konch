@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 - Minor bug fixes.
+- Tested on Python 3.4.
 
 0.3.4 (2013-04-06)
 ------------------

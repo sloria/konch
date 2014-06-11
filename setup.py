@@ -19,9 +19,9 @@ class PyTest(TestCommand):
 
 
 def find_version(fname):
-    '''Attempts to find the version number in the file names fname.
+    """Attempts to find the version number in the file names fname.
     Raises RuntimeError if not found.
-    '''
+    """
     version = ''
     with open(fname, 'r') as fp:
         reg = re.compile(r'__version__ = [\'"]([^\'"]*)[\'"]')
