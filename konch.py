@@ -36,7 +36,7 @@ import subprocess
 
 from docopt import docopt
 
-__version__ = '0.4.0'
+__version__ = '0.4.1-dev'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -414,7 +414,7 @@ def init_config(config_file=None):
 def edit_config(config_file=None, editor=None):
     filename = config_file or resolve_path(DEFAULT_CONFIG_FILE)
     print('Editing file: "{0}"'.format(filename))
-    edit_file(filename, editor=None)
+    edit_file(filename, editor=editor)
     sys.exit(0)
 
 def parse_args():
