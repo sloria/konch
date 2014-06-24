@@ -57,7 +57,7 @@ setup(
     zip_safe=False,
     keywords='konch shell custom ipython bpython repl',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',

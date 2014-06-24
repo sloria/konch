@@ -36,7 +36,7 @@ import subprocess
 
 from docopt import docopt
 
-__version__ = '0.4.1-dev'
+__version__ = '0.4.1'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -363,6 +363,7 @@ def resolve_path(filename):
     Return the absolute path of the file.
     """
     current = os.getcwd()
+    # Stop search at home directory
     sentinel_dir = os.path.abspath(os.path.join(__get_home_directory(), '..'))
     while current != sentinel_dir:
         target = os.path.join(current, filename)
