@@ -2,7 +2,12 @@
 Changelog
 *********
 
-0.4.0 (2014-04-10)
+0.4.1 (2014-06-23)
+------------------
+
+- Fix bug that caused konch to hang if no .konchrc file can be found.
+
+0.4.0 (2014-06-10)
 ------------------
 
 - Add ``edit`` command for editing .konchrc file.
