@@ -260,8 +260,9 @@ class Config(dict):
             prompt=prompt, output=output, hide_context=hide_context)
 
     def __setitem__(self, key, value):
-        val = Config.transform_val(value)
-        super(Config, self).__setitem__(key, val)
+        if key == 'context':
+            value = Config.transform_val(value)
+        super(Config, self).__setitem__(key, value)
 
     @staticmethod
     def transform_val(val):
@@ -292,7 +293,7 @@ def start(context=None, banner=None, shell=AutoShell,
     # Default to global config
     context_ = context or _cfg['context']
     banner_ = banner or _cfg['banner']
-    shell_ = shell or _cfg['shell']
+    shell_ = SHELL_MAP.get(shell or _cfg['shell'], _cfg['shell'])
     prompt_ = prompt or _cfg['prompt']
     output_ = output or _cfg['output']
     hide_context_ = hide_context or _cfg['hide_context']
