@@ -380,7 +380,7 @@ def get_editor():
         ret = os.environ.get(key)
         if ret:
             return ret
-    if sys.playform.startswith('win'):
+    if sys.platform.startswith('win'):
         return 'notepad'
     for editor in 'vim', 'nano':
         if os.system('which %s &> /dev/null' % editor) == 0:
