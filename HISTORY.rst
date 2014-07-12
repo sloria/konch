@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.4.2 (unreleased)
+0.4.2 (2014-07-12)
 ------------------
 
 - "shell" option in .konchrc can be a string: either 'bpy', 'ipy', 'py', or 'auto'.
