@@ -56,6 +56,8 @@ Context:
 DEFAULT_CONFIG_FILE = '.konchrc'
 
 INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
+# vi: set ft=python :
+
 import konch
 
 # TODO: Edit me

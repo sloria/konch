@@ -2,6 +2,11 @@
 Changelog
 *********
 
+0.4.3 (unreleased)
+------------------
+
+- Make sure that vim opens .konchrc files in Python mode.
+
 0.4.2 (2014-07-12)
 ------------------
 
