@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 - "shell" option in .konchrc can be a string: either 'bpy', 'ipy', 'py', or 'auto'.
+- Fix error in "konch edit".
 
 0.4.1 (2014-06-23)
 ------------------
