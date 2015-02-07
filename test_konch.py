@@ -246,11 +246,32 @@ konch.named_config('conf2', {
 """
 
 
+TEST_CONFIG_WITH_SETUP_AND_TEARDOWN = """
+import konch
+
+def setup():
+    print('setup!')
+
+def teardown():
+    print('teardown!')
+"""
+
+
 @pytest.fixture
-def fileenv2(request, env):
+def names_env(request, env):
     fpath = os.path.join(env.base_path, '.konchrc')
     with open(fpath, 'w') as fp:
         fp.write(TEST_CONFIG_WITH_NAMES)
+    def finalize():
+        os.remove(fpath)
+    request.addfinalizer(finalize)
+    return env
+
+@pytest.fixture
+def setup_env(request, env):
+    fpath = os.path.join(env.base_path, '.konchrc')
+    with open(fpath, 'w') as fp:
+        fp.write(TEST_CONFIG_WITH_SETUP_AND_TEARDOWN)
     def finalize():
         os.remove(fpath)
     request.addfinalizer(finalize)
@@ -267,20 +288,24 @@ def folderenv(request, env):
     return env
 
 
-def test_default_config(fileenv2):
-    res = fileenv2.run('konch', expect_stderr=True)
+def test_default_config(names_env):
+    res = names_env.run('konch', expect_stderr=True)
     assert_in_output('Default', res)
     assert_in_output('foo', res)
 
+def test_setup_teardown(setup_env):
+    res = setup_env.run('konch', expect_stderr=True)
+    assert_in_output('setup!', res)
+    assert_in_output('teardown!', res)
 
-def test_selecting_named_config(fileenv2):
-    res = fileenv2.run('konch', '-n', 'conf2', expect_stderr=True)
+def test_selecting_named_config(names_env):
+    res = names_env.run('konch', '-n', 'conf2', expect_stderr=True)
     assert_in_output('Conf2', res)
     assert_in_output('bar', res)
 
 
-def test_selecting_name_that_doesnt_exist(fileenv2):
-    res = fileenv2.run('konch', '-n', 'doesntexist', expect_stderr=True)
+def test_selecting_name_that_doesnt_exist(names_env):
+    res = names_env.run('konch', '-n', 'doesntexist', expect_stderr=True)
     assert_in_output('Default', res)
 
 

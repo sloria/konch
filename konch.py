@@ -26,6 +26,7 @@ Options:
 """
 
 from __future__ import unicode_literals, print_function
+import imp
 import logging
 import os
 import sys
@@ -342,19 +343,23 @@ def __ensure_directory_in_path(filename):
 
 
 def use_file(filename):
+    """Load filename as a python file. Import ``filename`` and return it
+    as a module.
+    """
     # First update _cfg by executing the config file
     config_file = filename or resolve_path(DEFAULT_CONFIG_FILE)
     if config_file and os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
         # Ensure that relative imports are possible
         __ensure_directory_in_path(config_file)
-        execute_file(config_file)
+        try:
+            return imp.load_source('konchrc', config_file)
+        except UnboundLocalError:  # File not found
+            pass
+    if not config_file:
+        warnings.warn('No config file found.')
     else:
-        if not config_file:
-            warnings.warn('No config file found.')
-        else:
-            warnings.warn('"{fname}" not found.'.format(fname=config_file))
-    return _cfg
+        warnings.warn('"{fname}" not found.'.format(fname=config_file))
 
 
 def __get_home_directory():
@@ -444,7 +449,9 @@ def main():
     elif args['edit']:
         edit_config(args['<config_file>'])
 
-    use_file(args['--file'])
+    mod = use_file(args['--file'])
+    if hasattr(mod, 'setup'):
+        mod.setup()
 
     if args['--name']:
         config_dict = _config_registry.get(args['--name'], _cfg)
@@ -458,6 +465,9 @@ def main():
         config_dict['shell'] = SHELL_MAP.get(shell_name.lower(), AutoShell)
     logger.debug('Starting with config {0}'.format(config_dict))
     start(**config_dict)
+
+    if hasattr(mod, 'teardown'):
+        mod.teardown()
     sys.exit(0)
 
 if __name__ == '__main__':
