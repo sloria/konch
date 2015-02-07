@@ -26,14 +26,14 @@ Options:
 """
 
 from __future__ import unicode_literals, print_function
+import code
 import imp
 import logging
 import os
-import sys
-import code
-import warnings
 import random
 import subprocess
+import sys
+import warnings
 
 from docopt import docopt
 
@@ -69,12 +69,6 @@ konch.config({
     }
 })
 '''
-
-
-def execute_file(fname, globals_=None, locals_=None):
-    """Executes code in a file. Python 2/3-compatible."""
-    exec(compile(open(fname).read(), fname, 'exec'), globals_, locals_)
-
 
 def format_context(context):
     """Output the a context dictionary as a string."""
