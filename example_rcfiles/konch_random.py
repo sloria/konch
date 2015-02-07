@@ -1,5 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# vi: set ft=python :
+
 import random
 
 import konch

@@ -151,6 +151,30 @@ overrides the default shell. Choose between ``ipy``, ``bpy``, or ``py``.
 
 starts a session using ``<file>`` as its config file instead of the default ``.konchrc``.
 
+Setup and Teardown Functions
+============================
+
+You can optionally define ``setup()`` and/or ``teardown()`` functions which will execute immediately before and after running the shell, respectively.
+
+.. code-block:: python
+
+    import os
+    import shutil
+    import konch
+
+    def setup():
+        os.mkdir('my_temp_dir')
+
+    def teardown():
+        shutil.rmtree('my_temp_dir')
+
+    konch.config({
+        'context': {
+            'pjoin': os.path.join,
+        }
+    })
+
+
 
 Programmatic Usage
 ==================
@@ -214,6 +238,9 @@ You can also use shell objects directly:
 ..
 
     "Praise the Magic Conch!"
+
+Project Info
+============
 
 
 .. toctree::

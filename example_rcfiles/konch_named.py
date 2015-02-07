@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# vi: set ft=python :
 """Example .konchrc with named configs.
 
 To use a named config, run:
