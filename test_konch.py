@@ -14,7 +14,10 @@ def assert_in_output(s, res, message=None):
     """Assert that a string is in either stdout or std err.
     Included because banners are sometimes outputted to stderr.
     """
-    assert any([s in res.stdout, res.stdout, s in res.stderr]), message
+    assert any([
+        s in res.stdout,
+        s in res.stderr
+    ]), message or '{0} not in output'.format(s)
 
 
 @pytest.fixture
@@ -190,7 +193,7 @@ TEST_CONFIG = """
 import konch
 
 konch.config({
-    'banner': 'Test banner'
+    'banner': 'Test banner',
     'prompt': 'myprompt >>>'
 })
 """
@@ -200,7 +203,7 @@ konch.config({
 def fileenv(request, env):
     fpath = os.path.join(env.base_path, 'testrc')
     with open(fpath, 'w') as fp:
-        fp.write(TEST_CONFIG_WITH_NAMES)
+        fp.write(TEST_CONFIG)
     def finalize():
         os.remove(fpath)
     request.addfinalizer(finalize)
