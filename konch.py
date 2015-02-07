@@ -37,7 +37,7 @@ import subprocess
 
 from docopt import docopt
 
-__version__ = '0.4.2'
+__version__ = '0.5.0-dev'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
