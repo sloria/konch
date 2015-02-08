@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.5.0 (unreleased)
+1.0.0 (unreleased)
 ------------------
 
 - Add support for ``setup`` and ``teardown`` functions in ``.konchrc`` files.
