@@ -53,8 +53,12 @@ Context:
 {context}
 """
 
+def __get_home_directory():
+    return os.path.expanduser('~')
 
-DEFAULT_CONFIG_FILE = '.konchrc'
+
+CONFIG_FILE = '.konchrc'
+DEFAULT_CONFIG_FILE = os.path.join(__get_home_directory(), '.konchrc.default')
 
 INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 # vi: set ft=python :
@@ -351,7 +355,7 @@ def use_file(filename):
     as a module.
     """
     # First update _cfg by executing the config file
-    config_file = filename or resolve_path(DEFAULT_CONFIG_FILE)
+    config_file = filename or resolve_path(CONFIG_FILE)
     if config_file and os.path.exists(config_file):
         logger.info('Using {0}'.format(config_file))
         # Ensure that relative imports are possible
@@ -372,10 +376,6 @@ def use_file(filename):
         warnings.warn('No config file found.')
     else:
         warnings.warn('"{fname}" not found.'.format(fname=config_file))
-
-
-def __get_home_directory():
-    return os.path.expanduser('~')
 
 
 def resolve_path(filename):
@@ -421,8 +421,12 @@ def edit_file(filename, editor=None):
 
 def init_config(config_file=None):
     if not os.path.exists(config_file):
+        init_template = INIT_TEMPLATE
+        if os.path.exists(DEFAULT_CONFIG_FILE):  # use ~/.konchrc.default if it exists
+            with open(DEFAULT_CONFIG_FILE, 'r') as fp:
+                init_template = fp.read()
         with open(config_file, 'w') as fp:
-            fp.write(INIT_TEMPLATE)
+            fp.write(init_template)
         print('Initialized konch. Edit {0} to your needs and run `konch` '
                 'to start an interactive session.'
                 .format(config_file))
@@ -433,7 +437,7 @@ def init_config(config_file=None):
         sys.exit(1)
 
 def edit_config(config_file=None, editor=None):
-    filename = config_file or resolve_path(DEFAULT_CONFIG_FILE)
+    filename = config_file or resolve_path(CONFIG_FILE)
     print('Editing file: "{0}"'.format(filename))
     edit_file(filename, editor=editor)
     sys.exit(0)
@@ -456,7 +460,7 @@ def main():
     logger.debug(args)
 
     if args['init']:
-        config_file = args['<config_file>'] or DEFAULT_CONFIG_FILE
+        config_file = args['<config_file>'] or CONFIG_FILE
         init_config(config_file)
     elif args['edit']:
         edit_config(args['<config_file>'])

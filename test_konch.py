@@ -154,7 +154,7 @@ def test_named_config_adds_to_registry():
 def test_init_creates_config_file(env):
     res = env.run('konch', 'init')
     assert res.returncode == 0
-    assert konch.DEFAULT_CONFIG_FILE in res.files_created
+    assert konch.CONFIG_FILE in res.files_created
 
 
 def test_init_with_filename(env):
