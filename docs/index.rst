@@ -91,6 +91,11 @@ Now, when you run ``konch`` again:
     For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tree/master/example_rcfiles>`_ directory.
 
 
+.. note::
+
+    You can override the default file contents of ``.konchrc`` by creating a ``~/.konchrc.default`` file in your home directory.
+
+
 ``$ konch edit``
 ----------------
 

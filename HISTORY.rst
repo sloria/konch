@@ -6,6 +6,7 @@ Changelog
 ------------------
 
 - Add support for ``setup`` and ``teardown`` functions in ``.konchrc`` files.
+- If ``~/.konchrc.default`` exists, use that file as the template for new ``.konchrc`` files created with ``konch init``.
 - Make sure that vim opens .konchrc files in Python mode.
 
 0.4.2 (2014-07-12)
@@ -43,7 +44,7 @@ Changelog
 
 - Some changes to make it easier to use konch programatically.
 - ``konch.start()`` can be called with no arguments.
-- Expose docopt argument parsing via ``knoch.parse_args()``.
+- Expose docopt argument parsing via ``konch.parse_args()``.
 
 
 0.3.1 (2014-03-17)
