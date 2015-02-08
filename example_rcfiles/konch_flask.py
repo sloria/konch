@@ -27,4 +27,3 @@ def setup():
 
 def teardown():
     ctx.pop()
-

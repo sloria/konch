@@ -113,10 +113,11 @@ class Shell(object):
     :param str banner: Banner text that appears on startup.
     :param str prompt: Custom input prompt.
     :param str output: Custom output prompt.
+    :param bool hide_context: If `True`, hide the context in the banner.
     """
 
     def __init__(self, context, banner=None, prompt=None,
-            output=None, hide_context=False):
+            output=None, hide_context=False, **kwargs):
         self.context = context
         self.hide_context = hide_context
         self.banner = make_banner(banner, context, hide_context=hide_context)
@@ -142,6 +143,10 @@ class PythonShell(Shell):
 class IPythonShell(Shell):
     """The IPython shell."""
 
+    def __init__(self, ipy_extensions=None, *args, **kwargs):
+        self.ipy_extensions = ipy_extensions
+        Shell.__init__(self, *args, **kwargs)
+
     def start(self):
         try:
             from IPython import start_ipython
@@ -166,6 +171,7 @@ class IPythonShell(Shell):
             display_banner=False,
             user_ns=self.context,
             config=ipy_config,
+            extensions=self.ipy_extensions or [],
             argv=[],
         )
         return None
@@ -192,8 +198,9 @@ class AutoShell(Shell):
     Python shell.
     """
 
-    def __init__(self, context, banner, *args, **kwargs):
-        Shell.__init__(self, context, *args, **kwargs)
+    def __init__(self, context, banner, **kwargs):
+        Shell.__init__(self, context, **kwargs)
+        self.kwargs = kwargs
         self.banner = banner
 
     def start(self):
@@ -204,6 +211,7 @@ class AutoShell(Shell):
             'output': self.output,
             'hide_context': self.hide_context,
         }
+        shell_args.update(self.kwargs)
         try:
             return IPythonShell(**shell_args).start()
         except ShellNotAvailableError:
@@ -268,8 +276,14 @@ class Config(dict):
     def __init__(self, context=None, banner=None, shell=AutoShell,
             prompt=None, output=None, hide_context=False):
         ctx = Config.transform_val(context) or {}
-        super(Config, self).__init__(context=ctx, banner=banner, shell=shell,
-            prompt=prompt, output=output, hide_context=hide_context)
+        super(Config, self).__init__(
+            context=ctx,
+            banner=banner,
+            shell=shell,
+            prompt=prompt,
+            output=output,
+            hide_context=hide_context
+        )
 
     def __setitem__(self, key, value):
         if key == 'context':
@@ -286,8 +300,7 @@ class Config(dict):
         for key in d.keys():
             self[key] = d[key]
 
-# _cfg and _config_registry are global variables that may be mutated by a
-# .konchrc file
+# _cfg and _config_registry are singletons that may be mutated in a .konchrc file
 _cfg = Config()
 _config_registry = {
     'default': _cfg
@@ -295,7 +308,7 @@ _config_registry = {
 
 
 def start(context=None, banner=None, shell=AutoShell,
-        prompt=None, output=None, hide_context=False):
+        prompt=None, output=None, hide_context=False, **kwargs):
     """Start up the konch shell. Takes the same parameters as Shell.__init__.
     """
     logger.debug('Using shell...')
@@ -310,7 +323,7 @@ def start(context=None, banner=None, shell=AutoShell,
     output_ = output or _cfg['output']
     hide_context_ = hide_context or _cfg['hide_context']
     shell_(context=context_, banner=banner_,
-        prompt=prompt_, output=output_, hide_context=hide_context_).start()
+        prompt=prompt_, output=output_, hide_context=hide_context_, **kwargs).start()
 
 
 def config(config_dict):

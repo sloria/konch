@@ -97,8 +97,10 @@ def test_parse_args():
 
 def test_context_list2dict():
     import math
+
     class MyClass:
         pass
+
     def my_func():
         pass
 
@@ -109,6 +111,7 @@ def test_context_list2dict():
 
 def test_config_list():
     assert konch._cfg == konch.Config()
+
     def my_func():
         return
     konch.config({
@@ -204,6 +207,7 @@ def fileenv(request, env):
     fpath = os.path.join(env.base_path, 'testrc')
     with open(fpath, 'w') as fp:
         fp.write(TEST_CONFIG)
+
     def finalize():
         os.remove(fpath)
     request.addfinalizer(finalize)
@@ -262,6 +266,7 @@ def names_env(request, env):
     fpath = os.path.join(env.base_path, '.konchrc')
     with open(fpath, 'w') as fp:
         fp.write(TEST_CONFIG_WITH_NAMES)
+
     def finalize():
         os.remove(fpath)
     request.addfinalizer(finalize)
@@ -272,6 +277,7 @@ def setup_env(request, env):
     fpath = os.path.join(env.base_path, '.konchrc')
     with open(fpath, 'w') as fp:
         fp.write(TEST_CONFIG_WITH_SETUP_AND_TEARDOWN)
+
     def finalize():
         os.remove(fpath)
     request.addfinalizer(finalize)
@@ -282,6 +288,7 @@ def setup_env(request, env):
 def folderenv(request, env):
     folder = os.path.abspath(os.path.join(env.base_path, 'testdir'))
     os.makedirs(folder)
+
     def finalize():
         os.removedirs(folder)
     request.addfinalizer(finalize)
