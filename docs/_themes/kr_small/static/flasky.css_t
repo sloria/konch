@@ -317,3 +317,9 @@ font-size: 14px;
 display: block;
 margin-top: 5px;
 }
+
+@media screen and (max-width: 870px) {
+    .github {
+        display: none;
+    }
+}
