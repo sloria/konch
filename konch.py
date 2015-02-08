@@ -356,10 +356,18 @@ def use_file(filename):
         logger.info('Using {0}'.format(config_file))
         # Ensure that relative imports are possible
         __ensure_directory_in_path(config_file)
+        mod = None
         try:
-            return imp.load_source('konchrc', config_file)
+            mod = imp.load_source('konchrc', config_file)
         except UnboundLocalError:  # File not found
             pass
+        else:
+            try:
+                # Clean up bytecode file on PY2
+                os.remove(config_file + 'c')
+            except FileNotFoundError:
+                pass
+            return mod
     if not config_file:
         warnings.warn('No config file found.')
     else:
