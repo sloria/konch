@@ -4,12 +4,16 @@ import os
 
 import konch
 from test_konch import env
+import IPython
+import bpython
 
 konch.config({
     'context': {
         'konch': konch,
         'env': env,
-        'os': os
+        'os': os,
+        'IPython': IPython,
+        'bpython': bpython,
     },
     'prompt': '[\\#] >>> ',
 })
