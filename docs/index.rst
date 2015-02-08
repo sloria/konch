@@ -14,8 +14,9 @@ Configures your Python shell
 
 - **Automatically import** any object upon startup
 - **Simple**, per-project configuration in a single file (it's just Python code)
-- **No dependencies**
+- **No external dependencies**
 - Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
+- Automatically load **IPython extensions**
 - Can have multiple configurations per project using **named configs**
 
 .. image:: https://dl.dropboxusercontent.com/u/1693233/github/konch-030-demo-optim.gif
@@ -38,7 +39,7 @@ Install/Upgrade
 
     $ pip install -U konch
 
-Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3, 3.4). There are no other dependencies.
+Supports Python 2 and 3 (tested on 2.6, 2.7, 3.2, 3.3, 3.4). There are no external dependencies.
 
 Usage
 =====
@@ -180,6 +181,43 @@ You can optionally define ``setup()`` and/or ``teardown()`` functions which will
     })
 
 
+IPython Extras
+==============
+
+``konch`` provides a few IPython-specific options:
+
+The ``ipy_extensions`` option is used to automatically load IPython extensions at startup.
+
+.. code-block:: python
+
+    import konch
+
+    konch.config({
+        # ...
+        'shell': 'ipython',
+        'ipy_extensions': [
+            'autoreload',
+            'rpy2.ipython'
+        ]
+    })
+
+The ``ipy_autoreload`` option enables and initializes the IPython `autoreload <http://ipython.org/ipython-doc/dev/config/extensions/autoreload.html>`_ extension at startup.
+
+.. code-block:: python
+
+    import konch
+
+    konch.config({
+        # ...
+        'shell': 'ipython',
+        # Automatically reload modules
+        'ipy_autoreload': True,
+    })
+
+This is equivalent to running: ::
+
+    % load_ext autoreload
+    % autoreload 2
 
 Programmatic Usage
 ==================
@@ -253,8 +291,3 @@ Project Info
 
    license
    changelog
-
-
-
-
-

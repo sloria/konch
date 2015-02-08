@@ -141,11 +141,27 @@ class PythonShell(Shell):
 
 
 class IPythonShell(Shell):
-    """The IPython shell."""
+    """The IPython shell.
 
-    def __init__(self, ipy_extensions=None, *args, **kwargs):
+    :param list ipy_extensions: List of IPython extension names to load upon startup.
+    :param bool ipy_autoreload: Whether to load and initialize the IPython autoreload
+        extension upon startup. Can also be an integer, which will be passed as
+        the argument to the %autoreload line magic.
+    :param kwargs: The same kwargs as `Shell.__init__`.
+    """
+
+    def __init__(self, ipy_extensions=None, ipy_autoreload=False, *args, **kwargs):
         self.ipy_extensions = ipy_extensions
+        self.ipy_autoreload = ipy_autoreload
         Shell.__init__(self, *args, **kwargs)
+
+    @staticmethod
+    def init_autoreload(mode=2):
+        """Load and initialize the IPython autoreload extension."""
+        from IPython.extensions import autoreload
+        ip = get_ipython()  # noqa
+        autoreload.load_ipython_extension(ip)
+        ip.magics_manager.magics['line']['autoreload'](str(mode))
 
     def start(self):
         try:
@@ -163,8 +179,21 @@ class IPythonShell(Shell):
             prompt_config.out_template = self.output
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
-        # so we just write it to stdout before starting the IPython app
+        # so we write it to stdout before starting the IPython app
         io.stdout.write(self.banner)
+        # Pass exec_lines in order to start autoreload
+        if self.ipy_autoreload:
+            if not isinstance(self.ipy_autoreload, bool):
+                mode = self.ipy_autoreload
+            else:
+                mode = 2
+            logger.debug('Intializing IPython autoreload in mode {mode}'.format(mode=mode))
+            exec_lines = [
+                'import konch as __konch',
+                '__konch.IPythonShell.init_autoreload({mode})'.format(mode=mode),
+            ]
+        else:
+            exec_lines = ''
         # Use start_ipython rather than embed so that IPython is loaded in the "normal"
         # way. See https://github.com/django/django/pull/512
         start_ipython(
@@ -172,6 +201,7 @@ class IPythonShell(Shell):
             user_ns=self.context,
             config=ipy_config,
             extensions=self.ipy_extensions or [],
+            exec_lines=exec_lines,
             argv=[],
         )
         return None

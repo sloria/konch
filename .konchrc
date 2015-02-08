@@ -16,4 +16,5 @@ konch.config({
         'bpython': bpython,
     },
     'prompt': '[\\#] >>> ',
+    'ipy_autoreload': True,
 })
