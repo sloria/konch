@@ -148,7 +148,8 @@ class IPythonShell(Shell):
             from IPython.utils import io
             from IPython.config.loader import Config as IPyConfig
         except ImportError:
-            raise ShellNotAvailableError('IPython shell not available.')
+            raise ShellNotAvailableError('IPython shell not available '
+                'or IPython version not supported.')
         ipy_config = IPyConfig()
         prompt_config = ipy_config.PromptManager
         if self.prompt:
