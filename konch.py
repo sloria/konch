@@ -140,7 +140,8 @@ class IPythonShell(Shell):
 
     def start(self):
         try:
-            from IPython import embed
+            from IPython import start_ipython
+            from IPython.utils import io
             from IPython.config.loader import Config as IPyConfig
         except ImportError:
             raise ShellNotAvailableError('IPython shell not available.')
@@ -150,9 +151,17 @@ class IPythonShell(Shell):
             prompt_config.in_template = self.prompt
         if self.output:
             prompt_config.out_template = self.output
-        embed(banner1=self.banner,
+        # Hack to show custom banner
+        # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
+        # so we just write it to stdout before starting the IPython app
+        io.stdout.write(self.banner)
+        # Use start_ipython rather than embed so that IPython is loaded in the "normal"
+        # way. See https://github.com/django/django/pull/512
+        start_ipython(
+            display_banner=False,
             user_ns=self.context,
-            config=ipy_config)
+            config=ipy_config,
+        )
         return None
 
 
