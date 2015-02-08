@@ -161,6 +161,7 @@ class IPythonShell(Shell):
             display_banner=False,
             user_ns=self.context,
             config=ipy_config,
+            argv=[],
         )
         return None
 
