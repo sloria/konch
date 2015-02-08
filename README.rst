@@ -23,7 +23,7 @@ Configures your Python shell
 - Automatically load **IPython extensions**
 - Can have multiple configurations per project using **named configs**
 
-.. image:: https://dl.dropboxusercontent.com/u/1693233/github/konch-030-demo-optim.gif
+.. image:: http://zippy.gfycat.com/PolishedSimilarHarlequinbug.gif
     :alt: Demo
     :target: http://konch.readthedocs.org
 

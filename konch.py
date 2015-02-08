@@ -65,13 +65,20 @@ INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 
 import konch
 
-# TODO: Edit me
-# Available options: 'context', 'banner', 'shell', 'prompt', 'hide_context'
+# Available options:
+#   'context', 'banner', 'shell', 'prompt',
+#   'hide_context', 'ipy_extensions', 'ipy_autoreload'
 konch.config({
     'context': {
         'speak': konch.speak
     }
 })
+
+def setup():
+    pass
+
+def teardown():
+    pass
 '''
 
 def format_context(context):
