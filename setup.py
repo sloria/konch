@@ -57,7 +57,6 @@ setup(
     zip_safe=False,
     keywords='konch shell custom ipython bpython repl',
     classifiers=[
-        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -67,7 +66,8 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: System :: Shells',
     ],
     py_modules=['konch', 'docopt'],
     entry_points={

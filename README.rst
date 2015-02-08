@@ -2,6 +2,14 @@
 konch
 =====
 
+.. image:: https://badge.fury.io/py/konch.png
+    :target: http://badge.fury.io/py/konch
+    :alt: Latest version
+
+.. image:: https://travis-ci.org/sloria/konch.svg?branch=master
+    :target: https://travis-ci.org/sloria/konch
+    :alt: Travis-CI
+
 
 Configures your Python shell
 ============================
