@@ -170,7 +170,7 @@ def test_konch_with_no_config_file(env):
         os.remove(os.path.join(env.base_path, '.konchrc'))
     except OSError:
         pass
-    res = env.run('konch', expect_stderr=True)
+    res = env.run('konch', expect_stderr=True, cwd=env.base_path)
     assert res.returncode == 0
 
 
