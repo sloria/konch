@@ -7,7 +7,9 @@ Changelog
 
 - Add support for ``setup`` and ``teardown`` functions in ``.konchrc`` files.
 - If ``~/.konchrc.default`` exists, use that file as the template for new ``.konchrc`` files created with ``konch init``.
+- Add ``ipy_extensions`` and ``ipy_autoreload`` options.
 - Make sure that vim opens .konchrc files in Python mode.
+- Drop Python 3.2 support.
 
 0.4.2 (2014-07-12)
 ------------------
