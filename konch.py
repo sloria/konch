@@ -193,7 +193,7 @@ class IPythonShell(Shell):
                 '__konch.IPythonShell.init_autoreload({mode})'.format(mode=mode),
             ]
         else:
-            exec_lines = ''
+            exec_lines = []
         # Use start_ipython rather than embed so that IPython is loaded in the "normal"
         # way. See https://github.com/django/django/pull/512
         start_ipython(
