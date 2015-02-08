@@ -166,7 +166,7 @@ def test_init_with_filename(env):
 
 
 def test_konch_with_no_config_file(env):
-    res = env.run('konch -f notfound', expect_stderr=True, cwd=env.base_path)
+    res = env.run('konch', '-f', 'notfound', expect_stderr=True, cwd=env.base_path)
     assert res.returncode == 0
 
 
