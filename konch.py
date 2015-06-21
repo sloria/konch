@@ -151,6 +151,15 @@ class PythonShell(Shell):
         return None
 
 
+def configure_ipython_prompt(config, prompt=None, output=None):
+    prompt_config = config.PromptManager
+    if prompt:
+        prompt_config.in_template = prompt
+    if output:
+        prompt_config.out_template = output
+    return prompt_config
+
+
 class IPythonShell(Shell):
     """The IPython shell.
 
@@ -184,10 +193,7 @@ class IPythonShell(Shell):
                 'or IPython version not supported.')
         ipy_config = IPyConfig()
         prompt_config = ipy_config.PromptManager
-        if self.prompt:
-            prompt_config.in_template = self.prompt
-        if self.output:
-            prompt_config.out_template = self.output
+        configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
         # so we write it to stdout before starting the IPython app
@@ -231,20 +237,24 @@ class PtPythonShell(Shell):
             raise ShellNotAvailableError('PtPython shell not available.')
         print(self.banner)
         embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
-
+        return None
 
 class PtIPythonShell(PtPythonShell):
 
-    # IPython will already show banner info
-    hide_banner_info = True
     banner_template = "{text}\n"
 
     def start(self):
         try:
             from ptpython.ipython import embed
+            from IPython.terminal.ipapp import load_default_config
         except ImportError:
             raise ShellNotAvailableError('PtIPython shell not available.')
-        embed(user_ns=self.context, header=self.banner, vi_mode=self.ptpy_vi_mode)
+
+        ipy_config = load_default_config()
+        ipy_config.InteractiveShellEmbed = ipy_config.TerminalInteractiveShell
+        configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
+        embed(config=ipy_config, user_ns=self.context, header=self.banner, vi_mode=self.ptpy_vi_mode)
+        return None
 
 
 class BPythonShell(Shell):
