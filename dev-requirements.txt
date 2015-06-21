@@ -1,7 +1,15 @@
-pytest
+# Task running
 invoke
+
+# Testing
+pytest
 tox
 scripttest
-ipython==2.3.1
-bpython==0.13.2
+
+# Docs
 Sphinx>=1.2.2
+
+# Shells
+ipython==3.1.0
+bpython==0.14.2
+ptpython==0.15

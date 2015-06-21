@@ -9,8 +9,13 @@ python:
   - "2.6"
   - "pypy"
 
+env:
+  - SHELLS="ipython==3.1.0"
+  - SHELLS="ptpython==0.15"
+
 install:
-    - "pip install -U ."
-    - "pip install pytest scripttest"
+    - pip install -U .
+    - pip install pytest scripttest
+    - pip install -U "$SHELLS"
 # command to run tests, e.g. python setup.py test
 script: python setup.py test
