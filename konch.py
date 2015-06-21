@@ -92,12 +92,13 @@ def format_context(context):
     ])
 
 
-def make_banner(text=None, context=None, hide_context=False):
+def make_banner(text=None, context=None, banner_template=None, hide_context=False):
     """Generates a full banner with version info, the given text, and a
     formatted list of context variables.
     """
     banner_text = text or speak()
-    out = BANNER_TEMPLATE.format(version=sys.version, text=banner_text)
+    banner_template = banner_template or BANNER_TEMPLATE
+    out = banner_template.format(version=sys.version, text=banner_text)
     if context and not hide_context:
         out += CONTEXT_TEMPLATE.format(context=format_context(context))
     return out
@@ -123,11 +124,14 @@ class Shell(object):
     :param bool hide_context: If `True`, hide the context in the banner.
     """
 
+    banner_template = BANNER_TEMPLATE
+
     def __init__(self, context, banner=None, prompt=None,
             output=None, hide_context=False, **kwargs):
         self.context = context
         self.hide_context = hide_context
-        self.banner = make_banner(banner, context, hide_context=hide_context)
+        self.banner = make_banner(banner, context, hide_context=hide_context,
+            banner_template=self.banner_template)
         self.prompt = prompt
         self.output = output
 
@@ -214,6 +218,35 @@ class IPythonShell(Shell):
         return None
 
 
+class PtPythonShell(Shell):
+
+    def __init__(self, ptpy_vi_mode=False, *args, **kwargs):
+        self.ptpy_vi_mode = ptpy_vi_mode
+        Shell.__init__(self, *args, **kwargs)
+
+    def start(self):
+        try:
+            from ptpython.repl import embed
+        except ImportError:
+            raise ShellNotAvailableError('PtPython shell not available.')
+        print(self.banner)
+        embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
+
+
+class PtIPythonShell(PtPythonShell):
+
+    # IPython will already show banner info
+    hide_banner_info = True
+    banner_template = "{text}\n"
+
+    def start(self):
+        try:
+            from ptpython.ipython import embed
+        except ImportError:
+            raise ShellNotAvailableError('PtIPython shell not available.')
+        embed(user_ns=self.context, header=self.banner, vi_mode=self.ptpy_vi_mode)
+
+
 class BPythonShell(Shell):
     """The BPython shell."""
 
@@ -250,12 +283,18 @@ class AutoShell(Shell):
         }
         shell_args.update(self.kwargs)
         try:
-            return IPythonShell(**shell_args).start()
+            return PtIPythonShell(**shell_args).start()
         except ShellNotAvailableError:
             try:
-                return BPythonShell(**shell_args).start()
+                return PtPythonShell(**shell_args).start()
             except ShellNotAvailableError:
-                return PythonShell(**shell_args).start()
+                try:
+                    return IPythonShell(**shell_args).start()
+                except ShellNotAvailableError:
+                    try:
+                        return BPythonShell(**shell_args).start()
+                    except ShellNotAvailableError:
+                        return PythonShell(**shell_args).start()
         return None
 
 
@@ -270,7 +309,9 @@ SHELL_MAP = {
     'ipy': IPythonShell, 'ipython': IPythonShell,
     'bpy': BPythonShell, 'bpython': BPythonShell,
     'py': PythonShell, 'python': PythonShell,
-    'auto': AutoShell,
+    'auto': AutoShell, 'ptpy': PtPythonShell,
+    'ptpython': PtPythonShell, 'ptipy': PtIPythonShell,
+    'ptipython': PtIPythonShell,
 }
 
 CONCHES = [
