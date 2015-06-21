@@ -10,6 +10,14 @@ from scripttest import TestFileEnvironment
 import konch
 
 
+try:
+    import ptpython
+except ImportError:
+    HAS_PTPYTHON = False
+else:
+    HAS_PTPYTHON = True
+
+
 def assert_in_output(s, res, message=None):
     """Assert that a string is in either stdout or std err.
     Included because banners are sometimes outputted to stderr.
@@ -165,6 +173,7 @@ def test_init_with_filename(env):
     assert 'myconfig' in res.files_created
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_konch_with_no_config_file(env):
     res = env.run('konch', '-f', 'notfound', expect_stderr=True, cwd=env.base_path)
     assert res.returncode == 0
@@ -177,12 +186,14 @@ def test_konch_init_when_config_file_exists(env):
     assert res.returncode == 1
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_default_banner(env):
     env.run('konch', 'init')
     res = env.run('konch', expect_stderr=True)
     assert_in_output(str(sys.version), res)
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_config_file_not_found(env):
     res = env.run('konch', '-f', 'notfound', expect_stderr=True)
     assert 'not found' in res.stderr
@@ -210,11 +221,13 @@ def fileenv(request, env):
     return env
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_custom_banner(fileenv):
     res = fileenv.run('konch', '-f', 'testrc', expect_stderr=True)
     assert_in_output('Test banner', res)
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_custom_prompt(fileenv):
     res = fileenv.run('konch', '-f', 'testrc', expect_stderr=True)
     assert_in_output('myprompt >>>', res)
@@ -291,22 +304,27 @@ def folderenv(request, env):
     return env
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_default_config(names_env):
+    # Explicitly specify ipython shell because test isn't compatible with ptpython
     res = names_env.run('konch', expect_stderr=True)
     assert_in_output('Default', res)
     assert_in_output('foo', res)
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_setup_teardown(setup_env):
     res = setup_env.run('konch', expect_stderr=True)
     assert_in_output('setup!', res)
     assert_in_output('teardown!', res)
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_selecting_named_config(names_env):
     res = names_env.run('konch', '-n', 'conf2', expect_stderr=True)
     assert_in_output('Conf2', res)
     assert_in_output('bar', res)
 
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_selecting_name_that_doesnt_exist(names_env):
     res = names_env.run('konch', '-n', 'doesntexist', expect_stderr=True)
     assert_in_output('Default', res)
