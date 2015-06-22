@@ -479,7 +479,7 @@ def use_file(filename):
             try:
                 # Clean up bytecode file on PY2
                 os.remove(config_file + 'c')
-            except FileNotFoundError:
+            except (IOError, OSError):
                 pass
             return mod
     if not config_file:
