@@ -6,15 +6,18 @@ import konch
 from test_konch import env
 import IPython
 import bpython
+import ptpython
 
 konch.config({
     'context': {
         'konch': konch,
-        'env': env,
+        'testenv': env,
         'os': os,
         'IPython': IPython,
         'bpython': bpython,
+        'ptpython': ptpython,
     },
     'prompt': '[\\#] >>> ',
     'ipy_autoreload': True,
+    'ptpy_vi_mode': True,
 })

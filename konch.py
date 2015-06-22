@@ -92,12 +92,13 @@ def format_context(context):
     ])
 
 
-def make_banner(text=None, context=None, hide_context=False):
+def make_banner(text=None, context=None, banner_template=None, hide_context=False):
     """Generates a full banner with version info, the given text, and a
     formatted list of context variables.
     """
     banner_text = text or speak()
-    out = BANNER_TEMPLATE.format(version=sys.version, text=banner_text)
+    banner_template = banner_template or BANNER_TEMPLATE
+    out = banner_template.format(version=sys.version, text=banner_text)
     if context and not hide_context:
         out += CONTEXT_TEMPLATE.format(context=format_context(context))
     return out
@@ -123,11 +124,14 @@ class Shell(object):
     :param bool hide_context: If `True`, hide the context in the banner.
     """
 
+    banner_template = BANNER_TEMPLATE
+
     def __init__(self, context, banner=None, prompt=None,
             output=None, hide_context=False, **kwargs):
         self.context = context
         self.hide_context = hide_context
-        self.banner = make_banner(banner, context, hide_context=hide_context)
+        self.banner = make_banner(banner, context, hide_context=hide_context,
+            banner_template=self.banner_template)
         self.prompt = prompt
         self.output = output
 
@@ -145,6 +149,15 @@ class PythonShell(Shell):
             warnings.warn('Custom output templates not supported by PythonShell.')
         code.interact(self.banner, local=self.context)
         return None
+
+
+def configure_ipython_prompt(config, prompt=None, output=None):
+    prompt_config = config.PromptManager
+    if prompt:
+        prompt_config.in_template = prompt
+    if output:
+        prompt_config.out_template = output
+    return prompt_config
 
 
 class IPythonShell(Shell):
@@ -179,11 +192,7 @@ class IPythonShell(Shell):
             raise ShellNotAvailableError('IPython shell not available '
                 'or IPython version not supported.')
         ipy_config = IPyConfig()
-        prompt_config = ipy_config.PromptManager
-        if self.prompt:
-            prompt_config.in_template = self.prompt
-        if self.output:
-            prompt_config.out_template = self.output
+        configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
         # so we write it to stdout before starting the IPython app
@@ -194,7 +203,9 @@ class IPythonShell(Shell):
                 mode = self.ipy_autoreload
             else:
                 mode = 2
-            logger.debug('Intializing IPython autoreload in mode {mode}'.format(mode=mode))
+            logger.debug(
+                'Initializing IPython autoreload in mode {mode}'.format(mode=mode)
+            )
             exec_lines = [
                 'import konch as __konch',
                 '__konch.IPythonShell.init_autoreload({mode})'.format(mode=mode),
@@ -211,6 +222,46 @@ class IPythonShell(Shell):
             exec_lines=exec_lines,
             argv=[],
         )
+        return None
+
+
+class PtPythonShell(Shell):
+
+    def __init__(self, ptpy_vi_mode=False, *args, **kwargs):
+        self.ptpy_vi_mode = ptpy_vi_mode
+        Shell.__init__(self, *args, **kwargs)
+
+    def start(self):
+        try:
+            from ptpython.repl import embed
+        except ImportError:
+            raise ShellNotAvailableError('PtPython shell not available.')
+        print(self.banner)
+        embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
+        return None
+
+
+class PtIPythonShell(PtPythonShell):
+
+    banner_template = '{text}\n'
+
+    def __init__(self, ipy_extensions=None, *args, **kwargs):
+        self.ipy_extensions = ipy_extensions or []
+        PtPythonShell.__init__(self, *args, **kwargs)
+
+    def start(self):
+        try:
+            from ptpython.ipython import embed
+            from IPython.terminal.ipapp import load_default_config
+        except ImportError:
+            raise ShellNotAvailableError('PtIPython shell not available.')
+
+        ipy_config = load_default_config()
+        ipy_config.InteractiveShellEmbed = ipy_config.TerminalInteractiveShell
+        ipy_config['InteractiveShellApp']['extensions'] = self.ipy_extensions
+        configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
+        embed(config=ipy_config, user_ns=self.context,
+            header=self.banner, vi_mode=self.ptpy_vi_mode)
         return None
 
 
@@ -250,12 +301,18 @@ class AutoShell(Shell):
         }
         shell_args.update(self.kwargs)
         try:
-            return IPythonShell(**shell_args).start()
+            return PtIPythonShell(**shell_args).start()
         except ShellNotAvailableError:
             try:
-                return BPythonShell(**shell_args).start()
+                return PtPythonShell(**shell_args).start()
             except ShellNotAvailableError:
-                return PythonShell(**shell_args).start()
+                try:
+                    return IPythonShell(**shell_args).start()
+                except ShellNotAvailableError:
+                    try:
+                        return BPythonShell(**shell_args).start()
+                    except ShellNotAvailableError:
+                        return PythonShell(**shell_args).start()
         return None
 
 
@@ -270,7 +327,9 @@ SHELL_MAP = {
     'ipy': IPythonShell, 'ipython': IPythonShell,
     'bpy': BPythonShell, 'bpython': BPythonShell,
     'py': PythonShell, 'python': PythonShell,
-    'auto': AutoShell,
+    'auto': AutoShell, 'ptpy': PtPythonShell,
+    'ptpython': PtPythonShell, 'ptipy': PtIPythonShell,
+    'ptipython': PtIPythonShell,
 }
 
 CONCHES = [
