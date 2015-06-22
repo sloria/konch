@@ -2,6 +2,9 @@
 
 language: python
 
+# Faster, containerized builds
+sudo: false
+
 python:
   - "3.4"
   - "3.3"
