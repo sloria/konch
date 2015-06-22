@@ -17,8 +17,13 @@ env:
   - SHELLS="ptpython==0.15"
 
 install:
-    - pip install -U .
-    - pip install pytest scripttest
-    - pip install -U "$SHELLS"
+  - pip install -U .
+  - pip install pytest scripttest flake8
+  - pip install -U "$SHELLS"
+
+before_script:
+  - flake8 .
+
 # command to run tests, e.g. python setup.py test
 script: python setup.py test
+

@@ -192,7 +192,6 @@ class IPythonShell(Shell):
             raise ShellNotAvailableError('IPython shell not available '
                 'or IPython version not supported.')
         ipy_config = IPyConfig()
-        prompt_config = ipy_config.PromptManager
         configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
@@ -204,7 +203,9 @@ class IPythonShell(Shell):
                 mode = self.ipy_autoreload
             else:
                 mode = 2
-            logger.debug('Intializing IPython autoreload in mode {mode}'.format(mode=mode))
+            logger.debug(
+                'Initializing IPython autoreload in mode {mode}'.format(mode=mode)
+            )
             exec_lines = [
                 'import konch as __konch',
                 '__konch.IPythonShell.init_autoreload({mode})'.format(mode=mode),
@@ -239,9 +240,10 @@ class PtPythonShell(Shell):
         embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
         return None
 
+
 class PtIPythonShell(PtPythonShell):
 
-    banner_template = "{text}\n"
+    banner_template = '{text}\n'
 
     def __init__(self, ipy_extensions=None, *args, **kwargs):
         self.ipy_extensions = ipy_extensions or []
@@ -249,7 +251,7 @@ class PtIPythonShell(PtPythonShell):
 
     def start(self):
         try:
-            from ptpython.ipython import embed, initialize_extensions
+            from ptpython.ipython import embed
             from IPython.terminal.ipapp import load_default_config
         except ImportError:
             raise ShellNotAvailableError('PtIPython shell not available.')
@@ -258,7 +260,8 @@ class PtIPythonShell(PtPythonShell):
         ipy_config.InteractiveShellEmbed = ipy_config.TerminalInteractiveShell
         ipy_config['InteractiveShellApp']['extensions'] = self.ipy_extensions
         configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
-        embed(config=ipy_config, user_ns=self.context, header=self.banner, vi_mode=self.ptpy_vi_mode)
+        embed(config=ipy_config, user_ns=self.context,
+            header=self.banner, vi_mode=self.ptpy_vi_mode)
         return None
 
 

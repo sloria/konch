@@ -11,7 +11,7 @@ import konch
 
 
 try:
-    import ptpython
+    import ptpython  # flake8: noqa
 except ImportError:
     HAS_PTPYTHON = False
 else:
