@@ -47,15 +47,15 @@ setup(
     version=__version__,
     description=('CLI and configuration utility for the Python shell, optimized '
                 'for simplicity and productivity.'),
-    long_description=(read("README.rst") + '\n\n' +
-                        read("HISTORY.rst")),
+    long_description=(read('README.rst') + '\n\n' +
+                        read('CHANGELOG.rst')),
     author='Steven Loria',
     author_email='sloria1@gmail.com',
     url='https://github.com/sloria/konch',
     install_requires=[],
     license=read("LICENSE"),
     zip_safe=False,
-    keywords='konch shell custom ipython bpython repl',
+    keywords='konch shell custom ipython bpython repl ptpython ptipython',
     classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import webbrowser
 
 from invoke import task, run
 
@@ -24,7 +25,8 @@ def clean_docs():
 
 @task
 def browse_docs():
-    run("open %s" % os.path.join(build_dir, 'index.html'))
+    path = os.path.join(build_dir, 'index.html')
+    webbrowser.open_new_tab(path)
 
 @task
 def docs(clean=False, browse=False):
@@ -36,7 +38,9 @@ def docs(clean=False, browse=False):
 
 @task
 def readme(browse=False):
-    run('rst2html.py README.rst > README.html')
+    run("rst2html.py README.rst > README.html")
+    if browse:
+        webbrowser.open_new_tab('README.html')
 
 @task
 def publish(test=False):

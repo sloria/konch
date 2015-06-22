@@ -15,7 +15,7 @@ Configures your Python shell
 - **Automatically import** any object upon startup
 - **Simple**, per-project configuration in a single file (it's just Python code)
 - **No external dependencies**
-- Uses **IPython** and **BPython** if available, and falls back to built-in interpreter
+- Uses **IPython**, **BPython**, or **ptpython** if available, and falls back to built-in interpreter
 - Automatically load **IPython extensions**
 - Can have multiple configurations per project using **named configs**
 
@@ -149,7 +149,7 @@ To use the ``flask`` config, you would run:
 ``$ konch -s <shell>``
 ----------------------
 
-overrides the default shell. Choose between ``ipy``, ``bpy``, or ``py``.
+overrides the default shell. Choose between ``ipy``, ``bpy``, or ``py``, ``ptpy``, or ``ptipy``.
 
 
 ``$ konch -f <file>``
@@ -184,7 +184,7 @@ You can optionally define ``setup()`` and/or ``teardown()`` functions which will
 IPython Extras
 ==============
 
-``konch`` provides a few IPython-specific options:
+``konch`` provides a few IPython-specific options.
 
 The ``ipy_extensions`` option is used to automatically load IPython extensions at startup.
 
@@ -218,6 +218,28 @@ This is equivalent to running: ::
 
     % load_ext autoreload
     % autoreload 2
+
+ptpython support
+================
+
+``konch`` supports both `ptpython <https://github.com/jonathanslenders/ptpython>`_ and ptipython. If either is installed in your current environment, running ``konch`` will run the available shell.
+
+``konch`` provides a few ptpython-specific options.
+
+To use ptpython's vi-style bindings, set the ``ptpy_vi_mode`` option in your ``.konchrc``. You can also use the ``ipy_extensions`` option to load IPython extensions at startup (must be using ``ptipython``).
+
+.. code-block:: python
+
+    import konch
+
+    konch.config({
+        # ...
+        'shell': 'ptipython',
+        'ptpy_vi_mode': True,
+        'ipy_extensions': [
+            'autoreload',
+        ]
+    })
 
 Programmatic Usage
 ==================
