@@ -2,6 +2,11 @@
 Changelog
 *********
 
+1.1.1 (unreleased)
+------------------
+
+- Remove deprecated import of IPython.config.
+
 1.1.0 (2015-06-21)
 ------------------
 

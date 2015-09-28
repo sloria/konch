@@ -187,7 +187,7 @@ class IPythonShell(Shell):
         try:
             from IPython import start_ipython
             from IPython.utils import io
-            from IPython.config.loader import Config as IPyConfig
+            from traitlets.config.loader import Config as IPyConfig
         except ImportError:
             raise ShellNotAvailableError('IPython shell not available '
                 'or IPython version not supported.')
