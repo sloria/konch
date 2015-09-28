@@ -10,6 +10,9 @@ scripttest
 Sphinx>=1.2.2
 
 # Shells
-ipython==3.1.0
-bpython==0.14.2
-ptpython==0.15
+ipython>=3.1.0
+bpython>=0.14.2
+ptpython>=0.15
+
+# Distribution
+twine
