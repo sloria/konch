@@ -37,7 +37,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = '1.1.1'
+__version__ = '1.1.2.dev0'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -135,12 +135,18 @@ class Shell(object):
         self.prompt = prompt
         self.output = output
 
+    def check_availability(self):
+        raise NotImplementedError
+
     def start(self):
         raise NotImplementedError
 
 
 class PythonShell(Shell):
     """The built-in Python shell."""
+
+    def check_availability(self):
+        return True
 
     def start(self):
         if self.prompt:
@@ -182,6 +188,12 @@ class IPythonShell(Shell):
         ip = get_ipython()  # noqa
         autoreload.load_ipython_extension(ip)
         ip.magics_manager.magics['line']['autoreload'](str(mode))
+
+    def check_availability(self):
+        try:
+            import IPython  # flake8: noqa
+        except ImportError:
+            raise ShellNotAvailableError('IPython shell not available.')
 
     def start(self):
         try:
@@ -231,6 +243,12 @@ class PtPythonShell(Shell):
         self.ptpy_vi_mode = ptpy_vi_mode
         Shell.__init__(self, *args, **kwargs)
 
+    def check_availability(self):
+        try:
+            import ptpython  # flake8: noqa
+        except ImportError:
+            raise ShellNotAvailableError('PtPython shell not available.')
+
     def start(self):
         try:
             from ptpython.repl import embed
@@ -248,6 +266,13 @@ class PtIPythonShell(PtPythonShell):
     def __init__(self, ipy_extensions=None, *args, **kwargs):
         self.ipy_extensions = ipy_extensions or []
         PtPythonShell.__init__(self, *args, **kwargs)
+
+    def check_availability(self):
+        try:
+            import ptypython.ipython  # flake8: noqa
+            import IPython  # flake8: noqa
+        except ImportError:
+            raise ShellNotAvailableError('PtIPython shell not available.')
 
     def start(self):
         try:
@@ -267,6 +292,12 @@ class PtIPythonShell(PtPythonShell):
 
 class BPythonShell(Shell):
     """The BPython shell."""
+
+    def check_availability(self):
+        try:
+            import bpython
+        except ImportError:
+            raise ShellNotAvailableError('BPython shell not available.')
 
     def start(self):
         try:
@@ -291,6 +322,9 @@ class AutoShell(Shell):
         self.kwargs = kwargs
         self.banner = banner
 
+    def check_availability(self):
+        return True
+
     def start(self):
         shell_args = {
             'context': self.context,
@@ -300,20 +334,25 @@ class AutoShell(Shell):
             'hide_context': self.hide_context,
         }
         shell_args.update(self.kwargs)
+        shell = None
         try:
-            return PtIPythonShell(**shell_args).start()
+            shell = PtIPythonShell(**shell_args)
+            shell.check_availability()
         except ShellNotAvailableError:
             try:
-                return PtPythonShell(**shell_args).start()
+                shell = PtPythonShell(**shell_args)
+                shell.check_availability()
             except ShellNotAvailableError:
                 try:
-                    return IPythonShell(**shell_args).start()
+                    shell = IPythonShell(**shell_args)
+                    shell.check_availability()
                 except ShellNotAvailableError:
                     try:
-                        return BPythonShell(**shell_args).start()
+                        shell = BPythonShell(**shell_args)
+                        shell.check_availability()
                     except ShellNotAvailableError:
-                        return PythonShell(**shell_args).start()
-        return None
+                        shell = PythonShell(**shell_args)
+        return shell.start()
 
 
 class KonchError(Exception):

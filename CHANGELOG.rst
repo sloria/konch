@@ -2,6 +2,11 @@
 Changelog
 *********
 
+1.1.2 (unreleased)
+------------------
+
+- ``ShellNotAvailableErrors`` no longer pollute tracebacks when using the ``AutoShell``.
+
 1.1.1 (2015-09-27)
 ------------------
 
