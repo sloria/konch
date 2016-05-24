@@ -6,6 +6,7 @@ language: python
 sudo: false
 
 python:
+  - "3.5"
   - "3.4"
   - "3.3"
   - "2.7"
@@ -13,8 +14,8 @@ python:
   - "pypy"
 
 env:
-  - SHELLS="ipython==3.1.0"
-  - SHELLS="ptpython==0.15"
+  - SHELLS="ipython==4.2.0"
+  - SHELLS="ptpython==0.34"
 
 install:
   - pip install -U .
