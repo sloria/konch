@@ -2,7 +2,7 @@
 konch
 =====
 
-.. image:: https://badge.fury.io/py/konch.png
+.. image:: https://badge.fury.io/py/konch.svg
     :target: http://badge.fury.io/py/konch
     :alt: Latest version
 
@@ -25,9 +25,8 @@ Configures your Python shell
 
 .. image:: http://zippy.gfycat.com/PolishedSimilarHarlequinbug.gif
     :alt: Demo
-    :target: http://konch.readthedocs.org
+    :target: http://konch.readthedocs.io
 
 
-`http://konch.readthedocs.org <http://konch.readthedocs.org>`_
-==============================================================
-
+`http://konch.readthedocs.io <http://konch.readthedocs.io>`_
+============================================================

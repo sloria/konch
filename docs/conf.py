@@ -16,7 +16,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = u'konch'
-copyright = u'2014-2015'
+copyright = u'2014-2016'
 
 version = release = konch.__version__
 
