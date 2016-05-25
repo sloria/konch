@@ -9,6 +9,7 @@ Changelog
 - *Backwards-incompatible*: Remove ``hide_context`` option. Use the ``context_format`` option instead.
 - More CONCHES!
 - Fix bug in checking availability of PtIPython.
+- Drop support for Python<=2.6 and <=3.3.
 
 1.1.2 (2016-05-24)
 ------------------

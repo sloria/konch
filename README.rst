@@ -10,6 +10,10 @@ konch
     :target: https://travis-ci.org/sloria/konch
     :alt: Travis-CI
 
+.. image:: https://readthedocs.org/projects/konch/badge/
+   :target: http://konch.readthedocs.io/
+   :alt: Documentation
+
 
 Configures your Python shell
 ============================

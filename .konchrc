@@ -20,4 +20,5 @@ konch.config({
     'prompt': '[\\#] >>> ',
     'ipy_autoreload': True,
     'ptpy_vi_mode': True,
+    'context_format': 'full',
 })

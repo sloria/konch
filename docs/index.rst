@@ -39,7 +39,7 @@ Install/Upgrade
 
     $ pip install -U konch
 
-Supports Python 2 and 3 (tested on 2.6, 2.7, 3.3, 3.4). There are no external dependencies.
+Supports Python 2 and 3 (tested on 2.7, 3.4, and 3.5). There are no external dependencies.
 
 Usage
 =====
@@ -149,7 +149,7 @@ To use the ``flask`` config, you would run:
 ``$ konch -s <shell>``
 ----------------------
 
-overrides the default shell. Choose between ``ipy``, ``bpy``, or ``py``, ``ptpy``, or ``ptipy``.
+overrides the default shell. Choose between ``ipy``, ``bpy``, ``py``, ``ptpy``, ``ptipy``, or ``auto``.
 
 
 ``$ konch -f <file>``
