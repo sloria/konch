@@ -394,7 +394,11 @@ CONCHES = [
         '"Nothing."'),
     '"The shell knows all!"',
     '"we must never question the wisdom of the Magic Conch."',
-    '"The Magic Conch! A club member!"'
+    '"The Magic Conch! A club member!"',
+    '"The shell has spoken!"',
+    '"This copyrighted conch is the cornerstone of our organization."',
+    '"All right, Magic Conch... what do we do now?"',
+    '"Ohhh! The Magic Conch Shell! Ask it something! Ask it something!"',
 ]
 
 
