@@ -1,6 +1,9 @@
 # Task running
 invoke
 
+# Linting
+flake8==2.4.1
+
 # Testing
 pytest
 tox

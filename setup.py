@@ -2,21 +2,6 @@
 import re
 import sys
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
-
-TESTS_REQUIRE = ['pytest', 'scripttest']
-
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = ['--verbose']
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-        errcode = pytest.main(self.test_args)
-        sys.exit(errcode)
-
 
 def find_version(fname):
     """Attempts to find the version number in the file names fname.
@@ -76,6 +61,4 @@ setup(
             "konch = konch:main"
         ]
     },
-    tests_require=TESTS_REQUIRE,
-    cmdclass={'test': PyTest}
 )
