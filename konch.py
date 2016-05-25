@@ -269,7 +269,7 @@ class PtIPythonShell(PtPythonShell):
 
     def check_availability(self):
         try:
-            import ptypython.ipython  # flake8: noqa
+            import ptpython.ipython  # flake8: noqa
             import IPython  # flake8: noqa
         except ImportError:
             raise ShellNotAvailableError('PtIPython shell not available.')
