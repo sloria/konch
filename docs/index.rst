@@ -59,10 +59,10 @@ creates a ``.konchrc`` file in your current directory.
 You can pass any of the following options:
 
 - ``context``: A dictionary or list of objects that will be immediately available to you in your shell session.
-- ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PythonShell``, or ``konch.AutoShell``.
+- ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'ptpy'``, ``'ptipy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PtPythonShell``, ``konch.PtIPythonShell``,  ``konch.PythonShell``, or ``konch.AutoShell``.
 - ``banner``: Custom banner text.
 - ``prompt``: The input prompt (not supported with BPython).
-- ``hide_context``: If ``True``, don't show the context variables in the banner. Defaults to ``False``.
+- ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, or a function that receives the context dictionary as input and returns a string.
 
 Here is an example ``.konchrc`` file that includes some functions from the `requests <http://docs.python-requests.org/en/latest/>`_ library in its context.
 

@@ -37,7 +37,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = '1.1.2'
+__version__ = '2.0.0.dev0'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -67,7 +67,7 @@ import konch
 
 # Available options:
 #   'context', 'banner', 'shell', 'prompt',
-#   'hide_context', 'ipy_extensions', 'ipy_autoreload'
+#   'context_format', 'ipy_extensions', 'ipy_autoreload'
 konch.config({
     'context': {
         'speak': konch.speak
@@ -81,26 +81,45 @@ def teardown():
     pass
 '''
 
-def format_context(context):
-    """Output the a context dictionary as a string."""
-    if context is None:
-        return ''
+def _full_formatter(context):
     line_format = '{name}: {obj!r}'
     return '\n'.join([
         line_format.format(name=name, obj=obj)
-        for name, obj in context.items()
+        for name, obj in sorted(context.items(), key=lambda i: i[0])
     ])
 
+def _short_formatter(context):
+    return ', '.join(sorted(context.keys()))
 
-def make_banner(text=None, context=None, banner_template=None, hide_context=False):
+CONTEXT_FORMATTERS = {
+    'full': _full_formatter,
+    'short': _short_formatter,
+}
+
+def format_context(context, formatter='full'):
+    """Output the a context dictionary as a string."""
+    if not context:
+        return ''
+
+    if callable(formatter):
+        formatter_func = formatter
+    else:
+        if formatter in CONTEXT_FORMATTERS:
+            formatter_func = CONTEXT_FORMATTERS[formatter]
+        else:
+            raise ValueError('Invalid context format: "{0}"'.format(formatter))
+    return formatter_func(context)
+
+
+def make_banner(text=None, context=None, banner_template=None, context_format='full'):
     """Generates a full banner with version info, the given text, and a
     formatted list of context variables.
     """
     banner_text = text or speak()
     banner_template = banner_template or BANNER_TEMPLATE
     out = banner_template.format(version=sys.version, text=banner_text)
-    if context and not hide_context:
-        out += CONTEXT_TEMPLATE.format(context=format_context(context))
+    if context and not context_format == 'hide':
+        out += CONTEXT_TEMPLATE.format(context=format_context(context, formatter=context_format))
     return out
 
 
@@ -121,17 +140,19 @@ class Shell(object):
     :param str banner: Banner text that appears on startup.
     :param str prompt: Custom input prompt.
     :param str output: Custom output prompt.
-    :param bool hide_context: If `True`, hide the context in the banner.
+    :param context_format: Formatter for the context dictionary in the banner.
+        Either 'full', 'short', 'hide', or a function that receives the context
+        dictionary and outputs a string.
     """
 
     banner_template = BANNER_TEMPLATE
 
     def __init__(self, context, banner=None, prompt=None,
-            output=None, hide_context=False, **kwargs):
+            output=None, context_format='full', **kwargs):
         self.context = context
-        self.hide_context = hide_context
-        self.banner = make_banner(banner, context, hide_context=hide_context,
-            banner_template=self.banner_template)
+        self.context_format = context_format
+        self.banner = make_banner(banner, context, context_format=context_format,
+                                  banner_template=self.banner_template)
         self.prompt = prompt
         self.output = output
 
@@ -331,7 +352,7 @@ class AutoShell(Shell):
             'banner': self.banner,
             'prompt': self.prompt,
             'output': self.output,
-            'hide_context': self.hide_context,
+            'context_format': self.context_format,
         }
         shell_args.update(self.kwargs)
         shell = None
@@ -413,7 +434,7 @@ class Config(dict):
     """
 
     def __init__(self, context=None, banner=None, shell=AutoShell,
-            prompt=None, output=None, hide_context=False):
+            prompt=None, output=None, context_format='full'):
         ctx = Config.transform_val(context) or {}
         super(Config, self).__init__(
             context=ctx,
@@ -421,7 +442,7 @@ class Config(dict):
             shell=shell,
             prompt=prompt,
             output=output,
-            hide_context=hide_context
+            context_format=context_format,
         )
 
     def __setitem__(self, key, value):
@@ -447,7 +468,7 @@ _config_registry = {
 
 
 def start(context=None, banner=None, shell=AutoShell,
-        prompt=None, output=None, hide_context=False, **kwargs):
+        prompt=None, output=None, context_format='full', **kwargs):
     """Start up the konch shell. Takes the same parameters as Shell.__init__.
     """
     logger.debug('Using shell...')
@@ -460,9 +481,9 @@ def start(context=None, banner=None, shell=AutoShell,
     shell_ = SHELL_MAP.get(shell or _cfg['shell'], _cfg['shell'])
     prompt_ = prompt or _cfg['prompt']
     output_ = output or _cfg['output']
-    hide_context_ = hide_context or _cfg['hide_context']
+    context_format_ = context_format or _cfg['context_format']
     shell_(context=context_, banner=banner_,
-        prompt=prompt_, output=output_, hide_context=hide_context_, **kwargs).start()
+        prompt=prompt_, output=output_, context_format=context_format_, **kwargs).start()
 
 
 def config(config_dict):

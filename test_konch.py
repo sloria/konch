@@ -36,19 +36,6 @@ def env():
 def teardown_function(func):
     konch.reset_config()
 
-
-def test_format_context():
-    context = {
-        'my_number': 42,
-        'my_func': lambda x: x,
-    }
-    result = konch.format_context(context)
-    assert result == '\n'.join([
-        '{0}: {1!r}'.format(key, value)
-        for key, value in context.items()
-    ])
-
-
 def test_make_banner_custom():
     text = 'I want to be the very best'
     result = konch.make_banner(text)
@@ -56,23 +43,48 @@ def test_make_banner_custom():
     assert sys.version in result
 
 
-def test_make_banner_with_context():
+def test_full_formatter():
+    class Foo(object):
+        def __repr__(self):
+            return '<Foo>'
+    context = {'foo': Foo(), 'bar': 42}
+
+    assert konch.format_context(context, formatter='full') == 'bar: 42\nfoo: <Foo>'
+
+def test_short_formatter():
+    class Foo(object):
+        def __repr__(self):
+            return '<Foo>'
+    context = {'foo': Foo(), 'bar': 42}
+
+    assert konch.format_context(context, formatter='short') == 'bar, foo'
+
+def test_custom_formatter():
+    context = {'foo': 42, 'bar': 24}
+    def my_formatter(ctx):
+        return '*'.join(sorted(ctx.keys()))
+    assert konch.format_context(context, formatter=my_formatter) == 'bar*foo'
+
+def test_make_banner_includes_full_context_by_default():
     context = {'foo': 42}
     result = konch.make_banner(context=context)
-    assert konch.format_context(context) in result
-
+    assert konch.format_context(context, formatter='full') in result
 
 def test_make_banner_hide_context():
     context = {'foo': 42}
-    result = konch.make_banner(context=context, hide_context=True)
+    result = konch.make_banner(context=context, context_format='hide')
     assert konch.format_context(context) not in result
 
+def test_make_banner_custom_format():
+    context = {'foo': 42}
+    result = konch.make_banner(context=context, context_format=lambda ctx: repr(ctx))
+    assert repr(context) in result
 
 def test_cfg_defaults():
     assert konch._cfg['shell'] == konch.AutoShell
     assert konch._cfg['banner'] is None
     assert konch._cfg['context'] == {}
-    assert konch._cfg['hide_context'] is False
+    assert konch._cfg['context_format'] == 'full'
 
 
 def test_config():

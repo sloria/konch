@@ -2,6 +2,14 @@
 Changelog
 *********
 
+2.0.0 (unreleased)
+------------------
+
+- Customizable context formatting via the ``context_format`` option.
+- *Backwards-incompatible*: Remove ``hide_context`` option. Use the ``context_format`` option instead.
+- More CONCHES!
+- Fix bug in checking availability of PtIPython.
+
 1.1.2 (2016-05-24)
 ------------------
 
