@@ -47,10 +47,6 @@ logger = logging.getLogger(__name__)
 BANNER_TEMPLATE = """{version}
 
 {text}
-"""
-
-CONTEXT_TEMPLATE = """
-Context:
 {context}
 """
 
@@ -84,13 +80,16 @@ def teardown():
 
 def _full_formatter(context):
     line_format = '{name}: {obj!r}'
-    return '\n'.join([
+    context_str = '\n'.join([
         line_format.format(name=name, obj=obj)
         for name, obj in sorted(context.items(), key=lambda i: i[0])
     ])
+    return '\nContext:\n{context}'.format(context=context_str)
 
 def _short_formatter(context):
-    return ', '.join(sorted(context.keys()))
+    context_str = ', '.join(sorted(context.keys()))
+    return '\nContext:\n{context}'.format(context=context_str)
+
 
 CONTEXT_FORMATTERS = {
     'full': _full_formatter,
@@ -99,7 +98,7 @@ CONTEXT_FORMATTERS = {
 
 def format_context(context, formatter='full'):
     """Output the a context dictionary as a string."""
-    if not context:
+    if not context or formatter == 'hide':
         return ''
 
     if callable(formatter):
@@ -118,9 +117,8 @@ def make_banner(text=None, context=None, banner_template=None, context_format='f
     """
     banner_text = text or speak()
     banner_template = banner_template or BANNER_TEMPLATE
-    out = banner_template.format(version=sys.version, text=banner_text)
-    if context and not context_format == 'hide':
-        out += CONTEXT_TEMPLATE.format(context=format_context(context, formatter=context_format))
+    context = format_context(context, formatter=context_format)
+    out = banner_template.format(version=sys.version, text=banner_text, context=context)
     return out
 
 
@@ -283,7 +281,7 @@ class PtPythonShell(Shell):
 
 class PtIPythonShell(PtPythonShell):
 
-    banner_template = '{text}\n'
+    banner_template = '{text}\n{context}'
 
     def __init__(self, ipy_extensions=None, *args, **kwargs):
         self.ipy_extensions = ipy_extensions or []

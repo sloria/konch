@@ -49,7 +49,7 @@ def test_full_formatter():
             return '<Foo>'
     context = {'foo': Foo(), 'bar': 42}
 
-    assert konch.format_context(context, formatter='full') == 'bar: 42\nfoo: <Foo>'
+    assert konch.format_context(context, formatter='full') == '\nContext:\nbar: 42\nfoo: <Foo>'
 
 def test_short_formatter():
     class Foo(object):
@@ -57,7 +57,7 @@ def test_short_formatter():
             return '<Foo>'
     context = {'foo': Foo(), 'bar': 42}
 
-    assert konch.format_context(context, formatter='short') == 'bar, foo'
+    assert konch.format_context(context, formatter='short') == '\nContext:\nbar, foo'
 
 def test_custom_formatter():
     context = {'foo': 42, 'bar': 24}
