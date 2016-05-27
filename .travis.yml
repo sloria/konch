@@ -20,5 +20,4 @@ install:
   - pip install invoke pytest scripttest flake8
   - pip install -U "$SHELLS"
 
-# command to run tests, e.g. python setup.py test
-script: python setup.py test
+script: inv test
