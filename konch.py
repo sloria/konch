@@ -477,7 +477,10 @@ def start(context=None, banner=None, shell=AutoShell,
     # Default to global config
     context_ = context or _cfg['context']
     banner_ = banner or _cfg['banner']
-    shell_ = SHELL_MAP.get(shell or _cfg['shell'], _cfg['shell'])
+    if isinstance(shell, type) and issubclass(shell, Shell):
+        shell_ = shell
+    else:
+        shell_ = SHELL_MAP.get(shell or _cfg['shell'], _cfg['shell'])
     prompt_ = prompt or _cfg['prompt']
     output_ = output or _cfg['output']
     context_format_ = context_format or _cfg['context_format']
