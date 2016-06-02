@@ -2,14 +2,23 @@
 Changelog
 *********
 
-2.0.0 (unreleased)
+2.0.0 (2016-06-01)
 ------------------
 
+Features:
+
 - Customizable context formatting via the ``context_format`` option.
-- *Backwards-incompatible*: Remove ``hide_context`` option. Use the ``context_format`` option instead.
 - More CONCHES!
-- Fix bug in checking availability of PtIPython.
+
+Deprecations/Removals:
+
+- Remove ``hide_context`` option. Use the ``context_format`` option instead.
 - Drop support for Python<=2.6 and <=3.3.
+
+Bug fixes:
+
+- Fix bug in checking availability of PtIPython.
+- Fix bug in passing shell subclass as ``shell`` argument to ``konch.start``.
 
 1.1.2 (2016-05-24)
 ------------------
