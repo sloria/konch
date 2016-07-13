@@ -2,6 +2,13 @@
 Changelog
 *********
 
+2.1.0 (unreleased)
+------------------
+
+Support:
+
+- Update tasks.py for compatibilty with invoke>=0.13.0.
+
 2.0.0 (2016-06-01)
 ------------------
 
