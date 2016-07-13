@@ -12,7 +12,10 @@ python:
   - "pypy"
 
 env:
+  # Lowest supported IPython version
   - SHELLS="ipython==4.2.0"
+  # Latest IPython
+  - SHELLS="ipython"
   - SHELLS="ptpython==0.34"
 
 install:

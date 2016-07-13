@@ -42,6 +42,12 @@ __version__ = '2.1.0.dev0'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
+PY2 = int(sys.version_info[0]) == 2
+if PY2:
+    basestring = basestring
+else:
+    basestring = (str, bytes)
+
 logger = logging.getLogger(__name__)
 
 BANNER_TEMPLATE = """{version}
@@ -178,13 +184,40 @@ class PythonShell(Shell):
 
 
 def configure_ipython_prompt(config, prompt=None, output=None):
-    prompt_config = config.PromptManager
-    if prompt:
-        prompt_config.in_template = prompt
-    if output:
-        prompt_config.out_template = output
-    return prompt_config
+    import IPython
+    if IPython.version_info[0] >= 5:  # Custom prompt API changed in IPython 5.0
+        from pygments.token import Token
+        # See http://ipython.readthedocs.io/en/stable/config/details.html#custom-prompts
+        class CustomPrompt(IPython.terminal.prompts.Prompts):
 
+            def in_prompt_tokens(self, *args, **kwargs):
+                if prompt is None:
+                    return super(CustomPrompt, self).in_prompt_tokens(*args, **kwargs)
+                if isinstance(prompt, basestring):
+                    return [
+                        (Token.Prompt, prompt),
+                    ]
+                else:
+                    return prompt
+
+            def out_prompt_tokens(self, *args, **kwargs):
+                if output is None:
+                    return super(CustomPrompt, self).out_prompt_tokens(*args, **kwargs)
+                if isinstance(output, basestring):
+                    return [
+                        (Token.OutPrompt, output),
+                    ]
+                else:
+                    return prompt
+
+        config.TerminalInteractiveShell.prompts_class = CustomPrompt
+    else:
+        prompt_config = config.PromptManager
+        if prompt:
+            prompt_config.in_template = prompt
+        if output:
+            prompt_config.out_template = output
+    return None
 
 class IPythonShell(Shell):
     """The IPython shell.
@@ -223,8 +256,6 @@ class IPythonShell(Shell):
         except ImportError:
             raise ShellNotAvailableError('IPython shell not available '
                 'or IPython version not supported.')
-        ipy_config = IPyConfig()
-        configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
         # so we write it to stdout before starting the IPython app
@@ -244,6 +275,8 @@ class IPythonShell(Shell):
             ]
         else:
             exec_lines = []
+        ipy_config = IPyConfig()
+        configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         # Use start_ipython rather than embed so that IPython is loaded in the "normal"
         # way. See https://github.com/django/django/pull/512
         start_ipython(

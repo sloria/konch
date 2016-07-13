@@ -17,7 +17,7 @@ konch.config({
         'bpython': bpython,
         'ptpython': ptpython,
     },
-    'prompt': '[\\#] >>> ',
+    'prompt': '[konch] >>> ',
     'ipy_autoreload': True,
     'ptpy_vi_mode': True,
     'context_format': 'full',
