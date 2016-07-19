@@ -239,9 +239,9 @@ def test_custom_banner(fileenv):
     assert_in_output('Test banner', res)
 
 
-@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
+# TODO: Get this test working with IPython
 def test_custom_prompt(fileenv):
-    res = fileenv.run('konch', '-f', 'testrc', expect_stderr=True)
+    res = fileenv.run('konch', '-f', 'testrc', '-s', 'py', expect_stderr=True)
     assert_in_output('myprompt >>>', res)
 
 

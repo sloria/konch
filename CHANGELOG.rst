@@ -5,6 +5,10 @@ Changelog
 2.1.0 (unreleased)
 ------------------
 
+Features:
+
+- Compatibility with IPython>=5.0.0.
+
 Support:
 
 - Update tasks.py for compatibilty with invoke>=0.13.0.
