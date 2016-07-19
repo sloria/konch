@@ -2,7 +2,7 @@
 Changelog
 *********
 
-2.1.0 (unreleased)
+2.1.0 (2016-07-18)
 ------------------
 
 Features:
@@ -11,7 +11,7 @@ Features:
 
 Support:
 
-- Update tasks.py for compatibilty with invoke>=0.13.0.
+- Update tasks.py for compatibility with invoke>=0.13.0.
 
 2.0.0 (2016-06-01)
 ------------------
