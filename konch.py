@@ -69,8 +69,9 @@ INIT_TEMPLATE = '''# -*- coding: utf-8 -*-
 import konch
 
 # Available options:
-#   'context', 'banner', 'shell', 'prompt',
-#   'context_format', 'ipy_extensions', 'ipy_autoreload'
+#   'context', 'banner', 'shell', 'prompt', 'output',
+#   'context_format', 'ipy_extensions', 'ipy_autoreload',
+#   'ipy_colors', 'ipy_highlighting_style'
 konch.config({
     'context': {
         'speak': konch.speak
@@ -229,9 +230,16 @@ class IPythonShell(Shell):
     :param kwargs: The same kwargs as `Shell.__init__`.
     """
 
-    def __init__(self, ipy_extensions=None, ipy_autoreload=False, *args, **kwargs):
+    def __init__(self,
+                 ipy_extensions=None,
+                 ipy_autoreload=False,
+                 ipy_colors=None,
+                 ipy_highlighting_style=None,
+                 *args, **kwargs):
         self.ipy_extensions = ipy_extensions
         self.ipy_autoreload = ipy_autoreload
+        self.ipy_colors = ipy_colors
+        self.ipy_highlighting_style = ipy_highlighting_style
         Shell.__init__(self, *args, **kwargs)
 
     @staticmethod
@@ -276,6 +284,10 @@ class IPythonShell(Shell):
         else:
             exec_lines = []
         ipy_config = IPyConfig()
+        if self.ipy_colors:
+            ipy_config.TerminalInteractiveShell.colors = self.ipy_colors
+        if self.ipy_highlighting_style:
+            ipy_config.TerminalInteractiveShell.highlighting_style = self.ipy_highlighting_style
         configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         # Use start_ipython rather than embed so that IPython is loaded in the "normal"
         # way. See https://github.com/django/django/pull/512

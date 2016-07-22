@@ -62,6 +62,7 @@ You can pass any of the following options:
 - ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'ptpy'``, ``'ptipy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PtPythonShell``, ``konch.PtIPythonShell``,  ``konch.PythonShell``, or ``konch.AutoShell``.
 - ``banner``: Custom banner text.
 - ``prompt``: The input prompt (not supported with BPython).
+- ``output``: The output prompt (supported in IPython and PtIPython only).
 - ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, or a function that receives the context dictionary as input and returns a string.
 
 Here is an example ``.konchrc`` file that includes some functions from the `requests <http://docs.python-requests.org/en/latest/>`_ library in its context.
@@ -186,6 +187,9 @@ IPython Extras
 
 ``konch`` provides a few IPython-specific options.
 
+Loading Extensions
+------------------
+
 The ``ipy_extensions`` option is used to automatically load IPython extensions at startup.
 
 .. code-block:: python
@@ -201,7 +205,10 @@ The ``ipy_extensions`` option is used to automatically load IPython extensions a
         ]
     })
 
-The ``ipy_autoreload`` option enables and initializes the IPython `autoreload <http://ipython.org/ipython-doc/dev/config/extensions/autoreload.html>`_ extension at startup.
+Autoreload
+----------
+
+The ``ipy_autoreload`` option enables and initializes the IPython `autoreload <http://ipython.readthedocs.io/en/stable/config/extensions/autoreload.html>`_ extension at startup.
 
 .. code-block:: python
 
@@ -218,6 +225,26 @@ This is equivalent to running: ::
 
     % load_ext autoreload
     % autoreload 2
+
+Configuring Colors
+------------------
+
+The ``ipy_colors`` and ``ipy_highlighting_style`` options are used to configure colors in the IPython shell. ``ipy_colors`` sets the color of tracebacks and object info (the output of e.g. ``zip?``). ``ipy_highlighting_style`` sets colors for syntax highlighting.
+
+.. code-block:: python
+
+    import konch
+
+    konch.config({
+        # ...
+        'shell': 'ipython',
+        # 'linux' is optimized for dark terminal backgrounds
+        'ipy_colors': 'linux',
+        'ipy_highlighting_style': 'monokai',
+    })
+
+
+See the IPython docs for more information and valid values for these options: http://ipython.readthedocs.io/en/stable/config/details.html#terminal-colors
 
 ptpython support
 ================

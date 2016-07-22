@@ -2,6 +2,13 @@
 Changelog
 *********
 
+2.2.0 (unreleased)
+------------------
+
+Features:
+
+- Add ``ipy_colors`` and ``ipy_highlighting_style`` options for customizing IPython terminal colors.
+
 2.1.0 (2016-07-18)
 ------------------
 
