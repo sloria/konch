@@ -19,7 +19,7 @@ Configures your Python shell
 - Automatically load **IPython extensions**
 - Can have multiple configurations per project using **named configs**
 
-.. image:: http://zippy.gfycat.com/PolishedSimilarHarlequinbug.gif
+.. image:: http://zippy.gfycat.com/EachTerrificChupacabra.gif
     :alt: Demo
 
 
