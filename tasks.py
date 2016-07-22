@@ -52,7 +52,7 @@ def docs(ctx, clean=False, browse=False):
         clean_docs(ctx)
     ctx.run('sphinx-build %s %s' % (docs_dir, build_dir), pty=True)
     if browse:
-        browse_docs()
+        browse_docs(ctx)
 
 @task
 def readme(ctx, browse=False):
