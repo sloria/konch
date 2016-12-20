@@ -2,6 +2,13 @@
 Changelog
 *********
 
+2.2.1 (2016-12-19)
+------------------
+
+Bug fixes:
+
+- Fix error raised when some options are passed to ``konch.named_config``.
+
 2.2.0 (2016-07-21)
 ------------------
 
