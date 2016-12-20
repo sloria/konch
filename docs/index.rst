@@ -58,7 +58,7 @@ creates a ``.konchrc`` file in your current directory.
 
 You can pass any of the following options:
 
-- ``context``: A dictionary or list of objects that will be immediately available to you in your shell session.
+- ``context``: A dictionary or list of objects that will be immediately available to you in your shell session. May also be a callable that returns a dictionary or list of objects.
 - ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'ptpy'``, ``'ptipy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PtPythonShell``, ``konch.PtIPythonShell``,  ``konch.PythonShell``, or ``konch.AutoShell``.
 - ``banner``: Custom banner text.
 - ``prompt``: The input prompt (not supported with BPython).

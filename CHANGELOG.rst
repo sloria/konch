@@ -2,6 +2,13 @@
 Changelog
 *********
 
+2.3.0 (unreleased)
+------------------
+
+Features:
+
+- Allow ``context`` to be a callable.
+
 2.2.1 (2016-12-19)
 ------------------
 

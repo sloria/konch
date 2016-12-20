@@ -171,6 +171,14 @@ def test_named_config_adds_to_registry():
     konch._config_registry = {'default': konch._cfg}
 
 
+def test_context_can_be_callable():
+    def get_context():
+        return {'foo': 42}
+    shell = konch.Shell(context=get_context)
+
+    assert shell.context == {'foo': 42}
+
+
 ##### Command tests #####
 
 

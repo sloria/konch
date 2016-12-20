@@ -38,7 +38,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = '2.2.1'
+__version__ = '2.3.0.dev0'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -141,8 +141,8 @@ def context_list2dict(context_list):
 class Shell(object):
     """Base shell class.
 
-    :param dict context: Dictionary that defines what variables will be
-        available when the shell is run.
+    :param dict context: Dictionary, list, or callable (that returns a `dict` or `list`)
+        that defines what variables will be available when the shell is run.
     :param str banner: Banner text that appears on startup.
     :param str prompt: Custom input prompt.
     :param str output: Custom output prompt.
@@ -155,9 +155,9 @@ class Shell(object):
 
     def __init__(self, context, banner=None, prompt=None,
             output=None, context_format='full', **kwargs):
-        self.context = context
+        self.context = context() if callable(context) else context
         self.context_format = context_format
-        self.banner = make_banner(banner, context, context_format=context_format,
+        self.banner = make_banner(banner, self.context, context_format=self.context_format,
                                   banner_template=self.banner_template)
         self.prompt = prompt
         self.output = output
