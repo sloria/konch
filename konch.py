@@ -478,7 +478,7 @@ class Config(dict):
     """
 
     def __init__(self, context=None, banner=None, shell=AutoShell,
-            prompt=None, output=None, context_format='full'):
+            prompt=None, output=None, context_format='full', **kwargs):
         ctx = Config.transform_val(context) or {}
         super(Config, self).__init__(
             context=ctx,
@@ -487,6 +487,7 @@ class Config(dict):
             prompt=prompt,
             output=output,
             context_format=context_format,
+            **kwargs
         )
 
     def __setitem__(self, key, value):
