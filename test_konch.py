@@ -276,6 +276,13 @@ konch.named_config('conf2', {
     },
     'banner': 'Conf2'
 })
+
+konch.named_config(['conf3', 'c3'], {
+    'context': {
+        'baz': 424,
+    },
+    'banner': 'Conf3',
+})
 """
 
 
@@ -343,6 +350,15 @@ def test_selecting_named_config(names_env):
     assert_in_output('Conf2', res)
     assert_in_output('bar', res)
 
+@pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
+def test_named_config_with_multiple_names(names_env):
+    res = names_env.run('konch', '-n', 'conf3', expect_stderr=True)
+    assert_in_output('Conf3', res)
+    assert_in_output('baz', res)
+
+    res = names_env.run('konch', '-n', 'c3', expect_stderr=True)
+    assert_in_output('Conf3', res)
+    assert_in_output('baz', res)
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason='test incompatible with ptpython')
 def test_selecting_name_that_doesnt_exist(names_env):

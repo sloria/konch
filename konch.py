@@ -27,6 +27,7 @@ Options:
 """
 
 from __future__ import unicode_literals, print_function
+from collections import Iterable
 import code
 import imp
 import logging
@@ -547,10 +548,14 @@ def config(config_dict):
 
 
 def named_config(name, config_dict):
-    """Adds a named config to the config registry.
+    """Adds a named config to the config registry. The first argument may either be a string
+    or a collection of strings.
+
     This function should be called in a .konchrc file.
     """
-    _config_registry[name] = Config(**config_dict)
+    names = name if isinstance(name, Iterable) and not isinstance(name, basestring) else [name]
+    for each in names:
+        _config_registry[each] = Config(**config_dict)
 
 
 def reset_config():

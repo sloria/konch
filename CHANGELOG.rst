@@ -8,6 +8,7 @@ Changelog
 Features:
 
 - Allow ``context`` to be a callable.
+- Multiple names may be passed to ``named_config``.
 
 2.2.1 (2016-12-19)
 ------------------

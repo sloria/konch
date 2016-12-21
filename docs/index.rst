@@ -147,6 +147,21 @@ To use the ``flask`` config, you would run:
 
     $ konch -n flask
 
+You can also pass multiple names to ``named_config``:
+
+.. code-block:: python
+
+    # konch -n flask
+    # OR
+    # konch -n fl
+    konch.named_config(['flask', 'fl'], {
+        'context': {
+            'request': flask.request,
+            'Flask': flask.Flask,
+            'url_for': flask.url_for
+        }
+    })
+
 ``$ konch -s <shell>``
 ----------------------
 
