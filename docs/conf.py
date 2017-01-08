@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime as dt
 import sys
 import os
 
@@ -16,7 +17,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = u'konch'
-copyright = u'2014-2016'
+copyright = u'2014-{0:%Y}'.format(dt.datetime.utcnow())
 
 version = release = konch.__version__
 
@@ -39,8 +40,8 @@ html_theme_options = {
 html_theme_path = ['_themes']
 
 html_sidebars = {
-    'index':    ['side-primary.html', 'searchbox.html'],
-    '**':       ['side-secondary.html', 'localtoc.html',
+    'index': ['side-primary.html', 'searchbox.html'],
+    '**': ['side-secondary.html', 'localtoc.html',
                  'relations.html', 'searchbox.html']
 }
 

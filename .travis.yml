@@ -6,6 +6,7 @@ language: python
 sudo: false
 
 python:
+  - "3.6"
   - "3.5"
   - "3.4"
   - "2.7"
@@ -20,7 +21,7 @@ env:
 
 install:
   - pip install -U .
-  - pip install invoke pytest scripttest flake8
+  - pip install invoke==0.14.0 pytest scripttest flake8
   - pip install -U "$SHELLS"
 
 script: inv test
