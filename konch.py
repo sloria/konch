@@ -39,7 +39,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = '2.3.0'
+__version__ = '2.4.0.dev0'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
@@ -177,6 +177,17 @@ class PythonShell(Shell):
         return True
 
     def start(self):
+        try:
+            import readline
+        except ImportError:
+            pass
+        else:
+            # We don't have to wrap the following import in a 'try', because
+            # we already know 'readline' was imported successfully.
+            import rlcompleter
+            readline.set_completer(rlcompleter.Completer(self.context).complete)
+            readline.parse_and_bind("tab:complete")
+
         if self.prompt:
             sys.ps1 = self.prompt
         if self.output:

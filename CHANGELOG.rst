@@ -2,6 +2,13 @@
 Changelog
 *********
 
+2.4.0 (unreleased)
+------------------
+
+Features:
+
+- Add basic tab-completion to plain Python shell.
+
 2.3.0 (2016-12-23)
 ------------------
 
