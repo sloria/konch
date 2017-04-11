@@ -19,7 +19,7 @@ def find_version(fname):
         raise RuntimeError('Cannot find version information')
     return version
 
-__version__ = find_version("konch.py")
+__version__ = find_version('konch.py')
 
 
 def read(fname):
@@ -38,7 +38,7 @@ setup(
     author_email='sloria1@gmail.com',
     url='https://github.com/sloria/konch',
     install_requires=[],
-    license=read("LICENSE"),
+    license='MIT',
     zip_safe=False,
     keywords='konch shell custom ipython bpython repl ptpython ptipython',
     classifiers=[
