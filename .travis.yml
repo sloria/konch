@@ -35,7 +35,7 @@ matrix:
 
 install:
   - pip install -U .
-  - pip install invoke==0.15.0 pytest scripttest flake8
+  - pip install invoke==0.16.3 pytest scripttest flake8
   - pip install -U "$SHELLS"
 
 script: inv test

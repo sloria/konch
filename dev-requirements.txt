@@ -1,5 +1,5 @@
 # Task running
-invoke==0.15.0
+invoke==0.16.3
 
 # Linting
 flake8==2.4.1
@@ -13,7 +13,7 @@ scripttest
 Sphinx>=1.2.2
 
 # Shells
-ipython>=3.1.0
+ipython>=4.2.0
 bpython>=0.14.2
 ptpython>=0.15
 
