@@ -19,6 +19,20 @@ env:
   - SHELLS="ipython"
   - SHELLS="ptpython==0.34"
 
+matrix:
+  # IPython>=6.0 is not supported on py2
+  exclude:
+    - python: "2.7"
+      env: SHELLS="ipython"
+    - python: "pypy"
+      env: SHELLS="ipython"
+  include:
+    - python: "2.7"
+      env: SHELLS="ipython>=5.0,<6.0"
+    - python: "pypy"
+      env: SHELLS="ipython>=5.0,<6.0"
+
+
 install:
   - pip install -U .
   - pip install invoke==0.15.0 pytest scripttest flake8
