@@ -39,7 +39,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = '2.4.0.dev0'
+__version__ = '2.4.0'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
