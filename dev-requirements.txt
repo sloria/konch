@@ -2,7 +2,7 @@
 invoke==0.22.1
 
 # Linting
-flake8==2.4.1
+flake8==3.5.0
 
 # Testing
 pytest
