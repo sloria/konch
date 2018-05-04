@@ -1,5 +1,5 @@
 # Task running
-invoke==0.22.1
+invoke==0.23.0
 
 # Linting
 flake8==3.5.0
