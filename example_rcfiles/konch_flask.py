@@ -24,6 +24,8 @@ konch.config({
 ctx = app.test_request_context()
 def setup():
     ctx.push()
+    app.preprocess_request()
 
 def teardown():
+    app.process_response(app.response_class())
     ctx.pop()
