@@ -18,4 +18,4 @@ bpython>=0.14.2
 ptpython>=0.15
 
 # Distribution
-twine==1.11.0
+twine==1.12.0
