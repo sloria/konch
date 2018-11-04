@@ -2,6 +2,13 @@
 Changelog
 *********
 
+2.5.0 (unreleased)
+------------------
+
+- Update dev environment.
+- Python 3.4 is no longer officially supported.
+- Tested on Python 3.7.
+
 2.4.0 (2017-04-29)
 ------------------
 
