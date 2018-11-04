@@ -73,15 +73,17 @@ Here is an example ``.konchrc`` file that includes some functions from the `requ
     import konch
     import requests
 
-    konch.config({
-        'context': {
-            'httpget': requests.get,
-            'httppost': requests.post,
-            'httpput': requests.put,
-            'httpdelete': requests.delete
-        },
-        'banner': 'A humanistic HTTP shell'
-    })
+    konch.config(
+        {
+            "context": {
+                "httpget": requests.get,
+                "httppost": requests.post,
+                "httpput": requests.put,
+                "httpdelete": requests.delete,
+            },
+            "banner": "A humanistic HTTP shell",
+        }
+    )
 
 Now, when you run ``konch`` again:
 
@@ -122,24 +124,22 @@ file.
     import flask
 
     # The default config
-    konch.config({
-        'context': [os, sys]
-    })
+    konch.config({"context": [os, sys]})
 
-    konch.named_config('http', {
-        'context': {
-            'httpget': requests.get,
-            'httppost': requests.post
-        }
-    })
+    konch.named_config(
+        "http", {"context": {"httpget": requests.get, "httppost": requests.post}}
+    )
 
-    konch.named_config('flask', {
-        'context': {
-            'request': flask.request,
-            'Flask': flask.Flask,
-            'url_for': flask.url_for
-        }
-    })
+    konch.named_config(
+        "flask",
+        {
+            "context": {
+                "request": flask.request,
+                "Flask": flask.Flask,
+                "url_for": flask.url_for,
+            }
+        },
+    )
 
 To use the ``flask`` config, you would run:
 
@@ -154,13 +154,16 @@ You can also pass multiple names to ``named_config``:
     # konch -n flask
     # OR
     # konch -n fl
-    konch.named_config(['flask', 'fl'], {
-        'context': {
-            'request': flask.request,
-            'Flask': flask.Flask,
-            'url_for': flask.url_for
-        }
-    })
+    konch.named_config(
+        ["flask", "fl"],
+        {
+            "context": {
+                "request": flask.request,
+                "Flask": flask.Flask,
+                "url_for": flask.url_for,
+            }
+        },
+    )
 
 ``$ konch -s <shell>``
 ----------------------
@@ -184,17 +187,16 @@ You can optionally define ``setup()`` and/or ``teardown()`` functions which will
     import shutil
     import konch
 
+
     def setup():
-        os.mkdir('my_temp_dir')
+        os.mkdir("my_temp_dir")
+
 
     def teardown():
-        shutil.rmtree('my_temp_dir')
+        shutil.rmtree("my_temp_dir")
 
-    konch.config({
-        'context': {
-            'pjoin': os.path.join,
-        }
-    })
+
+    konch.config({"context": {"pjoin": os.path.join}})
 
 
 IPython Extras
@@ -211,14 +213,13 @@ The ``ipy_extensions`` option is used to automatically load IPython extensions a
 
     import konch
 
-    konch.config({
-        # ...
-        'shell': 'ipython',
-        'ipy_extensions': [
-            'autoreload',
-            'rpy2.ipython'
-        ]
-    })
+    konch.config(
+        {
+            # ...
+            "shell": "ipython",
+            "ipy_extensions": ["autoreload", "rpy2.ipython"],
+        }
+    )
 
 Autoreload
 ----------
@@ -229,12 +230,14 @@ The ``ipy_autoreload`` option enables and initializes the IPython `autoreload <h
 
     import konch
 
-    konch.config({
-        # ...
-        'shell': 'ipython',
-        # Automatically reload modules
-        'ipy_autoreload': True,
-    })
+    konch.config(
+        {
+            # ...
+            "shell": "ipython",
+            # Automatically reload modules
+            "ipy_autoreload": True,
+        }
+    )
 
 This is equivalent to running: ::
 
@@ -250,13 +253,15 @@ The ``ipy_colors`` and ``ipy_highlighting_style`` options are used to configure 
 
     import konch
 
-    konch.config({
-        # ...
-        'shell': 'ipython',
-        # 'linux' is optimized for dark terminal backgrounds
-        'ipy_colors': 'linux',
-        'ipy_highlighting_style': 'monokai',
-    })
+    konch.config(
+        {
+            # ...
+            "shell": "ipython",
+            # 'linux' is optimized for dark terminal backgrounds
+            "ipy_colors": "linux",
+            "ipy_highlighting_style": "monokai",
+        }
+    )
 
 
 See the IPython docs for more information and valid values for these options: http://ipython.readthedocs.io/en/stable/config/details.html#terminal-colors
@@ -274,14 +279,14 @@ To use ptpython's vi-style bindings, set the ``ptpy_vi_mode`` option in your ``.
 
     import konch
 
-    konch.config({
-        # ...
-        'shell': 'ptipython',
-        'ptpy_vi_mode': True,
-        'ipy_extensions': [
-            'autoreload',
-        ]
-    })
+    konch.config(
+        {
+            # ...
+            "shell": "ptipython",
+            "ptpy_vi_mode": True,
+            "ipy_extensions": ["autoreload"],
+        }
+    )
 
 Programmatic Usage
 ==================
@@ -294,12 +299,7 @@ Want to use konch within a Python script? konch exposes many of its high-level f
     from mypackage import cheese
 
     # Start the shell
-    konch.start(
-        context={
-            'cheese': cheese
-        },
-        shell=konch.AutoShell
-    )
+    konch.start(context={"cheese": cheese}, shell=konch.AutoShell)
 
 To use a config file:
 
@@ -307,7 +307,7 @@ To use a config file:
 
     import konch
 
-    konch.use_file('~/path/to/.mykonchrc')
+    konch.use_file("~/path/to/.mykonchrc")
     konch.start()
 
 Get command-line arguments using ``konch.parse_args()``. ``konch`` uses `docopt`_ for arguments parsing.
@@ -320,16 +320,11 @@ Get command-line arguments using ``konch.parse_args()``. ``konch`` uses `docopt`
     from myapp import app, db
 
     args = konch.parse_args()
-    if args['--name'] == 'db':
+    if args["--name"] == "db":
         # ...expensive database setup...
-        konch.start(context={
-            'db': db,
-            'app': app
-        })
+        konch.start(context={"db": db, "app": app})
     else:
-        konch.start(context={
-            'app': app
-        })
+        konch.start(context={"app": app})
 
 .. _docopt: http://docopt.org
 
@@ -339,7 +334,7 @@ You can also use shell objects directly:
 
     import konch
 
-    my_shell = konch.AutoShell(context={'foo': 42}, banner='My foo shell')
+    my_shell = konch.AutoShell(context={"foo": 42}, banner="My foo shell")
     my_shell.start()
 
 ..
