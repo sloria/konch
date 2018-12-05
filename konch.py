@@ -345,11 +345,12 @@ class PtPythonShell(Shell):
 
     def start(self):
         try:
-            from ptpython.repl import embed
+            from ptpython.repl import embed, run_config
         except ImportError:
             raise ShellNotAvailableError("PtPython shell not available.")
         print(self.banner)
-        embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
+        embed(globals=self.context, vi_mode=self.ptpy_vi_mode, configure=run_config)
+
         return None
 
 
