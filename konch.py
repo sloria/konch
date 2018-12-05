@@ -350,10 +350,11 @@ class PtPythonShell(Shell):
             raise ShellNotAvailableError("PtPython shell not available.")
         print(self.banner)
 
-        if not os.path.isfile(os.path.expanduser("~/.ptpython/config.py")):
-            run_config = None
+        if os.path.isfile(os.path.expanduser("~/.ptpython/config.py")):
+            embed(globals=self.context, vi_mode=self.ptpy_vi_mode, configure=run_config)
 
-        embed(globals=self.context, vi_mode=self.ptpy_vi_mode, configure=run_config)
+        else:
+            embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
 
         return None
 
