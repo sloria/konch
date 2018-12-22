@@ -26,6 +26,12 @@ Options:
                                konch will use the .konchrc file in the current
                                directory.
   -d --debug                 Enable debugging/verbose mode.
+
+Environment variables:
+  KONCH_AUTH_FILE: File where to store authorization data for config files.
+    Defaults to ~/.local/share/konch_auth.
+  KONCH_EDITOR: Editor command to use when running `konch edit`.
+    Falls back to $VISUAL then $EDITOR.
 """
 
 from __future__ import unicode_literals, print_function
