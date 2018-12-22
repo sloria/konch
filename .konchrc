@@ -8,17 +8,20 @@ import IPython
 import bpython
 import ptpython
 
-konch.config({
-    'context': {
-        'konch': konch,
-        'testenv': env,
-        'os': os,
-        'IPython': IPython,
-        'bpython': bpython,
-        'ptpython': ptpython,
-    },
-    'prompt': '[konch] >>> ',
-    'ipy_autoreload': True,
-    'ptpy_vi_mode': True,
-    'context_format': 'full',
-})
+konch.config(
+    {
+        "context": {
+            "konch": konch,
+            "testenv": env,
+            "os": os,
+            "IPython": IPython,
+            "bpython": bpython,
+            "ptpython": ptpython,
+        },
+        "prompt": "[konch] >>> ",
+        "ipy_colors": "linux",
+        "ipy_autoreload": True,
+        "ptpy_vi_mode": True,
+        "context_format": "full",
+    }
+)
