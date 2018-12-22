@@ -579,9 +579,12 @@ class BPythonShell(Shell):
 
 
 class AutoShell(Shell):
-    """Shell that runs IPython or BPython if available. Falls back to built-in
-    Python shell.
+    """Shell that runs PtIpython, PtPython, IPython, or BPython if available.
+    Falls back to built-in Python shell.
     """
+
+    # Shell classes in precedence order
+    SHELLS = [PtIPythonShell, PtPythonShell, IPythonShell, BPythonShell, PythonShell]
 
     def __init__(self, context, banner, **kwargs):
         Shell.__init__(self, context, **kwargs)
@@ -601,23 +604,15 @@ class AutoShell(Shell):
         }
         shell_args.update(self.kwargs)
         shell = None
-        try:
-            shell = PtIPythonShell(**shell_args)
-            shell.check_availability()
-        except ShellNotAvailableError:
+
+        for shell_class in self.SHELLS:
             try:
-                shell = PtPythonShell(**shell_args)
+                shell = shell_class(**shell_args)
                 shell.check_availability()
             except ShellNotAvailableError:
-                try:
-                    shell = IPythonShell(**shell_args)
-                    shell.check_availability()
-                except ShellNotAvailableError:
-                    try:
-                        shell = BPythonShell(**shell_args)
-                        shell.check_availability()
-                    except ShellNotAvailableError:
-                        shell = PythonShell(**shell_args)
+                continue
+            else:
+                break
         return shell.start()
 
 
