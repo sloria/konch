@@ -439,8 +439,9 @@ def test_named_config_with_multiple_names(names_env):
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
 def test_selecting_name_that_doesnt_exist(names_env):
-    res = names_env.run("konch", "-n", "doesntexist", expect_stderr=True)
-    assert_in_output("Default", res)
+    res = names_env.run("konch", "-n", "doesntexist", expect_error=True)
+    assert res.returncode == 1
+    assert "Invalid --name" in res.stderr
 
 
 def test_resolve_path(folderenv):

@@ -943,9 +943,12 @@ def main():
         mod.setup()
 
     if args["--name"]:
-        config_dict = _config_registry.get(args["--name"], _cfg)
-        logger.debug("Using named config...")
-        logger.debug(config)
+        if args["--name"] not in _config_registry:
+            print('Invalid --name: "{}"'.format(args["--name"]), file=sys.stderr)
+            sys.exit(1)
+        config_dict = _config_registry[args["--name"]]
+        logger.debug('Using named config: "{}"...'.format(args["--name"]))
+        logger.debug(config_dict)
     else:
         config_dict = _cfg
     # Allow default shell to be overriden by command-line argument
