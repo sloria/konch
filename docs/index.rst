@@ -6,9 +6,9 @@ konch
 Release v\ |version|.
 
 :doc:`changelog <changelog>` //
-`github <http://github.com/sloria/konch>`_ //
-`pypi <http://pypi.python.org/pypi/konch>`_ //
-`issues <http://github.com/sloria/konch/issues>`_
+`github <https://github.com/sloria/konch>`_ //
+`pypi <https://pypi.python.org/pypi/konch>`_ //
+`issues <https://github.com/sloria/konch/issues>`_
 
 
 Configures your Python shell
@@ -23,7 +23,7 @@ Configures your Python shell
 - Automatically load **IPython extensions**
 - Can have multiple configurations per project using **named configs**
 
-.. image:: http://zippy.gfycat.com/EachTerrificChupacabra.gif
+.. image:: https://zippy.gfycat.com/EachTerrificChupacabra.gif
     :alt: Demo
 
 
@@ -76,7 +76,7 @@ You can pass any of the following options:
 - ``output``: The output prompt (supported in IPython and PtIPython only).
 - ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, or a function that receives the context dictionary as input and returns a string.
 
-Here is an example ``.konchrc`` file that includes some functions from the `requests <http://docs.python-requests.org/en/latest/>`_ library in its context.
+Here is an example ``.konchrc`` file that includes some functions from the `requests <https://docs.python-requests.org/en/latest/>`_ library in its context.
 
 .. code-block:: python
 
@@ -247,7 +247,7 @@ The ``ipy_extensions`` option is used to automatically load IPython extensions a
 Autoreload
 ----------
 
-The ``ipy_autoreload`` option enables and initializes the IPython `autoreload <http://ipython.readthedocs.io/en/stable/config/extensions/autoreload.html>`_ extension at startup.
+The ``ipy_autoreload`` option enables and initializes the IPython `autoreload <https://ipython.readthedocs.io/en/stable/config/extensions/autoreload.html>`_ extension at startup.
 
 .. code-block:: python
 
@@ -287,7 +287,7 @@ The ``ipy_colors`` and ``ipy_highlighting_style`` options are used to configure 
     )
 
 
-See the IPython docs for more information and valid values for these options: http://ipython.readthedocs.io/en/stable/config/details.html#terminal-colors
+See the IPython docs for more information and valid values for these options: https://ipython.readthedocs.io/en/stable/config/details.html#terminal-colors
 
 ptpython support
 ================
