@@ -4,7 +4,7 @@ from setuptools import setup
 
 
 EXTRAS_REQUIRE = {
-    "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython", "ptpython"],
+    "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
         "flake8==3.6.0",
         'flake8-bugbear==18.8.0; python_version >= "3.5"',
@@ -13,7 +13,10 @@ EXTRAS_REQUIRE = {
     "docs": ["sphinx"],
 }
 EXTRAS_REQUIRE["dev"] = (
-    EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + EXTRAS_REQUIRE["docs"] + ["tox"]
+    EXTRAS_REQUIRE["tests"]
+    + EXTRAS_REQUIRE["lint"]
+    + EXTRAS_REQUIRE["docs"]
+    + ["ptpython", "tox"]
 )
 
 
