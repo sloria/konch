@@ -2,6 +2,22 @@
 Changelog
 *********
 
+3.0.0 (unreleased)
+------------------
+
+Features:
+
+- Config files must be approved before executing them.
+  Use ``konch allow`` to authorize a config file. This is a security mechanism to prevent
+  executing untrusted Python code `#47 <https://github.com/sloria/konch/issues/47>`_.
+  Thanks `@hartwork <https://github.com/hartwork>`_ for the suggestion.
+- Allow customizing the editor to use for ``konch edit`` via the
+  ``KONCH_EDITOR`` environment variable.
+
+Bug fixes:
+
+- Address a ``DeprecationWarning`` about importing from ``collections.abc`` on Python 3.7.
+
 2.5.0 (2018-11-04)
 ------------------
 

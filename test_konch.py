@@ -5,7 +5,7 @@ import os
 
 import pytest
 from docopt import DocoptExit
-from scripttest import TestFileEnvironment
+from scripttest import TestFileEnvironment as FileEnvironment
 
 import konch
 
@@ -29,7 +29,9 @@ def assert_in_output(s, res, message=None):
 
 @pytest.fixture
 def env():
-    return TestFileEnvironment(ignore_hidden=False)
+    env_ = FileEnvironment(ignore_hidden=False)
+    env_.environ["KONCH_AUTH_FILE"] = os.path.join(env_.base_path, "konch_auth")
+    return env_
 
 
 def teardown_function(func):
@@ -203,16 +205,82 @@ def test_init_with_filename(env):
     assert "myconfig" in res.files_created
 
 
-@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
-def test_konch_with_no_config_file(env):
-    res = env.run("konch", "-f", "notfound", expect_stderr=True, cwd=env.base_path)
-    assert res.returncode == 0
-
-
 def test_konch_init_when_config_file_exists(env):
     env.run("konch", "init")
     res = env.run("konch", "init", expect_error=True)
     assert "already exists" in res.stderr
+    assert res.returncode == 1
+
+
+def test_file_blocked(env, request):
+    env.writefile(".konchrc", content=b"givemeyourbitcoinz")
+    request.addfinalizer(lambda: os.remove(os.path.join(env.base_path, ".konchrc")))
+    res = env.run("konch", expect_stderr=True, expect_error=True)
+    assert "blocked" in res.stderr
+    assert res.returncode == 1
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_allow_file(env, request):
+    env.writefile(".konchrc", content=b"import konch")
+    request.addfinalizer(lambda: os.remove(os.path.join(env.base_path, ".konchrc")))
+    env.run("konch", "allow")
+    res = env.run("konch")
+    assert res.returncode == 0
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_allow_specified_file(env, request):
+    env.writefile("mykonchrc", content=b"import konch")
+    request.addfinalizer(lambda: os.remove(os.path.join(env.base_path, "mykonchrc")))
+
+    res = env.run("konch", "-f", "mykonchrc", expect_error=True)
+    assert res.returncode == 1
+
+    env.run("konch", "allow", "mykonchrc")
+    res = env.run("konch", "-f", "mykonchrc", expect_error=False)
+    assert res.returncode == 0
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_allow_file_not_found(env, request):
+    res = env.run("konch", "allow", "notfound", expect_stderr=True, expect_error=True)
+    assert "does not exist" in res.stderr
+    assert res.returncode == 1
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_file_blocked_if_changed(env, request):
+    env.writefile(".konchrc", content=b"import konch")
+    request.addfinalizer(lambda: os.remove(os.path.join(env.base_path, ".konchrc")))
+    env.run("konch", "allow")
+    res = env.run("konch")
+    assert res.returncode == 0
+
+    env.writefile(".konchrc", content=b"import konch as k")
+    res = env.run("konch", expect_stderr=True, expect_error=True)
+    assert "changed" in res.stderr
+    assert res.returncode == 1
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_deny_file(env, request):
+    env.writefile(".konchrc", content=b"import konch")
+    request.addfinalizer(lambda: os.remove(os.path.join(env.base_path, ".konchrc")))
+    env.run("konch", "allow")
+    res = env.run("konch")
+    assert res.returncode == 0
+
+    env.run("konch", "deny")
+    res = env.run("konch", expect_stderr=True, expect_error=True)
+    assert "blocked" in res.stderr
+    assert res.returncode == 1
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_deny_file_not_found(env, request):
+    res = env.run("konch", "deny", "notfound", expect_stderr=True, expect_error=True)
+    assert "does not exist" in res.stderr
     assert res.returncode == 1
 
 
@@ -225,9 +293,9 @@ def test_default_banner(env):
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
 def test_config_file_not_found(env):
-    res = env.run("konch", "-f", "notfound", expect_stderr=True)
-    assert "not found" in res.stderr
-    assert res.returncode == 0
+    res = env.run("konch", "-f", "notfound", expect_stderr=True, expect_error=True)
+    assert '"notfound" not found' in res.stderr
+    assert res.returncode == 1
 
 
 TEST_CONFIG = """
@@ -246,11 +314,9 @@ def fileenv(request, env):
     with open(fpath, "w") as fp:
         fp.write(TEST_CONFIG)
 
-    def finalize():
-        os.remove(fpath)
-
-    request.addfinalizer(finalize)
-    return env
+    env.run("konch", "allow", fpath)
+    yield env
+    os.remove(fpath)
 
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
@@ -315,11 +381,9 @@ def names_env(request, env):
     with open(fpath, "w") as fp:
         fp.write(TEST_CONFIG_WITH_NAMES)
 
-    def finalize():
-        os.remove(fpath)
-
-    request.addfinalizer(finalize)
-    return env
+    env.run("konch", "allow", fpath)
+    yield env
+    os.remove(fpath)
 
 
 @pytest.fixture
@@ -328,28 +392,21 @@ def setup_env(request, env):
     with open(fpath, "w") as fp:
         fp.write(TEST_CONFIG_WITH_SETUP_AND_TEARDOWN)
 
-    def finalize():
-        os.remove(fpath)
-
-    request.addfinalizer(finalize)
-    return env
+    env.run("konch", "allow", fpath)
+    yield env
+    os.remove(fpath)
 
 
 @pytest.fixture
 def folderenv(request, env):
     folder = os.path.abspath(os.path.join(env.base_path, "testdir"))
     os.makedirs(folder)
-
-    def finalize():
-        os.removedirs(folder)
-
-    request.addfinalizer(finalize)
-    return env
+    yield env
+    os.removedirs(folder)
 
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
 def test_default_config(names_env):
-    # Explicitly specify ipython shell because test isn't compatible with ptpython
     res = names_env.run("konch", expect_stderr=True)
     assert_in_output("Default", res)
     assert_in_output("foo", res)
