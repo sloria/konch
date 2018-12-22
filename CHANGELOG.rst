@@ -13,6 +13,7 @@ Features:
   Thanks `@hartwork <https://github.com/hartwork>`_ for the suggestion.
 - Allow customizing the editor to use for ``konch edit`` via the
   ``KONCH_EDITOR`` environment variable.
+- ``konch init`` only adds the encoding pragma (``# -*- coding: utf-8 -*-\n``) on Python 2.
 
 Bug fixes:
 

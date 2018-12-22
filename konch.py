@@ -178,27 +178,30 @@ class AuthFile(object):
 CONFIG_FILE = ".konchrc"
 DEFAULT_CONFIG_FILE = os.path.join(_get_home_directory(), ".konchrc.default")
 
-INIT_TEMPLATE = """# -*- coding: utf-8 -*-
-# vi: set ft=python :
+INIT_TEMPLATE = """{}# vi: set ft=python :
 
 import konch
 
 # Available options:
-#   'context', 'banner', 'shell', 'prompt', 'output',
-#   'context_format', 'ipy_extensions', 'ipy_autoreload',
-#   'ipy_colors', 'ipy_highlighting_style'
-konch.config({
-    'context': {
-        'speak': konch.speak
-    }
-})
+#   "context", "banner", "shell", "prompt", "output",
+#   "context_format", "ipy_extensions", "ipy_autoreload",
+#   "ipy_colors", "ipy_highlighting_style"
+konch.config({{
+    "context": {{
+        "speak": konch.speak,
+    }}
+}})
+
 
 def setup():
     pass
 
+
 def teardown():
     pass
-"""
+""".format(
+    "# -*- coding: utf-8 -*-\n" if PY2 else ""
+)
 
 
 def _full_formatter(context):
