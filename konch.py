@@ -7,6 +7,8 @@ Usage:
   konch init
   konch init [<config_file>] [-d]
   konch edit [-d]
+  konch allow [<config_file>] [-d]
+  konch deny [<config_file>] [-d]
   konch [--name=<name>] [-d]
   konch [--name=<name>] [--file=<file>] [--shell=<shell_name>] [-d]
 
@@ -27,9 +29,12 @@ Options:
 """
 
 from __future__ import unicode_literals, print_function
-from collections import Iterable
 import code
+import codecs
+import errno
+import hashlib
 import imp
+import json
 import logging
 import os
 import random
@@ -46,8 +51,11 @@ __license__ = "MIT"
 PY2 = int(sys.version_info[0]) == 2
 if PY2:
     basestring = basestring  # noqa: F821
+    FileNotFoundError = IOError
+    from collections import Iterable
 else:
     basestring = (str, bytes)
+    from collections.abc import Iterable
 
 logger = logging.getLogger(__name__)
 
@@ -58,12 +66,117 @@ BANNER_TEMPLATE = """{version}
 """
 
 
-def __get_home_directory():
+class KonchError(Exception):
+    pass
+
+
+class ShellNotAvailableError(KonchError):
+    pass
+
+
+class KonchrcNotAuthorizedError(KonchError):
+    pass
+
+
+class KonchrcChangedError(KonchrcNotAuthorizedError):
+    pass
+
+
+def _get_home_directory():
     return os.path.expanduser("~")
 
 
+def _mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as error:
+        if error.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
+
+class AuthFile(object):
+    def __init__(self, data):
+        self.data = data
+
+    def __repr__(self):
+        return "AuthFile({!r})".format(self.data)
+
+    @classmethod
+    def load(cls):
+        filepath = cls.get_path()
+        try:
+            with codecs.open(filepath, "r", "utf-8") as fp:
+                data = json.load(fp)
+        except FileNotFoundError:
+            data = {}
+        except json.JSONDecodeError as error:
+            # File exists but is empty
+            if error.doc.strip() == "":
+                data = {}
+            else:
+                raise
+        return cls(data)
+
+    def allow(self, filepath):
+        self.data[os.path.abspath(filepath)] = self._hash_file(filepath)
+
+    def deny(self, filepath):
+        if not os.path.exists(filepath):
+            raise FileNotFoundError("{} not found".format(filepath))
+        try:
+            del self.data[os.path.abspath(filepath)]
+        except KeyError:
+            pass
+
+    def check(self, filepath):
+        if os.path.abspath(filepath) not in self.data:
+            raise KonchrcNotAuthorizedError
+        else:
+            file_hash = self._hash_file(filepath)
+            if file_hash != self.data[os.path.abspath(filepath)]:
+                raise KonchrcChangedError
+        return True
+
+    def save(self):
+        filepath = self.get_path()
+        _mkdir_p(os.path.dirname(filepath))
+        with codecs.open(filepath, "w", "utf-8") as fp:
+            json.dump(self.data, fp)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if not exc_type:
+            self.save()
+
+    @staticmethod
+    def get_path():
+        if "KONCH_AUTH_FILE" in os.environ:
+            return os.environ["KONCH_AUTH_FILE"]
+        elif "XDG_DATA_HOME" in os.environ:
+            return os.path.join(os.environ["XDG_DATA_HOME"], "konch_auth")
+        else:
+            return os.path.join(_get_home_directory(), ".local", "share", "konch_auth")
+
+    @staticmethod
+    def _hash_file(filepath):
+        # https://stackoverflow.com/a/22058673/1157536
+        BUF_SIZE = 65536  # read in 64kb chunks
+        sha1 = hashlib.sha1()
+        with codecs.open(filepath, "rb") as f:
+            while True:
+                data = f.read(BUF_SIZE)
+                if not data:
+                    break
+                sha1.update(data)
+        return sha1.hexdigest()
+
+
 CONFIG_FILE = ".konchrc"
-DEFAULT_CONFIG_FILE = os.path.join(__get_home_directory(), ".konchrc.default")
+DEFAULT_CONFIG_FILE = os.path.join(_get_home_directory(), ".konchrc.default")
 
 INIT_TEMPLATE = """# -*- coding: utf-8 -*-
 # vi: set ft=python :
@@ -453,14 +566,6 @@ class AutoShell(Shell):
         return shell.start()
 
 
-class KonchError(Exception):
-    pass
-
-
-class ShellNotAvailableError(KonchError):
-    pass
-
-
 SHELL_MAP = {
     "ipy": IPythonShell,
     "ipython": IPythonShell,
@@ -570,8 +675,7 @@ def start(
 ):
     """Start up the konch shell. Takes the same parameters as Shell.__init__.
     """
-    logger.debug("Using shell...")
-    logger.debug(shell)
+    logger.debug("Using shell: {!r}".format(shell))
     if banner is None:
         banner = speak()
     # Default to global config
@@ -644,9 +748,30 @@ def use_file(filename):
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
     """
-    # First update _cfg by executing the config file
     config_file = filename or resolve_path(CONFIG_FILE)
+    if config_file and not os.path.exists(config_file):
+        print('"{}" not found.'.format(filename), file=sys.stderr)
+        sys.exit(1)
     if config_file and os.path.exists(config_file):
+        with AuthFile.load() as authfile:
+            try:
+                authfile.check(config_file)
+            except KonchrcChangedError:
+                print(
+                    '"{}" has changed since you last used it. '
+                    "Verify the file's contents and run `konch allow` "
+                    "to approve it.".format(config_file),
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+            except KonchrcNotAuthorizedError:
+                print(
+                    '"{}" is blocked. Verify the file\'s '
+                    "contents and run `konch allow` to approve it.".format(config_file),
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+
         logger.info("Using {0}".format(config_file))
         # Ensure that relative imports are possible
         __ensure_directory_in_path(config_file)
@@ -674,7 +799,7 @@ def resolve_path(filename):
     """
     current = os.getcwd()
     # Stop search at home directory
-    sentinel_dir = os.path.abspath(os.path.join(__get_home_directory(), ".."))
+    sentinel_dir = os.path.abspath(os.path.join(_get_home_directory(), ".."))
     while current != sentinel_dir:
         target = os.path.join(current, filename)
         if os.path.exists(target):
@@ -686,7 +811,7 @@ def resolve_path(filename):
 
 
 def get_editor():
-    for key in "VISUAL", "EDITOR":
+    for key in "KONCH_EDITOR", "VISUAL", "EDITOR":
         ret = os.environ.get(key)
         if ret:
             return ret
@@ -709,9 +834,12 @@ def edit_file(filename, editor=None):
     except OSError as err:
         print("{0}: Editing failed: {1}".format(editor, err), file=sys.stderr)
         sys.exit(1)
+    else:
+        with AuthFile.load() as authfile:
+            authfile.allow(filename)
 
 
-def init_config(config_file=None):
+def init_config(config_file):
     if not os.path.exists(config_file):
         init_template = INIT_TEMPLATE
         if os.path.exists(DEFAULT_CONFIG_FILE):  # use ~/.konchrc.default if it exists
@@ -719,6 +847,8 @@ def init_config(config_file=None):
                 init_template = fp.read()
         with open(config_file, "w") as fp:
             fp.write(init_template)
+        with AuthFile.load() as authfile:
+            authfile.allow(config_file)
         print(
             "Initialized konch. Edit {0} to your needs and run `konch` "
             "to start an interactive session.".format(config_file)
@@ -735,6 +865,46 @@ def edit_config(config_file=None, editor=None):
     filename = config_file or resolve_path(CONFIG_FILE)
     print('Editing file: "{0}"'.format(filename))
     edit_file(filename, editor=editor)
+    sys.exit(0)
+
+
+def allow_config(config_file=None):
+    if config_file and os.path.isdir(config_file):
+        filename = os.path.join(config_file, CONFIG_FILE)
+    else:
+        filename = config_file or resolve_path(CONFIG_FILE)
+    if not filename:
+        print("No config file found.", file=sys.stderr)
+        sys.exit(1)
+    print('Authorizing "{}"...'.format(filename))
+    with AuthFile.load() as authfile:
+        try:
+            authfile.allow(filename)
+        except FileNotFoundError:
+            print('"{}" does not exist.'.format(filename), file=sys.stderr)
+            sys.exit(1)
+        else:
+            print("Done. You can now start a shell with `konch`.")
+    sys.exit(0)
+
+
+def deny_config(config_file=None):
+    if config_file and os.path.isdir(config_file):
+        filename = os.path.join(config_file, CONFIG_FILE)
+    else:
+        filename = config_file or resolve_path(CONFIG_FILE)
+    if not filename:
+        print("No config file found.", file=sys.stderr)
+        sys.exit(1)
+    print('Removing authorization for "{}"...'.format(filename))
+    with AuthFile.load() as authfile:
+        try:
+            authfile.deny(filename)
+        except FileNotFoundError:
+            print("{} does not exist.".format(filename), file=sys.stderr)
+            sys.exit(1)
+        else:
+            print("Done.")
     sys.exit(0)
 
 
@@ -760,6 +930,10 @@ def main():
         init_config(config_file)
     elif args["edit"]:
         edit_config(args["<config_file>"])
+    elif args["allow"]:
+        allow_config(args["<config_file>"])
+    elif args["deny"]:
+        deny_config(args["<config_file>"])
 
     mod = use_file(args["--file"])
     if hasattr(mod, "setup"):

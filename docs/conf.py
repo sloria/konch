@@ -44,20 +44,3 @@ html_sidebars = {
     "index": ["side-primary.html", "searchbox.html"],
     "**": ["side-secondary.html", "localtoc.html", "relations.html", "searchbox.html"],
 }
-
-latex_documents = [
-    ("index", "konch.tex", u"konch Documentation", u"Steven Loria", "manual")
-]
-man_pages = [("index", "konch", u"konch Documentation", [u"Steven Loria"], 1)]
-
-texinfo_documents = [
-    (
-        "index",
-        "konch",
-        u"konch Documentation",
-        u"Steven Loria",
-        "konch",
-        "HTTP Request Parsing for Pirates",
-        "",
-    )
-]
