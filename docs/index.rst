@@ -2,6 +2,10 @@
 konch
 *****
 
+
+Release v\ |version|.
+
+:doc:`changelog <changelog>` //
 `github <http://github.com/sloria/konch>`_ //
 `pypi <http://pypi.python.org/pypi/konch>`_ //
 `issues <http://github.com/sloria/konch/issues>`_

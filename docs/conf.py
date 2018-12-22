@@ -10,7 +10,9 @@ sys.path.append(os.path.abspath("_themes"))
 
 # -- General configuration -----------------------------------------------------
 
-extensions = ["sphinx.ext.autodoc"]
+extensions = ["sphinx.ext.autodoc", "sphinx_issues"]
+
+issues_github_path = "sloria/doitlive"
 
 templates_path = ["_templates"]
 

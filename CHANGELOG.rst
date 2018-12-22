@@ -9,8 +9,7 @@ Features:
 
 - Config files must be approved before executing them.
   Use ``konch allow`` to authorize a config file. This is a security mechanism to prevent
-  executing untrusted Python code `#47 <https://github.com/sloria/konch/issues/47>`_.
-  Thanks `@hartwork <https://github.com/hartwork>`_ for the suggestion.
+  executing untrusted Python code (:issue:`47`). Thanks :user:`hartwork` for the suggestion.
 - Allow customizing the editor to use for ``konch edit`` via the
   ``KONCH_EDITOR`` environment variable.
 - ``konch init`` only adds the encoding pragma (``# -*- coding: utf-8 -*-\n``) on Python 2.
@@ -18,6 +17,9 @@ Features:
 
 Bug fixes:
 
+- Respect ptpython's user config file (``~/.ptpython/config.py``)
+  (:issue:`16`). Thanks :user:`nasyxx` for reporting and thanks
+  :user:`pycadelic` for helping out with the implementation.
 - Address a ``DeprecationWarning`` about importing from ``collections.abc`` on Python 3.7.
 
 2.5.0 (2018-11-04)
