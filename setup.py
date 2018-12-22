@@ -10,13 +10,9 @@ EXTRAS_REQUIRE = {
         'flake8-bugbear==18.8.0; python_version >= "3.5"',
         "pre-commit==1.13.0",
     ],
-    "docs": ["sphinx"],
 }
 EXTRAS_REQUIRE["dev"] = (
-    EXTRAS_REQUIRE["tests"]
-    + EXTRAS_REQUIRE["lint"]
-    + EXTRAS_REQUIRE["docs"]
-    + ["ptpython", "tox"]
+    EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + ["ptpython", "tox"]
 )
 
 
