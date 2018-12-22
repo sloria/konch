@@ -46,7 +46,7 @@ setup(
         "CLI and configuration utility for the Python shell, optimized "
         "for simplicity and productivity."
     ),
-    long_description=(read("README.rst") + "\n\n" + read("CHANGELOG.rst")),
+    long_description=read("README.rst"),
     author="Steven Loria",
     author_email="sloria1@gmail.com",
     url="https://github.com/sloria/konch",
@@ -69,4 +69,9 @@ setup(
     ],
     py_modules=["konch", "docopt"],
     entry_points={"console_scripts": ["konch = konch:main"]},
+    project_urls={
+        "Changelog": "https://konch.readthedocs.io/en/latest/changelog.html",
+        "Issues": "https://github.com/sloria/konch/issues",
+        "Source": "https://github.com/sloria/konch/",
+    },
 )
