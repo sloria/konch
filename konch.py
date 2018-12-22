@@ -467,11 +467,31 @@ class PtPythonShell(Shell):
 
     def start(self):
         try:
-            from ptpython.repl import embed
+            from ptpython.repl import embed, run_config
         except ImportError:
             raise ShellNotAvailableError("PtPython shell not available.")
         print(self.banner)
-        embed(globals=self.context, vi_mode=self.ptpy_vi_mode)
+
+        config_dir = os.path.expanduser("~/.ptpython/")
+
+        # Startup path
+        startup_paths = []
+        if "PYTHONSTARTUP" in os.environ:
+            startup_paths.append(os.environ["PYTHONSTARTUP"])
+
+        # Apply config file
+        def configure(repl):
+            path = os.path.join(config_dir, "config.py")
+            if os.path.exists(path):
+                run_config(repl, path)
+
+        embed(
+            globals=self.context,
+            history_filename=os.path.join(config_dir, "history"),
+            vi_mode=self.ptpy_vi_mode,
+            startup_paths=startup_paths,
+            configure=configure,
+        )
         return None
 
 
@@ -493,9 +513,33 @@ class PtIPythonShell(PtPythonShell):
     def start(self):
         try:
             from ptpython.ipython import embed
+            from ptpython.repl import run_config
             from IPython.terminal.ipapp import load_default_config
+            import six
         except ImportError:
             raise ShellNotAvailableError("PtIPython shell not available.")
+
+        config_dir = os.path.expanduser("~/.ptpython/")
+
+        # Apply config file
+        def configure(repl):
+            path = os.path.join(config_dir, "config.py")
+            if os.path.exists(path):
+                run_config(repl, path)
+
+        # Startup path
+        startup_paths = []
+        if "PYTHONSTARTUP" in os.environ:
+            startup_paths.append(os.environ["PYTHONSTARTUP"])
+        # exec scripts from startup paths
+        for path in startup_paths:
+            if os.path.exists(path):
+                with open(path, "rb") as f:
+                    code = compile(f.read(), path, "exec")
+                    six.exec_(code, self.context, self.context)
+            else:
+                print("File not found: {}\n\n".format(path))
+                sys.exit(1)
 
         ipy_config = load_default_config()
         ipy_config.InteractiveShellEmbed = ipy_config.TerminalInteractiveShell
@@ -503,6 +547,8 @@ class PtIPythonShell(PtPythonShell):
         configure_ipython_prompt(ipy_config, prompt=self.prompt, output=self.output)
         embed(
             config=ipy_config,
+            configure=configure,
+            history_filename=os.path.join(config_dir, "history"),
             user_ns=self.context,
             header=self.banner,
             vi_mode=self.ptpy_vi_mode,
