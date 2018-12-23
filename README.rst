@@ -2,19 +2,19 @@
 konch
 =====
 
-.. image:: https://badge.fury.io/py/konch.svg
-    :target: http://badge.fury.io/py/konch
-    :alt: Latest version
+.. image:: https://badgen.net/pypi/v/konch
+  :alt: pypi badge
+  :target: http://badge.fury.io/py/konch
 
-.. image:: https://travis-ci.org/sloria/konch.svg?branch=master
-    :target: https://travis-ci.org/sloria/konch
-    :alt: Travis-CI
+.. image:: https://badgen.net/travis/sloria/konch
+  :alt: travis-ci status
+  :target: https://travis-ci.org/sloria/konch
 
 .. image:: https://readthedocs.org/projects/konch/badge/
    :target: http://konch.readthedocs.io/
    :alt: Documentation
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+.. image:: https://badgen.net/badge/code%20style/black/000
    :target: https://github.com/ambv/black
    :alt: Code style: Black
 
