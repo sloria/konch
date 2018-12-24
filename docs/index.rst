@@ -2,13 +2,16 @@
 konch
 *****
 
+.. container:: release
 
-Release v\ |version|.
+   Release v\ |version|
 
-:doc:`changelog <changelog>` //
-`github <https://github.com/sloria/konch>`_ //
-`pypi <https://pypi.python.org/pypi/konch>`_ //
-`issues <https://github.com/sloria/konch/issues>`_
+.. container:: centered
+
+   :doc:`changelog <changelog>` //
+   `github <https://github.com/sloria/konch>`_ //
+   `pypi <https://pypi.python.org/pypi/konch>`_ //
+   `issues <https://github.com/sloria/konch/issues>`_
 
 
 Configures your Python shell
