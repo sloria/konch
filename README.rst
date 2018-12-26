@@ -4,14 +4,14 @@ konch
 
 .. image:: https://badgen.net/pypi/v/konch
   :alt: pypi badge
-  :target: http://badge.fury.io/py/konch
+  :target: https://badge.fury.io/py/konch
 
 .. image:: https://badgen.net/travis/sloria/konch
   :alt: travis-ci status
   :target: https://travis-ci.org/sloria/konch
 
 .. image:: https://readthedocs.org/projects/konch/badge/
-   :target: http://konch.readthedocs.io/
+   :target: https://konch.readthedocs.io/
    :alt: Documentation
 
 .. image:: https://badgen.net/badge/code%20style/black/000
@@ -31,10 +31,10 @@ Configures your Python shell
 - Automatically load **IPython extensions**
 - Can have multiple configurations per project using **named configs**
 
-.. image:: http://zippy.gfycat.com/EachTerrificChupacabra.gif
+.. image:: https://zippy.gfycat.com/EachTerrificChupacabra.gif
     :alt: Demo
-    :target: http://konch.readthedocs.io
+    :target: https://konch.readthedocs.io
 
 
-`http://konch.readthedocs.io <http://konch.readthedocs.io>`_
-============================================================
+`https://konch.readthedocs.io <https://konch.readthedocs.io>`_
+==============================================================
