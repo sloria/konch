@@ -2,6 +2,11 @@
 Changelog
 *********
 
+3.1.0 (unreleased)
+------------------
+
+- Show preview of unauthorized files.
+
 3.0.0.post0 (2018-12-22)
 ------------------------
 
