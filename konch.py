@@ -50,7 +50,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = "3.0.0.post0"
+__version__ = "3.1.0"
 __author__ = "Steven Loria"
 __license__ = "MIT"
 

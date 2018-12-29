@@ -2,7 +2,7 @@
 Changelog
 *********
 
-3.1.0 (unreleased)
+3.1.0 (2018-12-29)
 ------------------
 
 - Show preview of unauthorized files.
