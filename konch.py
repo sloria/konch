@@ -815,9 +815,17 @@ def use_file(filename):
                 )
                 sys.exit(1)
             except KonchrcNotAuthorizedError:
+                print('"{}" is blocked.\n'.format(config_file), file=sys.stderr)
+                print("*" * 46, file=sys.stderr)
+                print(file=sys.stderr)
+                with codecs.open(config_file, "r", "utf-8") as fp:
+                    for line in fp:
+                        print(line, end="", file=sys.stderr)
+                print(file=sys.stderr)
+                print("*" * 46, file=sys.stderr)
+                print(file=sys.stderr)
                 print(
-                    '"{}" is blocked. Verify the file\'s '
-                    "contents and run `konch allow` to approve it.".format(config_file),
+                    "Verify the file's contents and run `konch allow` to approve it.",
                     file=sys.stderr,
                 )
                 sys.exit(1)
