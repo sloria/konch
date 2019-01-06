@@ -226,12 +226,20 @@ def _short_formatter(context):
     return "\nContext:\n{context}".format(context=context_str)
 
 
-CONTEXT_FORMATTERS = {"full": _full_formatter, "short": _short_formatter}
+def _hide_formatter(context):
+    return ""
+
+
+CONTEXT_FORMATTERS = {
+    "full": _full_formatter,
+    "short": _short_formatter,
+    "hide": _hide_formatter,
+}
 
 
 def format_context(context, formatter="full"):
     """Output the a context dictionary as a string."""
-    if not context or formatter == "hide":
+    if not context:
         return ""
 
     if callable(formatter):
