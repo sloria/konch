@@ -2,7 +2,7 @@
 Changelog
 *********
 
-3.2.0 (unreleased)
+3.2.0 (2019-01-11)
 ------------------
 
 - Show preview when .konchrc file has changed.
