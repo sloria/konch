@@ -807,6 +807,22 @@ def use_file(filename):
     as a module.
     """
     config_file = filename or resolve_path(CONFIG_FILE)
+
+    def preview_unauthorized():
+        print()
+        print("*" * 46, file=sys.stderr)
+        print(file=sys.stderr)
+        with codecs.open(config_file, "r", "utf-8") as fp:
+            for line in fp:
+                print(line, end="", file=sys.stderr)
+        print(file=sys.stderr)
+        print("*" * 46, file=sys.stderr)
+        print(file=sys.stderr)
+        print(
+            "Verify the file's contents and run `konch allow` to approve it.",
+            file=sys.stderr,
+        )
+
     if config_file and not os.path.exists(config_file):
         print('"{}" not found.'.format(filename), file=sys.stderr)
         sys.exit(1)
@@ -816,26 +832,14 @@ def use_file(filename):
                 authfile.check(config_file)
             except KonchrcChangedError:
                 print(
-                    '"{}" has changed since you last used it. '
-                    "Verify the file's contents and run `konch allow` "
-                    "to approve it.".format(config_file),
+                    '"{}" has changed since you last used it.'.format(config_file),
                     file=sys.stderr,
                 )
+                preview_unauthorized()
                 sys.exit(1)
             except KonchrcNotAuthorizedError:
-                print('"{}" is blocked.\n'.format(config_file), file=sys.stderr)
-                print("*" * 46, file=sys.stderr)
-                print(file=sys.stderr)
-                with codecs.open(config_file, "r", "utf-8") as fp:
-                    for line in fp:
-                        print(line, end="", file=sys.stderr)
-                print(file=sys.stderr)
-                print("*" * 46, file=sys.stderr)
-                print(file=sys.stderr)
-                print(
-                    "Verify the file's contents and run `konch allow` to approve it.",
-                    file=sys.stderr,
-                )
+                print('"{}" is blocked.'.format(config_file), file=sys.stderr)
+                preview_unauthorized()
                 sys.exit(1)
 
         logger.info("Using {0}".format(config_file))

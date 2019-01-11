@@ -2,6 +2,11 @@
 Changelog
 *********
 
+3.2.0 (unreleased)
+------------------
+
+- Show preview when .konchrc file has changed.
+
 3.1.0 (2018-12-29)
 ------------------
 
