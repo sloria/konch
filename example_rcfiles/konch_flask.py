@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vi: set ft=python :
 import flask
 from flask import Flask

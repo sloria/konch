@@ -1,20 +1,15 @@
-# -*- coding: utf-8 -*-
 import re
 from setuptools import setup
 
 
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
-    "lint": [
-        "flake8==3.6.0",
-        'flake8-bugbear==18.8.0; python_version >= "3.5"',
-        "pre-commit==1.14.2",
-    ],
+    "lint": ["flake8==3.6.0", "flake8-bugbear==18.8.0", "pre-commit==1.14.2"],
 }
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + ["ptpython", "tox"]
 )
-PYTHON_REQUIRES = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+PYTHON_REQUIRES = ">=3.6"
 
 
 def find_version(fname):
@@ -61,10 +56,7 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Topic :: System :: Shells",
