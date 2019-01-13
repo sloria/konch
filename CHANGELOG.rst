@@ -2,7 +2,7 @@
 Changelog
 *********
 
-3.2.0.post0 (unreleased)
+3.2.0.post0 (2019-01-13)
 ------------------------
 
 - Add ``python_requires`` to PyPI metadata.
