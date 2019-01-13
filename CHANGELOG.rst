@@ -2,6 +2,13 @@
 Changelog
 *********
 
+3.2.0.post0 (unreleased)
+------------------------
+
+- Add ``python_requires`` to PyPI metadata.
+
+This will be the last version to support Python 2.
+
 3.2.0 (2019-01-11)
 ------------------
 

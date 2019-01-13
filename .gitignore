@@ -43,4 +43,4 @@ output/*/index.html
 docs/_build
 README.html
 
-sandbox
+.mypy_cache

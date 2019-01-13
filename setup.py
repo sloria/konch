@@ -14,6 +14,7 @@ EXTRAS_REQUIRE = {
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + ["ptpython", "tox"]
 )
+PYTHON_REQUIRES = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 
 def find_version(fname):
@@ -52,6 +53,7 @@ setup(
     url="https://github.com/sloria/konch",
     install_requires=[],
     extras_require=EXTRAS_REQUIRE,
+    python_requires=PYTHON_REQUIRES,
     license="MIT",
     zip_safe=False,
     keywords="konch shell custom ipython bpython repl ptpython ptipython",
