@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """konch: Customizes your Python shell.
 
 Usage:
@@ -35,6 +34,7 @@ Environment variables:
 """
 
 from __future__ import unicode_literals, print_function
+from collections.abc import Iterable
 import code
 import codecs
 import errno
@@ -51,17 +51,6 @@ import warnings
 from docopt import docopt
 
 __version__ = "3.2.0.post0"
-__author__ = "Steven Loria"
-__license__ = "MIT"
-
-PY2 = int(sys.version_info[0]) == 2
-if PY2:
-    basestring = basestring  # noqa: F821
-    FileNotFoundError = IOError
-    from collections import Iterable
-else:
-    basestring = (str, bytes)
-    from collections.abc import Iterable
 
 logger = logging.getLogger(__name__)
 
@@ -184,7 +173,7 @@ class AuthFile(object):
 CONFIG_FILE = ".konchrc"
 DEFAULT_CONFIG_FILE = os.path.join(_get_home_directory(), ".konchrc.default")
 
-INIT_TEMPLATE = """{}# vi: set ft=python :
+INIT_TEMPLATE = """# vi: set ft=python :
 
 import konch
 
@@ -192,11 +181,11 @@ import konch
 #   "context", "banner", "shell", "prompt", "output",
 #   "context_format", "ipy_extensions", "ipy_autoreload",
 #   "ipy_colors", "ipy_highlighting_style"
-konch.config({{
-    "context": {{
+konch.config({
+    "context": {
         "speak": konch.speak,
-    }}
-}})
+    }
+})
 
 
 def setup():
@@ -205,9 +194,7 @@ def setup():
 
 def teardown():
     pass
-""".format(
-    "# -*- coding: utf-8 -*-\n" if PY2 else ""
-)
+"""
 
 
 def _full_formatter(context):
@@ -350,7 +337,7 @@ def configure_ipython_prompt(config, prompt=None, output=None):
             def in_prompt_tokens(self, *args, **kwargs):
                 if prompt is None:
                     return super(CustomPrompt, self).in_prompt_tokens(*args, **kwargs)
-                if isinstance(prompt, basestring):
+                if isinstance(prompt, (str, bytes)):
                     return [(Token.Prompt, prompt)]
                 else:
                     return prompt
@@ -358,7 +345,7 @@ def configure_ipython_prompt(config, prompt=None, output=None):
             def out_prompt_tokens(self, *args, **kwargs):
                 if output is None:
                     return super(CustomPrompt, self).out_prompt_tokens(*args, **kwargs)
-                if isinstance(output, basestring):
+                if isinstance(output, (str, bytes)):
                     return [(Token.OutPrompt, output)]
                 else:
                     return prompt
@@ -776,7 +763,7 @@ def named_config(name, config_dict):
     """
     names = (
         name
-        if isinstance(name, Iterable) and not isinstance(name, basestring)
+        if isinstance(name, Iterable) and not isinstance(name, (str, bytes))
         else [name]
     )
     for each in names:

@@ -2,10 +2,9 @@
 
 ## Setting up for development
 
-* Create and activate a new virtual environment
+* Create and activate a new Python 3 virtual environment
 * `pip install -e '.[dev]'`
-* (Optional but recommended) If you're using a Python 3.6 virtual
-    environment, install the pre-commit hooks, which will
+* (Optional but recommended) Install the pre-commit hooks, which will
     format and lint your git staged files:
 
 
@@ -32,7 +31,7 @@ tox -e lint
 tox -e watch-docs
 ```
 
-* (Optional) To run tests on Python 2.7, 3.5, 3.6, and 3.7 virtual environments (must have each interpreter installed):
+* (Optional) To run tests on all supported Python versions (must have each interpreter installed):
 
 ```
 tox
