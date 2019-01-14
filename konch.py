@@ -50,7 +50,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = "3.2.0.post0"
+__version__ = "4.0.0.dev0"
 
 logger = logging.getLogger(__name__)
 

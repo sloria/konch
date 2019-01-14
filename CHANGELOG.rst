@@ -2,6 +2,13 @@
 Changelog
 *********
 
+4.0.0 (unreleased)
+------------------
+
+Other changes:
+
+- Python 2 is no longer supported. Python>=3.6 is officially supported.
+
 3.2.0.post0 (2019-01-13)
 ------------------------
 
