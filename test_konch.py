@@ -21,9 +21,7 @@ def assert_in_output(s, res, message=None):
     """Assert that a string is in either stdout or std err.
     Included because banners are sometimes outputted to stderr.
     """
-    assert any(
-        [s in res.stdout, s in res.stderr]
-    ), message or "{0} not in output".format(s)
+    assert any([s in res.stdout, s in res.stderr]), message or f"{s} not in output"
 
 
 @pytest.fixture
@@ -45,7 +43,7 @@ def test_make_banner_custom():
 
 
 def test_full_formatter():
-    class Foo(object):
+    class Foo:
         def __repr__(self):
             return "<Foo>"
 
@@ -58,7 +56,7 @@ def test_full_formatter():
 
 
 def test_short_formatter():
-    class Foo(object):
+    class Foo:
         def __repr__(self):
             return "<Foo>"
 

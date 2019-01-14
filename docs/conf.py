@@ -18,8 +18,8 @@ templates_path = ["_templates"]
 source_suffix = ".rst"
 master_doc = "index"
 
-project = u"konch"
-copyright = u"2014-{0:%Y}".format(dt.datetime.utcnow())
+project = "konch"
+copyright = "2014-{:%Y}".format(dt.datetime.utcnow())
 
 version = release = konch.__version__
 

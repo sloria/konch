@@ -97,12 +97,12 @@ def _mkdir_p(path: str) -> None:
             raise
 
 
-class AuthFile(object):
+class AuthFile:
     def __init__(self, data: typing.Dict[str, str]) -> None:
         self.data = data
 
     def __repr__(self) -> str:
-        return "AuthFile({!r})".format(self.data)
+        return f"AuthFile({self.data!r})"
 
     @classmethod
     def load(cls) -> "AuthFile":
@@ -125,7 +125,7 @@ class AuthFile(object):
 
     def deny(self, filepath: str) -> None:
         if not os.path.exists(filepath):
-            raise FileNotFoundError("{} not found".format(filepath))
+            raise FileNotFoundError(f"{filepath} not found")
         try:
             del self.data[os.path.abspath(filepath)]
         except KeyError:
@@ -218,12 +218,12 @@ def _full_formatter(context: Context) -> str:
             for name, obj in sorted(context.items(), key=lambda i: i[0])
         ]
     )
-    return "\nContext:\n{context}".format(context=context_str)
+    return f"\nContext:\n{context_str}"
 
 
 def _short_formatter(context: Context) -> str:
     context_str = ", ".join(sorted(context.keys()))
-    return "\nContext:\n{context}".format(context=context_str)
+    return f"\nContext:\n{context_str}"
 
 
 def _hide_formatter(context: Context) -> str:
@@ -250,7 +250,7 @@ def format_context(
         if formatter in CONTEXT_FORMATTERS:
             formatter_func = CONTEXT_FORMATTERS[formatter]
         else:
-            raise ValueError('Invalid context format: "{0}"'.format(formatter))
+            raise ValueError(f'Invalid context format: "{formatter}"')
     return formatter_func(context)
 
 
@@ -274,10 +274,10 @@ def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return dict((obj.__name__, obj) for obj in context_list)
+    return {obj.__name__: obj for obj in context_list}
 
 
-class Shell(object):
+class Shell:
     """Base shell class.
 
     :param dict context: Dictionary, list, or callable (that returns a `dict` or `list`)
@@ -299,7 +299,7 @@ class Shell(object):
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
         context_format: ContextFormat = "full",
-        **kwargs: typing.Any
+        **kwargs: typing.Any,
     ) -> None:
         self.context = context() if callable(context) else context
         self.context_format = context_format
@@ -358,7 +358,7 @@ def configure_ipython_prompt(
         class CustomPrompt(IPython.terminal.prompts.Prompts):
             def in_prompt_tokens(self, *args, **kwargs):
                 if prompt is None:
-                    return super(CustomPrompt, self).in_prompt_tokens(*args, **kwargs)
+                    return super().in_prompt_tokens(*args, **kwargs)
                 if isinstance(prompt, (str, bytes)):
                     return [(Token.Prompt, prompt)]
                 else:
@@ -366,7 +366,7 @@ def configure_ipython_prompt(
 
             def out_prompt_tokens(self, *args, **kwargs):
                 if output is None:
-                    return super(CustomPrompt, self).out_prompt_tokens(*args, **kwargs)
+                    return super().out_prompt_tokens(*args, **kwargs)
                 if isinstance(output, (str, bytes)):
                     return [(Token.OutPrompt, output)]
                 else:
@@ -399,7 +399,7 @@ class IPythonShell(Shell):
         ipy_colors: typing.Optional[str] = None,
         ipy_highlighting_style: typing.Optional[str] = None,
         *args: typing.Any,
-        **kwargs: typing.Any
+        **kwargs: typing.Any,
     ):
         self.ipy_extensions = ipy_extensions
         self.ipy_autoreload = ipy_autoreload
@@ -442,12 +442,10 @@ class IPythonShell(Shell):
                 mode = self.ipy_autoreload
             else:
                 mode = 2
-            logger.debug(
-                "Initializing IPython autoreload in mode {mode}".format(mode=mode)
-            )
+            logger.debug(f"Initializing IPython autoreload in mode {mode}")
             exec_lines = [
                 "import konch as __konch",
-                "__konch.IPythonShell.init_autoreload({mode})".format(mode=mode),
+                f"__konch.IPythonShell.init_autoreload({mode})",
             ]
         else:
             exec_lines = []
@@ -537,7 +535,6 @@ class PtIPythonShell(PtPythonShell):
             from ptpython.ipython import embed
             from ptpython.repl import run_config
             from IPython.terminal.ipapp import load_default_config
-            import six
         except ImportError:
             raise ShellNotAvailableError("PtIPython shell not available.")
 
@@ -558,9 +555,9 @@ class PtIPythonShell(PtPythonShell):
             if os.path.exists(path):
                 with open(path, "rb") as f:
                     code = compile(f.read(), path, "exec")
-                    six.exec_(code, self.context, self.context)
+                    exec(code, self.context, self.context)
             else:
-                print("File not found: {}\n\n".format(path))
+                print(f"File not found: {path}\n\n")
                 sys.exit(1)
 
         ipy_config = load_default_config()
@@ -705,23 +702,23 @@ class Config(dict):
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
         context_format: str = "full",
-        **kwargs: typing.Any
+        **kwargs: typing.Any,
     ) -> None:
         ctx = Config.transform_val(context) or {}
-        super(Config, self).__init__(
+        super().__init__(
             context=ctx,
             banner=banner,
             shell=shell,
             prompt=prompt,
             output=output,
             context_format=context_format,
-            **kwargs
+            **kwargs,
         )
 
     def __setitem__(self, key: typing.Any, value: typing.Any) -> None:
         if key == "context":
             value = Config.transform_val(value)
-        super(Config, self).__setitem__(key, value)
+        super().__setitem__(key, value)
 
     @staticmethod
     def transform_val(val: typing.Any) -> typing.Any:
@@ -746,11 +743,11 @@ def start(
     prompt: typing.Optional[str] = None,
     output: typing.Optional[str] = None,
     context_format: str = "full",
-    **kwargs: typing.Any
+    **kwargs: typing.Any,
 ) -> None:
     """Start up the konch shell. Takes the same parameters as Shell.__init__.
     """
-    logger.debug("Using shell: {!r}".format(shell))
+    logger.debug(f"Using shell: {shell!r}")
     if banner is None:
         banner = speak()
     # Default to global config
@@ -769,7 +766,7 @@ def start(
         prompt=prompt_,
         output=output_,
         context_format=context_format_,
-        **kwargs
+        **kwargs,
     ).start()
 
 
@@ -780,7 +777,7 @@ def config(config_dict: typing.Mapping) -> Config:
     :param dict config_dict: Dict that may contain 'context', 'banner', and/or
         'shell' (default shell class to use).
     """
-    logger.debug("Updating with {0}".format(config_dict))
+    logger.debug(f"Updating with {config_dict}")
     _cfg.update(config_dict)
     return _cfg
 
@@ -815,7 +812,7 @@ def __ensure_directory_in_path(filename: str) -> None:
     """
     directory = get_file_directory(filename)
     if directory not in sys.path:
-        logger.debug("Adding {0} to sys.path".format(directory))
+        logger.debug(f"Adding {directory} to sys.path")
         sys.path.insert(0, directory)
 
 
@@ -843,7 +840,7 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
         )
 
     if config_file and not os.path.exists(config_file):
-        print('"{}" not found.'.format(filename), file=sys.stderr)
+        print(f'"{filename}" not found.', file=sys.stderr)
         sys.exit(1)
     if config_file and os.path.exists(config_file):
         with AuthFile.load() as authfile:
@@ -851,17 +848,17 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
                 authfile.check(config_file)
             except KonchrcChangedError:
                 print(
-                    '"{}" has changed since you last used it.'.format(config_file),
+                    f'"{config_file}" has changed since you last used it.',
                     file=sys.stderr,
                 )
                 preview_unauthorized()
                 sys.exit(1)
             except KonchrcNotAuthorizedError:
-                print('"{}" is blocked.'.format(config_file), file=sys.stderr)
+                print(f'"{config_file}" is blocked.', file=sys.stderr)
                 preview_unauthorized()
                 sys.exit(1)
 
-        logger.info("Using {0}".format(config_file))
+        logger.info(f"Using {config_file}")
         # Ensure that relative imports are possible
         __ensure_directory_in_path(config_file)
         mod = None
@@ -879,7 +876,7 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
     if not config_file:
         warnings.warn("No config file found.")
     else:
-        warnings.warn('"{fname}" not found.'.format(fname=config_file))
+        warnings.warn(f'"{config_file}" not found.')
     return None
 
 
@@ -921,13 +918,13 @@ def edit_file(
         sys.exit(1)
     editor = editor or get_editor()
     try:
-        result = subprocess.Popen('{0} "{1}"'.format(editor, filename), shell=True)
+        result = subprocess.Popen(f'{editor} "{filename}"', shell=True)
         exit_code = result.wait()
         if exit_code != 0:
-            print("{0}: Editing failed!".format(editor), file=sys.stderr)
+            print(f"{editor}: Editing failed!", file=sys.stderr)
             sys.exit(1)
     except OSError as err:
-        print("{0}: Editing failed: {1}".format(editor, err), file=sys.stderr)
+        print(f"{editor}: Editing failed: {err}", file=sys.stderr)
         sys.exit(1)
     else:
         with AuthFile.load() as authfile:
@@ -945,14 +942,12 @@ def init_config(config_file: str) -> typing.NoReturn:
         with AuthFile.load() as authfile:
             authfile.allow(config_file)
         print(
-            "Initialized konch. Edit {0} to your needs and run `konch` "
+            "Initialized konch. Edit {} to your needs and run `konch` "
             "to start an interactive session.".format(config_file)
         )
         sys.exit(0)
     else:
-        print(
-            "{0} already exists in this directory.".format(config_file), file=sys.stderr
-        )
+        print(f"{config_file} already exists in this directory.", file=sys.stderr)
         sys.exit(1)
 
 
@@ -960,7 +955,7 @@ def edit_config(
     config_file: typing.Optional[str] = None, editor: typing.Optional[str] = None
 ) -> typing.NoReturn:
     filename = config_file or resolve_path(CONFIG_FILE)
-    print('Editing file: "{0}"'.format(filename))
+    print(f'Editing file: "{filename}"')
     edit_file(filename, editor=editor)
     sys.exit(0)
 
@@ -974,12 +969,12 @@ def allow_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
     if not filename:
         print("No config file found.", file=sys.stderr)
         sys.exit(1)
-    print('Authorizing "{}"...'.format(filename))
+    print(f'Authorizing "{filename}"...')
     with AuthFile.load() as authfile:
         try:
             authfile.allow(filename)
         except FileNotFoundError:
-            print('"{}" does not exist.'.format(filename), file=sys.stderr)
+            print(f'"{filename}" does not exist.', file=sys.stderr)
             sys.exit(1)
         else:
             print("Done. You can now start a shell with `konch`.")
@@ -995,12 +990,12 @@ def deny_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
     if not filename:
         print("No config file found.", file=sys.stderr)
         sys.exit(1)
-    print('Removing authorization for "{}"...'.format(filename))
+    print(f'Removing authorization for "{filename}"...')
     with AuthFile.load() as authfile:
         try:
             authfile.deny(filename)
         except FileNotFoundError:
-            print("{} does not exist.".format(filename), file=sys.stderr)
+            print(f"{filename} does not exist.", file=sys.stderr)
             sys.exit(1)
         else:
             print("Done.")
@@ -1051,7 +1046,7 @@ def main() -> typing.NoReturn:
     shell_name = args["--shell"]
     if shell_name:
         config_dict["shell"] = SHELL_MAP.get(shell_name.lower(), AutoShell)
-    logger.debug("Starting with config {0}".format(config_dict))
+    logger.debug(f"Starting with config {config_dict}")
     start(**config_dict)
 
     if hasattr(mod, "teardown"):
