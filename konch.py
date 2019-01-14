@@ -46,6 +46,8 @@ import os
 import random
 import subprocess
 import sys
+import typing
+import types
 import warnings
 
 from docopt import docopt
@@ -59,6 +61,10 @@ BANNER_TEMPLATE = """{version}
 {text}
 {context}
 """
+
+Context = typing.Mapping[str, typing.Any]
+Formatter = typing.Callable[[Context], str]
+ContextFormat = typing.Union[str, Formatter]
 
 
 class KonchError(Exception):
@@ -77,11 +83,11 @@ class KonchrcChangedError(KonchrcNotAuthorizedError):
     pass
 
 
-def _get_home_directory():
+def _get_home_directory() -> str:
     return os.path.expanduser("~")
 
 
-def _mkdir_p(path):
+def _mkdir_p(path: str) -> None:
     try:
         os.makedirs(path)
     except OSError as error:
@@ -92,14 +98,14 @@ def _mkdir_p(path):
 
 
 class AuthFile(object):
-    def __init__(self, data):
+    def __init__(self, data: typing.Dict[str, str]) -> None:
         self.data = data
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "AuthFile({!r})".format(self.data)
 
     @classmethod
-    def load(cls):
+    def load(cls) -> "AuthFile":
         filepath = cls.get_path()
         try:
             with codecs.open(filepath, "r", "utf-8") as fp:
@@ -114,10 +120,10 @@ class AuthFile(object):
                 raise
         return cls(data)
 
-    def allow(self, filepath):
+    def allow(self, filepath: str) -> None:
         self.data[os.path.abspath(filepath)] = self._hash_file(filepath)
 
-    def deny(self, filepath):
+    def deny(self, filepath: str) -> None:
         if not os.path.exists(filepath):
             raise FileNotFoundError("{} not found".format(filepath))
         try:
@@ -125,7 +131,9 @@ class AuthFile(object):
         except KeyError:
             pass
 
-    def check(self, filepath):
+    def check(self, filepath: typing.Union[str, None]) -> bool:
+        if not filepath:
+            return False
         if os.path.abspath(filepath) not in self.data:
             raise KonchrcNotAuthorizedError
         else:
@@ -134,21 +142,26 @@ class AuthFile(object):
                 raise KonchrcChangedError
         return True
 
-    def save(self):
+    def save(self) -> None:
         filepath = self.get_path()
         _mkdir_p(os.path.dirname(filepath))
         with codecs.open(filepath, "w", "utf-8") as fp:
             json.dump(self.data, fp)
 
-    def __enter__(self):
+    def __enter__(self) -> "AuthFile":
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(
+        self,
+        exc_type: typing.Type[Exception],
+        exc_value: Exception,
+        exc_traceback: types.TracebackType,
+    ) -> None:
         if not exc_type:
             self.save()
 
     @staticmethod
-    def get_path():
+    def get_path() -> str:
         if "KONCH_AUTH_FILE" in os.environ:
             return os.environ["KONCH_AUTH_FILE"]
         elif "XDG_DATA_HOME" in os.environ:
@@ -157,7 +170,7 @@ class AuthFile(object):
             return os.path.join(_get_home_directory(), ".local", "share", "konch_auth")
 
     @staticmethod
-    def _hash_file(filepath):
+    def _hash_file(filepath: str) -> str:
         # https://stackoverflow.com/a/22058673/1157536
         BUF_SIZE = 65536  # read in 64kb chunks
         sha1 = hashlib.sha1()
@@ -166,14 +179,14 @@ class AuthFile(object):
                 data = f.read(BUF_SIZE)
                 if not data:
                     break
-                sha1.update(data)
+                sha1.update(data)  # type: ignore
         return sha1.hexdigest()
 
 
-CONFIG_FILE = ".konchrc"
-DEFAULT_CONFIG_FILE = os.path.join(_get_home_directory(), ".konchrc.default")
+CONFIG_FILE: str = ".konchrc"
+DEFAULT_CONFIG_FILE: str = os.path.join(_get_home_directory(), ".konchrc.default")
 
-INIT_TEMPLATE = """# vi: set ft=python :
+INIT_TEMPLATE: str = """# vi: set ft=python :
 
 import konch
 
@@ -197,7 +210,7 @@ def teardown():
 """
 
 
-def _full_formatter(context):
+def _full_formatter(context: Context) -> str:
     line_format = "{name}: {obj!r}"
     context_str = "\n".join(
         [
@@ -208,23 +221,25 @@ def _full_formatter(context):
     return "\nContext:\n{context}".format(context=context_str)
 
 
-def _short_formatter(context):
+def _short_formatter(context: Context) -> str:
     context_str = ", ".join(sorted(context.keys()))
     return "\nContext:\n{context}".format(context=context_str)
 
 
-def _hide_formatter(context):
+def _hide_formatter(context: Context) -> str:
     return ""
 
 
-CONTEXT_FORMATTERS = {
+CONTEXT_FORMATTERS: typing.Dict[str, Formatter] = {
     "full": _full_formatter,
     "short": _short_formatter,
     "hide": _hide_formatter,
 }
 
 
-def format_context(context, formatter="full"):
+def format_context(
+    context: Context, formatter: typing.Union[str, Formatter] = "full"
+) -> str:
     """Output the a context dictionary as a string."""
     if not context:
         return ""
@@ -239,18 +254,23 @@ def format_context(context, formatter="full"):
     return formatter_func(context)
 
 
-def make_banner(text=None, context=None, banner_template=None, context_format="full"):
+def make_banner(
+    text: typing.Optional[str] = None,
+    context: typing.Optional[Context] = None,
+    banner_template: typing.Optional[str] = None,
+    context_format: ContextFormat = "full",
+) -> str:
     """Generates a full banner with version info, the given text, and a
     formatted list of context variables.
     """
     banner_text = text or speak()
     banner_template = banner_template or BANNER_TEMPLATE
-    context = format_context(context, formatter=context_format)
-    out = banner_template.format(version=sys.version, text=banner_text, context=context)
+    ctx = format_context(context or {}, formatter=context_format)
+    out = banner_template.format(version=sys.version, text=banner_text, context=ctx)
     return out
 
 
-def context_list2dict(context_list):
+def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
@@ -270,17 +290,17 @@ class Shell(object):
         dictionary and outputs a string.
     """
 
-    banner_template = BANNER_TEMPLATE
+    banner_template: str = BANNER_TEMPLATE
 
     def __init__(
         self,
-        context,
-        banner=None,
-        prompt=None,
-        output=None,
-        context_format="full",
-        **kwargs
-    ):
+        context: Context,
+        banner: typing.Optional[str] = None,
+        prompt: typing.Optional[str] = None,
+        output: typing.Optional[str] = None,
+        context_format: ContextFormat = "full",
+        **kwargs: typing.Any
+    ) -> None:
         self.context = context() if callable(context) else context
         self.context_format = context_format
         self.banner = make_banner(
@@ -292,20 +312,20 @@ class Shell(object):
         self.prompt = prompt
         self.output = output
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         raise NotImplementedError
 
-    def start(self):
+    def start(self) -> None:
         raise NotImplementedError
 
 
 class PythonShell(Shell):
     """The built-in Python shell."""
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         return True
 
-    def start(self):
+    def start(self) -> None:
         try:
             import readline
         except ImportError:
@@ -326,7 +346,9 @@ class PythonShell(Shell):
         return None
 
 
-def configure_ipython_prompt(config, prompt=None, output=None):
+def configure_ipython_prompt(
+    config, prompt: typing.Optional[str] = None, output: typing.Optional[str] = None
+) -> None:
     import IPython
 
     if IPython.version_info[0] >= 5:  # Custom prompt API changed in IPython 5.0
@@ -372,12 +394,12 @@ class IPythonShell(Shell):
 
     def __init__(
         self,
-        ipy_extensions=None,
-        ipy_autoreload=False,
-        ipy_colors=None,
-        ipy_highlighting_style=None,
-        *args,
-        **kwargs
+        ipy_extensions: typing.Optional[typing.List[str]] = None,
+        ipy_autoreload: bool = False,
+        ipy_colors: typing.Optional[str] = None,
+        ipy_highlighting_style: typing.Optional[str] = None,
+        *args: typing.Any,
+        **kwargs: typing.Any
     ):
         self.ipy_extensions = ipy_extensions
         self.ipy_autoreload = ipy_autoreload
@@ -386,21 +408,22 @@ class IPythonShell(Shell):
         Shell.__init__(self, *args, **kwargs)
 
     @staticmethod
-    def init_autoreload(mode=2):
+    def init_autoreload(mode: int) -> None:
         """Load and initialize the IPython autoreload extension."""
         from IPython.extensions import autoreload
 
-        ip = get_ipython()  # noqa: F821
+        ip = get_ipython()  # type: ignore # noqa: F821
         autoreload.load_ipython_extension(ip)
         ip.magics_manager.magics["line"]["autoreload"](str(mode))
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         try:
             import IPython  # noqa: F401
         except ImportError:
             raise ShellNotAvailableError("IPython shell not available.")
+        return True
 
-    def start(self):
+    def start(self) -> None:
         try:
             from IPython import start_ipython
             from IPython.utils import io
@@ -450,17 +473,18 @@ class IPythonShell(Shell):
 
 
 class PtPythonShell(Shell):
-    def __init__(self, ptpy_vi_mode=False, *args, **kwargs):
+    def __init__(self, ptpy_vi_mode: bool = False, *args, **kwargs):
         self.ptpy_vi_mode = ptpy_vi_mode
         Shell.__init__(self, *args, **kwargs)
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         try:
             import ptpython  # noqa: F401
         except ImportError:
             raise ShellNotAvailableError("PtPython shell not available.")
+        return True
 
-    def start(self):
+    def start(self) -> None:
         try:
             from ptpython.repl import embed, run_config
         except ImportError:
@@ -492,20 +516,23 @@ class PtPythonShell(Shell):
 
 class PtIPythonShell(PtPythonShell):
 
-    banner_template = "{text}\n{context}"
+    banner_template: str = "{text}\n{context}"
 
-    def __init__(self, ipy_extensions=None, *args, **kwargs):
+    def __init__(
+        self, ipy_extensions: typing.Optional[typing.List[str]] = None, *args, **kwargs
+    ) -> None:
         self.ipy_extensions = ipy_extensions or []
         PtPythonShell.__init__(self, *args, **kwargs)
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         try:
             import ptpython.ipython  # noqa: F401
             import IPython  # noqa: F401
         except ImportError:
             raise ShellNotAvailableError("PtIPython shell not available.")
+        return True
 
-    def start(self):
+    def start(self) -> None:
         try:
             from ptpython.ipython import embed
             from ptpython.repl import run_config
@@ -554,13 +581,14 @@ class PtIPythonShell(PtPythonShell):
 class BPythonShell(Shell):
     """The BPython shell."""
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         try:
             import bpython  # noqa: F401
         except ImportError:
             raise ShellNotAvailableError("BPython shell not available.")
+        return True
 
-    def start(self):
+    def start(self) -> None:
         try:
             from bpython import embed
         except ImportError:
@@ -581,15 +609,15 @@ class AutoShell(Shell):
     # Shell classes in precedence order
     SHELLS = [PtIPythonShell, PtPythonShell, IPythonShell, BPythonShell, PythonShell]
 
-    def __init__(self, context, banner, **kwargs):
+    def __init__(self, context: Context, banner: str, **kwargs):
         Shell.__init__(self, context, **kwargs)
         self.kwargs = kwargs
         self.banner = banner
 
-    def check_availability(self):
+    def check_availability(self) -> bool:
         return True
 
-    def start(self):
+    def start(self) -> None:
         shell_args = {
             "context": self.context,
             "banner": self.banner,
@@ -608,10 +636,12 @@ class AutoShell(Shell):
                 continue
             else:
                 break
+        else:
+            raise ShellNotAvailableError("No available shell to run.")
         return shell.start()
 
 
-SHELL_MAP = {
+SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
     "ipy": IPythonShell,
     "ipython": IPythonShell,
     "bpy": BPythonShell,
@@ -625,7 +655,7 @@ SHELL_MAP = {
     "ptipython": PtIPythonShell,
 }
 
-CONCHES = [
+CONCHES: typing.List[str] = [
     ('"My conch told me to come save you guys."\n' '"Hooray for the magic conches!"'),
     '"All hail the Magic Conch!"',
     '"Hooray for the magic conches!"',
@@ -657,7 +687,7 @@ CONCHES = [
 ]
 
 
-def speak():
+def speak() -> str:
     return random.choice(CONCHES)
 
 
@@ -669,14 +699,14 @@ class Config(dict):
 
     def __init__(
         self,
-        context=None,
-        banner=None,
-        shell=AutoShell,
-        prompt=None,
-        output=None,
-        context_format="full",
-        **kwargs
-    ):
+        context: typing.Optional[Context] = None,
+        banner: typing.Optional[str] = None,
+        shell: typing.Type[Shell] = AutoShell,
+        prompt: typing.Optional[str] = None,
+        output: typing.Optional[str] = None,
+        context_format: str = "full",
+        **kwargs: typing.Any
+    ) -> None:
         ctx = Config.transform_val(context) or {}
         super(Config, self).__init__(
             context=ctx,
@@ -688,18 +718,18 @@ class Config(dict):
             **kwargs
         )
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: typing.Any, value: typing.Any) -> None:
         if key == "context":
             value = Config.transform_val(value)
         super(Config, self).__setitem__(key, value)
 
     @staticmethod
-    def transform_val(val):
+    def transform_val(val: typing.Any) -> typing.Any:
         if isinstance(val, (list, tuple)):
             return context_list2dict(val)
         return val
 
-    def update(self, d):
+    def update(self, d: typing.Mapping) -> None:  # type: ignore
         for key in d.keys():
             self[key] = d[key]
 
@@ -710,14 +740,14 @@ _config_registry = {"default": _cfg}
 
 
 def start(
-    context=None,
-    banner=None,
-    shell=AutoShell,
-    prompt=None,
-    output=None,
-    context_format="full",
-    **kwargs
-):
+    context: typing.Optional[typing.Mapping] = None,
+    banner: typing.Optional[str] = None,
+    shell: typing.Type[Shell] = AutoShell,
+    prompt: typing.Optional[str] = None,
+    output: typing.Optional[str] = None,
+    context_format: str = "full",
+    **kwargs: typing.Any
+) -> None:
     """Start up the konch shell. Takes the same parameters as Shell.__init__.
     """
     logger.debug("Using shell: {!r}".format(shell))
@@ -743,7 +773,7 @@ def start(
     ).start()
 
 
-def config(config_dict):
+def config(config_dict: typing.Mapping) -> Config:
     """Configures the konch shell. This function should be called in a
     .konchrc file.
 
@@ -755,7 +785,7 @@ def config(config_dict):
     return _cfg
 
 
-def named_config(name, config_dict):
+def named_config(name: str, config_dict: typing.Mapping) -> None:
     """Adds a named config to the config registry. The first argument may either be a string
     or a collection of strings.
 
@@ -770,17 +800,17 @@ def named_config(name, config_dict):
         _config_registry[each] = Config(**config_dict)
 
 
-def reset_config():
+def reset_config() -> Config:
     global _cfg
     _cfg = Config()
     return _cfg
 
 
-def get_file_directory(filename):
+def get_file_directory(filename: str) -> str:
     return os.path.dirname(os.path.abspath(filename))
 
 
-def __ensure_directory_in_path(filename):
+def __ensure_directory_in_path(filename: str) -> None:
     """Ensures that a file's directory is in the Python path.
     """
     directory = get_file_directory(filename)
@@ -789,13 +819,15 @@ def __ensure_directory_in_path(filename):
         sys.path.insert(0, directory)
 
 
-def use_file(filename):
+def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
     """
     config_file = filename or resolve_path(CONFIG_FILE)
 
-    def preview_unauthorized():
+    def preview_unauthorized() -> None:
+        if not config_file:
+            return None
         print()
         print("*" * 46, file=sys.stderr)
         print(file=sys.stderr)
@@ -848,9 +880,10 @@ def use_file(filename):
         warnings.warn("No config file found.")
     else:
         warnings.warn('"{fname}" not found.'.format(fname=config_file))
+    return None
 
 
-def resolve_path(filename):
+def resolve_path(filename: str) -> typing.Union[str, None]:
     """Find a file by walking up parent directories until the file is found.
     Return the absolute path of the file.
     """
@@ -864,10 +897,10 @@ def resolve_path(filename):
         else:
             current = os.path.abspath(os.path.join(current, ".."))
 
-    return False
+    return None
 
 
-def get_editor():
+def get_editor() -> str:
     for key in "KONCH_EDITOR", "VISUAL", "EDITOR":
         ret = os.environ.get(key)
         if ret:
@@ -880,7 +913,12 @@ def get_editor():
     return "vi"
 
 
-def edit_file(filename, editor=None):
+def edit_file(
+    filename: typing.Optional[str], editor: typing.Optional[str] = None
+) -> None:
+    if not filename:
+        print("filename not passed.", file=sys.stderr)
+        sys.exit(1)
     editor = editor or get_editor()
     try:
         result = subprocess.Popen('{0} "{1}"'.format(editor, filename), shell=True)
@@ -896,7 +934,7 @@ def edit_file(filename, editor=None):
             authfile.allow(filename)
 
 
-def init_config(config_file):
+def init_config(config_file: str) -> typing.NoReturn:
     if not os.path.exists(config_file):
         init_template = INIT_TEMPLATE
         if os.path.exists(DEFAULT_CONFIG_FILE):  # use ~/.konchrc.default if it exists
@@ -918,14 +956,17 @@ def init_config(config_file):
         sys.exit(1)
 
 
-def edit_config(config_file=None, editor=None):
+def edit_config(
+    config_file: typing.Optional[str] = None, editor: typing.Optional[str] = None
+) -> typing.NoReturn:
     filename = config_file or resolve_path(CONFIG_FILE)
     print('Editing file: "{0}"'.format(filename))
     edit_file(filename, editor=editor)
     sys.exit(0)
 
 
-def allow_config(config_file=None):
+def allow_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
+    filename: typing.Union[str, None] = None
     if config_file and os.path.isdir(config_file):
         filename = os.path.join(config_file, CONFIG_FILE)
     else:
@@ -945,7 +986,8 @@ def allow_config(config_file=None):
     sys.exit(0)
 
 
-def deny_config(config_file=None):
+def deny_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
+    filename: typing.Union[str, None] = None
     if config_file and os.path.isdir(config_file):
         filename = os.path.join(config_file, CONFIG_FILE)
     else:
@@ -965,14 +1007,14 @@ def deny_config(config_file=None):
     sys.exit(0)
 
 
-def parse_args():
+def parse_args() -> typing.Dict[str, str]:
     """Exposes the docopt command-line arguments parser.
     Return a dictionary of arguments.
     """
     return docopt(__doc__, version=__version__)
 
 
-def main():
+def main() -> typing.NoReturn:
     """Main entry point for the konch CLI."""
     args = parse_args()
 
@@ -994,7 +1036,7 @@ def main():
 
     mod = use_file(args["--file"])
     if hasattr(mod, "setup"):
-        mod.setup()
+        mod.setup()  # type: ignore
 
     if args["--name"]:
         if args["--name"] not in _config_registry:
@@ -1013,7 +1055,7 @@ def main():
     start(**config_dict)
 
     if hasattr(mod, "teardown"):
-        mod.teardown()
+        mod.teardown()  # type: ignore
     sys.exit(0)
 
 
