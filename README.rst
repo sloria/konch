@@ -6,7 +6,7 @@ konch
   :alt: pypi badge
   :target: https://badge.fury.io/py/konch
 
-.. image:: https://badgen.net/travis/sloria/konch
+.. image:: https://badgen.net/travis/sloria/konch/master
   :alt: travis-ci status
   :target: https://travis-ci.org/sloria/konch
 
