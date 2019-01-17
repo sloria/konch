@@ -37,8 +37,6 @@ from __future__ import unicode_literals, print_function
 from collections.abc import Iterable
 from pathlib import Path
 import code
-import codecs
-import errno
 import hashlib
 import imp
 import json
@@ -84,20 +82,6 @@ class KonchrcChangedError(KonchrcNotAuthorizedError):
     pass
 
 
-def _get_home_directory() -> str:
-    return os.path.expanduser("~")
-
-
-def _mkdir_p(path: str) -> None:
-    try:
-        os.makedirs(path)
-    except OSError as error:
-        if error.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
-            raise
-
-
 class AuthFile:
     def __init__(self, data: typing.Dict[str, str]) -> None:
         self.data = data
@@ -109,7 +93,7 @@ class AuthFile:
     def load(cls) -> "AuthFile":
         filepath = cls.get_path()
         try:
-            with codecs.open(filepath, "r", "utf-8") as fp:
+            with Path(filepath).open("r", encoding="utf-8") as fp:
                 data = json.load(fp)
         except FileNotFoundError:
             data = {}
@@ -121,32 +105,32 @@ class AuthFile:
                 raise
         return cls(data)
 
-    def allow(self, filepath: str) -> None:
-        self.data[os.path.abspath(filepath)] = self._hash_file(filepath)
+    def allow(self, filepath: Path) -> None:
+        self.data[str(Path(filepath).resolve())] = self._hash_file(filepath)
 
-    def deny(self, filepath: str) -> None:
-        if not os.path.exists(filepath):
+    def deny(self, filepath: Path) -> None:
+        if not filepath.exists():
             raise FileNotFoundError(f"{filepath} not found")
         try:
-            del self.data[os.path.abspath(filepath)]
+            del self.data[str(filepath.resolve())]
         except KeyError:
             pass
 
-    def check(self, filepath: typing.Union[str, None]) -> bool:
+    def check(self, filepath: typing.Union[Path, None]) -> bool:
         if not filepath:
             return False
-        if os.path.abspath(filepath) not in self.data:
+        if str(filepath.resolve()) not in self.data:
             raise KonchrcNotAuthorizedError
         else:
             file_hash = self._hash_file(filepath)
-            if file_hash != self.data[os.path.abspath(filepath)]:
+            if file_hash != self.data[str(filepath.resolve())]:
                 raise KonchrcChangedError
         return True
 
     def save(self) -> None:
         filepath = self.get_path()
-        _mkdir_p(os.path.dirname(filepath))
-        with codecs.open(filepath, "w", "utf-8") as fp:
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with Path(filepath).open("w", encoding="utf-8") as fp:
             json.dump(self.data, fp)
 
     def __enter__(self) -> "AuthFile":
@@ -162,20 +146,20 @@ class AuthFile:
             self.save()
 
     @staticmethod
-    def get_path() -> str:
+    def get_path() -> Path:
         if "KONCH_AUTH_FILE" in os.environ:
-            return os.environ["KONCH_AUTH_FILE"]
+            return Path(os.environ["KONCH_AUTH_FILE"])
         elif "XDG_DATA_HOME" in os.environ:
-            return os.path.join(os.environ["XDG_DATA_HOME"], "konch_auth")
+            return Path(os.environ["XDG_DATA_HOME"]) / "konch_auth"
         else:
-            return os.path.join(_get_home_directory(), ".local", "share", "konch_auth")
+            return Path.home() / ".local" / "share" / "konch_auth"
 
     @staticmethod
-    def _hash_file(filepath: str) -> str:
+    def _hash_file(filepath: Path) -> str:
         # https://stackoverflow.com/a/22058673/1157536
         BUF_SIZE = 65536  # read in 64kb chunks
         sha1 = hashlib.sha1()
-        with codecs.open(filepath, "rb") as f:
+        with Path(filepath).open("rb") as f:
             while True:
                 data = f.read(BUF_SIZE)
                 if not data:
@@ -184,8 +168,8 @@ class AuthFile:
         return sha1.hexdigest()
 
 
-CONFIG_FILE: str = ".konchrc"
-DEFAULT_CONFIG_FILE: str = os.path.join(_get_home_directory(), ".konchrc.default")
+CONFIG_FILE = Path(".konchrc")
+DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
 
 INIT_TEMPLATE: str = """# vi: set ft=python :
 
@@ -490,7 +474,7 @@ class PtPythonShell(Shell):
             raise ShellNotAvailableError("PtPython shell not available.")
         print(self.banner)
 
-        config_dir = os.path.expanduser("~/.ptpython/")
+        config_dir = Path("~/.ptpython/").expanduser()
 
         # Startup path
         startup_paths = []
@@ -499,13 +483,13 @@ class PtPythonShell(Shell):
 
         # Apply config file
         def configure(repl):
-            path = os.path.join(config_dir, "config.py")
-            if os.path.exists(path):
+            path = config_dir / "config.py"
+            if path.exists():
                 run_config(repl, path)
 
         embed(
             globals=self.context,
-            history_filename=os.path.join(config_dir, "history"),
+            history_filename=config_dir / "history",
             vi_mode=self.ptpy_vi_mode,
             startup_paths=startup_paths,
             configure=configure,
@@ -539,12 +523,12 @@ class PtIPythonShell(PtPythonShell):
         except ImportError:
             raise ShellNotAvailableError("PtIPython shell not available.")
 
-        config_dir = os.path.expanduser("~/.ptpython/")
+        config_dir = Path("~/.ptpython/").expanduser()
 
         # Apply config file
         def configure(repl):
-            path = os.path.join(config_dir, "config.py")
-            if os.path.exists(path):
+            path = config_dir / "config.py"
+            if path.exists():
                 run_config(repl, path)
 
         # Startup path
@@ -553,8 +537,8 @@ class PtIPythonShell(PtPythonShell):
             startup_paths.append(os.environ["PYTHONSTARTUP"])
         # exec scripts from startup paths
         for path in startup_paths:
-            if os.path.exists(path):
-                with open(path, "rb") as f:
+            if Path(path).exists():
+                with Path(path).open("rb") as f:
                     code = compile(f.read(), path, "exec")
                     exec(code, self.context, self.context)
             else:
@@ -568,7 +552,7 @@ class PtIPythonShell(PtPythonShell):
         embed(
             config=ipy_config,
             configure=configure,
-            history_filename=os.path.join(config_dir, "history"),
+            history_filename=config_dir / "history",
             user_ns=self.context,
             header=self.banner,
             vi_mode=self.ptpy_vi_mode,
@@ -804,20 +788,20 @@ def reset_config() -> Config:
     return _cfg
 
 
-def get_file_directory(filename: str) -> str:
-    return os.path.dirname(os.path.abspath(filename))
+def get_file_directory(filename: Path) -> Path:
+    return Path(filename).parent.resolve()
 
 
-def __ensure_directory_in_path(filename: str) -> None:
+def __ensure_directory_in_path(filename: Path) -> None:
     """Ensures that a file's directory is in the Python path.
     """
     directory = get_file_directory(filename)
     if directory not in sys.path:
         logger.debug(f"Adding {directory} to sys.path")
-        sys.path.insert(0, directory)
+        sys.path.insert(0, str(directory))
 
 
-def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
+def use_file(filename: typing.Optional[Path]) -> typing.Union[types.ModuleType, None]:
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
     """
@@ -829,7 +813,7 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
         print()
         print("*" * 46, file=sys.stderr)
         print(file=sys.stderr)
-        with codecs.open(config_file, "r", "utf-8") as fp:
+        with Path(config_file).open("r", encoding="utf-8") as fp:
             for line in fp:
                 print(line, end="", file=sys.stderr)
         print(file=sys.stderr)
@@ -846,10 +830,10 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
             file=sys.stderr,
         )
 
-    if config_file and not os.path.exists(config_file):
+    if config_file and not Path(config_file).exists():
         print(f'"{filename}" not found.', file=sys.stderr)
         sys.exit(1)
-    if config_file and os.path.exists(config_file):
+    if config_file and Path(config_file).exists():
         with AuthFile.load() as authfile:
             try:
                 authfile.check(config_file)
@@ -870,15 +854,10 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
         __ensure_directory_in_path(config_file)
         mod = None
         try:
-            mod = imp.load_source("konchrc", config_file)
+            mod = imp.load_source("konchrc", str(config_file))
         except UnboundLocalError:  # File not found
             pass
         else:
-            try:
-                # Clean up bytecode file on PY2
-                os.remove(config_file + "c")
-            except (IOError, OSError):
-                pass
             return mod
     if not config_file:
         warnings.warn("No config file found.")
@@ -887,19 +866,19 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
     return None
 
 
-def resolve_path(filename: str) -> typing.Union[str, None]:
+def resolve_path(filename: Path) -> typing.Union[Path, None]:
     """Find a file by walking up parent directories until the file is found.
     Return the absolute path of the file.
     """
-    current = os.getcwd()
+    current = Path.cwd()
     # Stop search at home directory
-    sentinel_dir = os.path.abspath(os.path.join(_get_home_directory(), ".."))
+    sentinel_dir = Path.home().parent.resolve()
     while current != sentinel_dir:
-        target = os.path.join(current, filename)
-        if os.path.exists(target):
-            return os.path.abspath(target)
+        target = Path(current) / Path(filename)
+        if target.exists():
+            return target.resolve()
         else:
-            current = os.path.abspath(os.path.join(current, ".."))
+            current = current.parent.resolve()
 
     return None
 
@@ -918,7 +897,7 @@ def get_editor() -> str:
 
 
 def edit_file(
-    filename: typing.Optional[str], editor: typing.Optional[str] = None
+    filename: typing.Optional[Path], editor: typing.Optional[str] = None
 ) -> None:
     if not filename:
         print("filename not passed.", file=sys.stderr)
@@ -938,13 +917,13 @@ def edit_file(
             authfile.allow(filename)
 
 
-def init_config(config_file: str) -> typing.NoReturn:
-    if not os.path.exists(config_file):
+def init_config(config_file: Path) -> typing.NoReturn:
+    if not config_file.exists():
         init_template = INIT_TEMPLATE
-        if os.path.exists(DEFAULT_CONFIG_FILE):  # use ~/.konchrc.default if it exists
-            with open(DEFAULT_CONFIG_FILE, "r") as fp:
+        if DEFAULT_CONFIG_FILE.exists():  # use ~/.konchrc.default if it exists
+            with Path(DEFAULT_CONFIG_FILE).open("r") as fp:
                 init_template = fp.read()
-        with open(config_file, "w") as fp:
+        with Path(config_file).open("w") as fp:
             fp.write(init_template)
         with AuthFile.load() as authfile:
             authfile.allow(config_file)
@@ -959,7 +938,7 @@ def init_config(config_file: str) -> typing.NoReturn:
 
 
 def edit_config(
-    config_file: typing.Optional[str] = None, editor: typing.Optional[str] = None
+    config_file: typing.Optional[Path] = None, editor: typing.Optional[str] = None
 ) -> typing.NoReturn:
     filename = config_file or resolve_path(CONFIG_FILE)
     print(f'Editing file: "{filename}"')
@@ -967,10 +946,10 @@ def edit_config(
     sys.exit(0)
 
 
-def allow_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
-    filename: typing.Union[str, None] = None
-    if config_file and os.path.isdir(config_file):
-        filename = os.path.join(config_file, CONFIG_FILE)
+def allow_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
+    filename: typing.Union[Path, None]
+    if config_file and config_file.is_dir():
+        filename = Path(config_file) / CONFIG_FILE
     else:
         filename = config_file or resolve_path(CONFIG_FILE)
     if not filename:
@@ -988,10 +967,10 @@ def allow_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
     sys.exit(0)
 
 
-def deny_config(config_file: typing.Optional[str] = None) -> typing.NoReturn:
-    filename: typing.Union[str, None] = None
-    if config_file and os.path.isdir(config_file):
-        filename = os.path.join(config_file, CONFIG_FILE)
+def deny_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
+    filename: typing.Union[Path, None]
+    if config_file and config_file.is_dir():
+        filename = Path(config_file) / CONFIG_FILE
     else:
         filename = config_file or resolve_path(CONFIG_FILE)
     if not filename:
@@ -1026,17 +1005,20 @@ def main() -> typing.NoReturn:
         )
     logger.debug(args)
 
+    config_file: typing.Union[Path, None]
     if args["init"]:
-        config_file = args["<config_file>"] or CONFIG_FILE
+        config_file = Path(args["<config_file>"] or CONFIG_FILE)
         init_config(config_file)
-    elif args["edit"]:
-        edit_config(args["<config_file>"])
-    elif args["allow"]:
-        allow_config(args["<config_file>"])
-    elif args["deny"]:
-        deny_config(args["<config_file>"])
+    else:
+        config_file = Path(args["<config_file>"]) if args["<config_file>"] else None
+        if args["edit"]:
+            edit_config(config_file)
+        elif args["allow"]:
+            allow_config(config_file)
+        elif args["deny"]:
+            deny_config(config_file)
 
-    mod = use_file(args["--file"])
+    mod = use_file(Path(args["--file"]) if args["--file"] else None)
     if hasattr(mod, "setup"):
         mod.setup()  # type: ignore
 
