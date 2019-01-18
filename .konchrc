@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 # vi: set ft=python :
-import os
+from pathlib import Path
 
 import konch
 from test_konch import env
@@ -10,14 +9,14 @@ import ptpython
 
 konch.config(
     {
-        "context": {
-            "konch": konch,
-            "testenv": env,
-            "os": os,
-            "IPython": IPython,
-            "bpython": bpython,
-            "ptpython": ptpython,
-        },
+        "context": [
+            konch,
+            env,
+            Path,
+            IPython,
+            bpython,
+            ptpython,
+        ],
         "prompt": "[konch] >>> ",
         "ipy_colors": "linux",
         "ipy_autoreload": True,
