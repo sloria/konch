@@ -397,6 +397,55 @@ You can also use shell objects directly:
     my_shell = konch.AutoShell(context={"foo": 42}, banner="My foo shell")
     my_shell.start()
 
+
+Integrating with setuptools / ``python setup.py shell``
+=======================================================
+
+You can integrate konch into your setuptools-based project using
+the following ``Command`` class.
+
+.. code-block:: python
+
+    # setup.py
+    import shlex
+    from setuptools import Command
+
+
+    class Shell(Command):
+        user_options = [("args=", "a", "Arguments to pass to konch")]
+
+        def initialize_options(self):
+            self.args = ""
+
+        def finalize_options(self):
+            pass
+
+        def run(self):
+            import konch
+
+            konch.main(shlex.split(self.args))
+
+
+    setup(
+        # ...,
+        cmdclass={"shell": Shell}
+    )
+
+
+You can now run:
+
+.. code-block:: bash
+
+   $ python setup.py shell
+
+
+You can also pass a string of arguments:
+
+
+.. code-block:: bash
+ 
+   $ python setup.py shell -a "--shell ipy"
+
 ..
 
     "Praise the Magic Conch!"

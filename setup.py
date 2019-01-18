@@ -1,5 +1,21 @@
 import re
-from setuptools import setup
+import shlex
+from setuptools import setup, Command
+
+
+class Shell(Command):
+    user_options = [("args=", "a", "Arguments to pass to konch")]
+
+    def initialize_options(self):
+        self.args = ""
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import konch
+
+        konch.main(shlex.split(self.args))
 
 
 EXTRAS_REQUIRE = {
@@ -52,6 +68,7 @@ setup(
     author_email="sloria1@gmail.com",
     url="https://github.com/sloria/konch",
     install_requires=[],
+    cmdclass={"shell": Shell},
     extras_require=EXTRAS_REQUIRE,
     python_requires=PYTHON_REQUIRES,
     license="MIT",
