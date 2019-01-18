@@ -1006,16 +1006,16 @@ def deny_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     sys.exit(0)
 
 
-def parse_args() -> typing.Dict[str, str]:
+def parse_args(argv: typing.Optional[typing.Sequence] = None) -> typing.Dict[str, str]:
     """Exposes the docopt command-line arguments parser.
     Return a dictionary of arguments.
     """
-    return docopt(__doc__, version=__version__)
+    return docopt(__doc__, argv=argv, version=__version__)
 
 
-def main() -> typing.NoReturn:
+def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
     """Main entry point for the konch CLI."""
-    args = parse_args()
+    args = parse_args(argv)
 
     if args["--debug"]:
         logging.basicConfig(
