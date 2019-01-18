@@ -7,7 +7,10 @@ Changelog
 
 Features:
 
+- ``konch.config()`` will shallow-merge ``context`` when
+  called multiple times.
 - ``konch edit`` may be passed a filename to edit.
+- ``konch.main`` accepts an ``argv`` argument.
 
 Other changes:
 
