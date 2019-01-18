@@ -5,6 +5,10 @@ Changelog
 4.0.0 (unreleased)
 ------------------
 
+Features:
+
+- ``konch edit`` may be passed a filename to edit.
+
 Other changes:
 
 - Python 2 is no longer supported. Python>=3.6 is officially supported.

@@ -29,6 +29,7 @@ def assert_in_output(s, res, message=None):
 def env():
     env_ = FileEnvironment(ignore_hidden=False)
     env_.environ["KONCH_AUTH_FILE"] = str(Path(env_.base_path) / "konch_auth")
+    env_.environ["KONCH_EDITOR"] = "echo"
     return env_
 
 
@@ -217,6 +218,25 @@ def test_file_blocked(env, request):
     res = env.run("konch", expect_stderr=True, expect_error=True)
     assert "blocked" in res.stderr
     assert res.returncode == 1
+
+
+def test_edit(env, request):
+    env.run("konch", "init")
+    res = env.run("konch", "edit")
+    assert res.returncode == 0
+    assert "Editing file" in res.stdout
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_edit_with_filename(env, request):
+    env.run("konch", "init", "myfile")
+    res = env.run("konch", "edit", "myfile")
+    assert res.returncode == 0
+    assert "Editing file" in res.stdout
+
+    # File is automatically allowed
+    res = env.run("konch", "-f", "myfile")
+    assert res.returncode == 0
 
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")

@@ -5,7 +5,7 @@ Usage:
   konch
   konch init
   konch init [<config_file>] [-d]
-  konch edit [-d]
+  konch edit [<config_file>] [-d]
   konch allow [<config_file>] [-d]
   konch deny [<config_file>] [-d]
   konch [--name=<name>] [-d]
