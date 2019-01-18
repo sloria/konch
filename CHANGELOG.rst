@@ -2,12 +2,12 @@
 Changelog
 *********
 
-3.2.1 (unreleased)
+3.2.1 (2019-01-17)
 ------------------
 
 Bug fixes:
 
-- Fix handling of nested modules.
+- Fix handling of nested modules when passing a list to ``context``.
 
 3.2.0.post0 (2019-01-13)
 ------------------------
