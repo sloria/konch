@@ -128,6 +128,7 @@ def test_parse_args():
 
 def test_context_list2dict():
     import math
+    from logging import config
 
     class MyClass:
         pass
@@ -135,8 +136,8 @@ def test_context_list2dict():
     def my_func():
         pass
 
-    my_objects = [math, MyClass, my_func]
-    expected = {"my_func": my_func, "MyClass": MyClass, "math": math}
+    my_objects = [math, MyClass, my_func, config]
+    expected = {"my_func": my_func, "MyClass": MyClass, "math": math, "config": config}
     assert konch.context_list2dict(my_objects) == expected
 
 
