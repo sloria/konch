@@ -13,9 +13,13 @@ konch
    `pypi <https://pypi.python.org/pypi/konch>`_ //
    `issues <https://github.com/sloria/konch/issues>`_
 
+.. contents::
+   :local:
+   :depth: 1
 
-Configures your Python shell
-============================
+
+Configure your Python shell
+===========================
 
 **konch** is a CLI and configuration utility for the Python shell, optimized for simplicity and productivity.
 
@@ -37,7 +41,6 @@ Example Use Cases
 - If you're building a Python package, you can automatically import all of its modules.
 - In a live demo, skip the imports.
 - Immediately have test objects to work with in interactive sessions.
-
 
 Install/Upgrade
 ===============
@@ -74,15 +77,7 @@ By default, the auth file is stored in ``~/.local/share/konch_auth``. You can ch
 creates a ``.konchrc`` file in your current directory.
 
 ``.konchrc`` is a Python file that calls the ``konch.config(config_dict)`` function.
-
-You can pass any of the following options:
-
-- ``context``: A dictionary or list of objects that will be immediately available to you in your shell session. May also be a callable that returns a dictionary or list of objects.
-- ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'ptpy'``, ``'ptipy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PtPythonShell``, ``konch.PtIPythonShell``,  ``konch.PythonShell``, or ``konch.AutoShell``.
-- ``banner``: Custom banner text.
-- ``prompt``: The input prompt (not supported with BPython).
-- ``output``: The output prompt (supported in IPython and PtIPython only).
-- ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, or a function that receives the context dictionary as input and returns a string.
+See the `Configuration`_ section for a listing of options.
 
 Here is an example ``.konchrc`` file that includes some functions from the `requests <https://docs.python-requests.org/en/latest/>`_ library in its context.
 
@@ -193,6 +188,17 @@ starts a session using ``<file>`` as its config file instead of the default ``.k
 removes authorization for a config file.
 
 
+Configuration
+=============
+
+- ``context``: A dictionary or list of objects that will be be available in your shell session. May also be a callable that returns a dictionary or list of objects.
+- ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'ptpy'``, ``'ptipy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PtPythonShell``, ``konch.PtIPythonShell``,  ``konch.PythonShell``, or ``konch.AutoShell``.
+- ``banner``: Custom banner text.
+- ``prompt``: The input prompt (not supported with BPython).
+- ``output``: The output prompt (supported in IPython and PtIPython only).
+- ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, ``hide``, or a function that receives the context dictionary as input and returns a string.
+
+
 Setup and Teardown Functions
 ============================
 
@@ -261,8 +267,8 @@ This is equivalent to running: ::
     % load_ext autoreload
     % autoreload 2
 
-Configuring Colors
-------------------
+Colors
+------
 
 The ``ipy_colors`` and ``ipy_highlighting_style`` options are used to configure colors in the IPython shell. ``ipy_colors`` sets the color of tracebacks and object info (the output of e.g. ``zip?``). ``ipy_highlighting_style`` sets colors for syntax highlighting.
 
@@ -304,6 +310,43 @@ To use ptpython's vi-style bindings, set the ``ptpy_vi_mode`` option in your ``.
             "ipy_extensions": ["autoreload"],
         }
     )
+
+
+Using ``.konchrc.local``
+========================
+
+If you're distributing your ``.konchrc`` in a git repo, you
+may want to allow collaborators to extend your configuration in an
+unversioned ``.konchrc.local`` file.
+
+First, add ``.konchrc.local`` to ``.gitignore``.
+
+.. code-block:: bash
+
+   # .gitignore
+
+   .konchrc.local
+
+
+Then add the following to your ``.konchrc``:
+
+.. code-block:: python
+
+    # .konchrc
+
+    from pathlib import Path
+
+    # konch.config(...)
+
+    if Path(".konchrc.local").exists():
+        konch.use_file(".konchrc.local")
+
+
+.. note::
+
+    The ``context`` in ``.konchrc.local`` will be merged
+    with the context in ``.konchrc``.
+
 
 Programmatic Usage
 ==================
