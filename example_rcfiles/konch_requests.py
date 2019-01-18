@@ -4,12 +4,7 @@ import requests
 
 konch.config(
     {
-        "context": {
-            "httpget": requests.get,
-            "httppost": requests.post,
-            "httpput": requests.put,
-            "httpdelete": requests.delete,
-        },
+        "context": [requests.get, requests.post, requests.put, requests.delete],
         "banner": "A humanistic HTTP shell",
     }
 )

@@ -1,13 +1,12 @@
-import datetime as dt
+import datetime
 
 import konch
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
+import pandas
+import numpy
 
 konch.config(
     {
-        "context": {"dt": dt, "pd": pd, "plt": plt, "np": np},
+        "context": [datetime, pandas, numpy],
         "shell": "ipython",
         "ipy_autoreload": True,
         "ipy_extensions": [

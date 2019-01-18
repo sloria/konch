@@ -11,16 +11,7 @@ def index():
     return "Hello world"
 
 
-konch.config(
-    {
-        "context": {
-            "request": flask.request,
-            "url_for": flask.url_for,
-            "Flask": flask.Flask,
-            "render_template": flask.render_template,
-        }
-    }
-)
+konch.config({"context": [flask.url_for, flask.Flask, flask.render_template]})
 
 # Make sure we're in a request context so we can use
 # url_for

@@ -156,14 +156,7 @@ file.
     )
 
     konch.named_config(
-        "flask",
-        {
-            "context": {
-                "request": flask.request,
-                "Flask": flask.Flask,
-                "url_for": flask.url_for,
-            }
-        },
+        "flask", {"context": [flask.Flask, flask.url_for, flask.render_template]}
     )
 
 To use the ``flask`` config, you would run:
@@ -180,14 +173,7 @@ You can also pass multiple names to ``named_config``:
     # OR
     # konch -n fl
     konch.named_config(
-        ["flask", "fl"],
-        {
-            "context": {
-                "request": flask.request,
-                "Flask": flask.Flask,
-                "url_for": flask.url_for,
-            }
-        },
+        ["flask", "fl"], {"context": [flask.Flask, flask.url_for, flask.render_template]}
     )
 
 ``$ konch -s <shell>``
