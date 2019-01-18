@@ -50,7 +50,8 @@ Supports Python 3 (tested on 3.6 and 3.7). There are no external dependencies.
 
 .. note::
 
-   If you are using Python 2, install ``konch<4.0``.
+   If you are using Python 2, ``konch<4.0`` will be installed with the
+   above command.
 
 Usage
 =====
