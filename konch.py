@@ -264,6 +264,10 @@ def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     return {obj.__name__.split(".")[-1]: obj for obj in context_list}
 
 
+def _relpath(p: Path) -> Path:
+    return p.resolve().relative_to(Path.cwd())
+
+
 class Shell:
     """Base shell class.
 
@@ -821,7 +825,7 @@ def use_file(filename: typing.Optional[Path]) -> typing.Union[types.ModuleType, 
         print(file=sys.stderr)
         print("*" * 46, file=sys.stderr)
         print(file=sys.stderr)
-        relative_path = Path(config_file).resolve().relative_to(Path.cwd())
+        relative_path = _relpath(config_file)
         cmd = (
             "konch allow"
             if relative_path == Path(CONFIG_FILE)
@@ -965,7 +969,13 @@ def allow_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
             print(f'"{filename}" does not exist.', file=sys.stderr)
             sys.exit(1)
         else:
-            print("Done. You can now start a shell with `konch`.")
+            relative_path = _relpath(filename)
+            cmd = (
+                "konch"
+                if relative_path == Path(CONFIG_FILE)
+                else f"konch -f {relative_path}"
+            )
+            print(f"Done. You can now start a shell with `{cmd}`.")
     sys.exit(0)
 
 
