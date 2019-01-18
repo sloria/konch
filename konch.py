@@ -719,7 +719,11 @@ class Config(dict):
 
     def update(self, d: typing.Mapping) -> None:  # type: ignore
         for key in d.keys():
-            self[key] = d[key]
+            # Shallow-merge context
+            if key == "context":
+                self["context"].update(Config.transform_val(d["context"]))
+            else:
+                self[key] = d[key]
 
 
 # _cfg and _config_registry are singletons that may be mutated in a .konchrc file
@@ -807,7 +811,9 @@ def __ensure_directory_in_path(filename: Path) -> None:
         sys.path.insert(0, str(directory))
 
 
-def use_file(filename: typing.Optional[Path]) -> typing.Union[types.ModuleType, None]:
+def use_file(
+    filename: typing.Union[Path, str, None]
+) -> typing.Union[types.ModuleType, None]:
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
     """
@@ -825,7 +831,7 @@ def use_file(filename: typing.Optional[Path]) -> typing.Union[types.ModuleType, 
         print(file=sys.stderr)
         print("*" * 46, file=sys.stderr)
         print(file=sys.stderr)
-        relative_path = _relpath(config_file)
+        relative_path = _relpath(Path(config_file))
         cmd = (
             "konch allow"
             if relative_path == Path(CONFIG_FILE)
@@ -842,7 +848,7 @@ def use_file(filename: typing.Optional[Path]) -> typing.Union[types.ModuleType, 
     if config_file and Path(config_file).exists():
         with AuthFile.load() as authfile:
             try:
-                authfile.check(config_file)
+                authfile.check(Path(config_file))
             except KonchrcChangedError:
                 print(
                     f'"{config_file}" has changed since you last used it.',
@@ -857,7 +863,7 @@ def use_file(filename: typing.Optional[Path]) -> typing.Union[types.ModuleType, 
 
         logger.info(f"Using {config_file}")
         # Ensure that relative imports are possible
-        __ensure_directory_in_path(config_file)
+        __ensure_directory_in_path(Path(config_file))
         mod = None
         try:
             mod = imp.load_source("konchrc", str(config_file))

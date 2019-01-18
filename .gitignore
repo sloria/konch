@@ -45,3 +45,4 @@ README.html
 
 .mypy_cache
 .cache
+.konchrc.local

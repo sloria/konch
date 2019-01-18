@@ -173,6 +173,33 @@ def test_config_update_context_converts_list():
     assert config["context"] == {"math": math}
 
 
+def test_config_shallow_merges_context():
+    config = konch.Config()
+    config.update({"context": {"foo": 42}, "banner": "bar"})
+    config.update({"context": {"baz": 24}, "banner": "qux"})
+
+    assert config["context"] == {"foo": 42, "baz": 24}
+    assert config["banner"] == "qux"
+
+    config = konch.Config()
+    config.update({"context": {"foo": 42}})
+    config.update({"context": {"foo": 24}})
+    assert config["context"] == {"foo": 24}
+
+    config = konch.Config()
+    config.update({"context": {"foo": {"inner": 42}}})
+    config.update({"context": {"foo": {"inner2": 24}}})
+    assert config["context"] == {"foo": {"inner2": 24}}
+
+    config = konch.Config()
+
+    def bar():
+        pass
+
+    config.update({"context": {"foo": 42}, "banner": "bar"})
+    config.update({"context": [bar], "banner": "bar"})
+
+
 def test_named_config_adds_to_registry():
     assert konch._config_registry["default"] == konch._cfg
     assert len(konch._config_registry.keys()) == 1

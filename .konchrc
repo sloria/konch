@@ -24,3 +24,6 @@ konch.config(
         "context_format": "full",
     }
 )
+
+if Path(".konchrc.local").exists():
+    konch.use_file(".konchrc.local")
