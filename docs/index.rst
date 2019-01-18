@@ -110,7 +110,7 @@ Now, when you run ``konch`` again:
 
 .. seealso::
 
-    For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tree/dev/example_rcfiles>`_ directory.
+    For more examples, see the `example_rcfiles <https://github.com/sloria/konch/tree/master/example_rcfiles>`_ directory.
 
 .. note::
 
