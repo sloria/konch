@@ -275,7 +275,7 @@ def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return {obj.__name__: obj for obj in context_list}
+    return {obj.__name__.split(".")[-1]: obj for obj in context_list}
 
 
 class Shell:

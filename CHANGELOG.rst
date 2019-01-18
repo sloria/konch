@@ -9,12 +9,19 @@ Other changes:
 
 - Python 2 is no longer supported. Python>=3.6 is officially supported.
 
+3.2.1 (2019-01-17)
+------------------
+
+Bug fixes:
+
+- Fix handling of nested modules when passing a list to ``context``.
+
 3.2.0.post0 (2019-01-13)
 ------------------------
 
 - Add ``python_requires`` to PyPI metadata.
 
-This will be the last version to support Python 2.
+3.2.x will be the last release line to support Python 2.
 
 3.2.0 (2019-01-11)
 ------------------
