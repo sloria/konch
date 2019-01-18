@@ -2,12 +2,19 @@
 Changelog
 *********
 
+3.2.1 (unreleased)
+------------------
+
+Bug fixes:
+
+- Fix handling of nested modules.
+
 3.2.0.post0 (2019-01-13)
 ------------------------
 
 - Add ``python_requires`` to PyPI metadata.
 
-This will be the last version to support Python 2.
+3.2.x will be the last release line to support Python 2.
 
 3.2.0 (2019-01-11)
 ------------------

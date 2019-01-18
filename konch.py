@@ -267,7 +267,7 @@ def context_list2dict(context_list):
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return dict((obj.__name__, obj) for obj in context_list)
+    return dict((obj.__name__.split(".")[-1], obj) for obj in context_list)
 
 
 class Shell(object):
