@@ -35,6 +35,7 @@ Environment variables:
 
 from __future__ import unicode_literals, print_function
 from collections.abc import Iterable
+from pathlib import Path
 import code
 import codecs
 import errno
@@ -834,8 +835,14 @@ def use_file(filename: str) -> typing.Union[types.ModuleType, None]:
         print(file=sys.stderr)
         print("*" * 46, file=sys.stderr)
         print(file=sys.stderr)
+        relative_path = Path(config_file).resolve().relative_to(Path.cwd())
+        cmd = (
+            "konch allow"
+            if relative_path == Path(CONFIG_FILE)
+            else f"konch allow {relative_path}"
+        )
         print(
-            "Verify the file's contents and run `konch allow` to approve it.",
+            f"Verify the file's contents and run `{cmd}` to approve it.",
             file=sys.stderr,
         )
 
