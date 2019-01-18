@@ -172,17 +172,19 @@ CONFIG_FILE = Path(".konchrc")
 DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
 
 INIT_TEMPLATE: str = """# vi: set ft=python :
-
 import konch
+import sys
+import os
 
 # Available options:
 #   "context", "banner", "shell", "prompt", "output",
 #   "context_format", "ipy_extensions", "ipy_autoreload",
 #   "ipy_colors", "ipy_highlighting_style"
 konch.config({
-    "context": {
-        "speak": konch.speak,
-    }
+    "context": [
+        sys,
+        os,
+    ]
 })
 
 
