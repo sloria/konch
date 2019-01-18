@@ -200,14 +200,14 @@ def _full_formatter(context: Context) -> str:
     context_str = "\n".join(
         [
             line_format.format(name=name, obj=obj)
-            for name, obj in sorted(context.items(), key=lambda i: i[0])
+            for name, obj in sorted(context.items(), key=lambda i: i[0].lower())
         ]
     )
     return f"\nContext:\n{context_str}"
 
 
 def _short_formatter(context: Context) -> str:
-    context_str = ", ".join(sorted(context.keys()))
+    context_str = ", ".join(sorted(map(lambda k: k.lower(), context.keys())))
     return f"\nContext:\n{context_str}"
 
 
