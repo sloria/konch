@@ -26,4 +26,4 @@ konch.config(
 )
 
 if Path(".konchrc.local").exists():
-    konch.use_file(".konchrc.local")
+    konch.use_file(".konchrc.local", trust=True)

@@ -31,7 +31,11 @@ def env():
     auth_file = Path(env_.base_path) / "konch_auth"
     env_.environ["KONCH_AUTH_FILE"] = str(auth_file)
     env_.environ["KONCH_EDITOR"] = "echo"
-    return env_
+    yield env_
+    try:
+        auth_file.unlink()
+    except FileNotFoundError:
+        pass
 
 
 def teardown_function(func):
@@ -498,3 +502,60 @@ def test_resolve_path(folderenv):
     folder = (Path(folderenv.base_path) / "testdir").resolve()
     os.chdir(folder)
     assert konch.resolve_path(".konchrc") == fpath
+
+
+class TestAuthFile:
+    @pytest.fixture()
+    def auth_file(self, env):
+        auth_filepath = Path(env.base_path) / "konch_auth"
+        env.writefile(auth_filepath, content=b"")
+        yield auth_filepath
+        auth_filepath.unlink()
+
+    @pytest.fixture()
+    def rcfile(self, env):
+        filepath = Path(env.base_path) / ".konchrc"
+        env.writefile(filepath, content=b"import konch")
+        yield filepath
+        filepath.unlink()
+
+    def test_check_returns_true_if_authorized(self, auth_file, rcfile):
+        with konch.AuthFile.load(auth_file) as authfile:
+            authfile.allow(rcfile)
+            assert authfile.check(rcfile) is True
+
+    def test_deny(self, auth_file, rcfile):
+        with konch.AuthFile.load(auth_file) as authfile:
+            authfile.allow(rcfile)
+            assert authfile.check(rcfile)
+            authfile.deny(rcfile)
+            with pytest.raises(konch.KonchrcNotAuthorizedError):
+                authfile.check(rcfile)
+
+    def test_check_raises_if_file_not_authorized(self, auth_file, rcfile):
+        with konch.AuthFile.load(auth_file) as authfile:
+            with pytest.raises(konch.KonchrcNotAuthorizedError):
+                authfile.check(rcfile)
+
+    def test_check_does_not_raise_if_file_not_authorized_and_raise_error_false(
+        self, auth_file, rcfile
+    ):
+        with konch.AuthFile.load(auth_file) as authfile:
+            assert authfile.check(rcfile, raise_error=False) is False
+
+    def test_check_raises_if_file_changed(self, auth_file, rcfile, env):
+        with konch.AuthFile.load(auth_file) as authfile:
+            authfile.allow(rcfile)
+            assert authfile.check(rcfile)
+            env.writefile(rcfile, content=b"changed")
+            with pytest.raises(konch.KonchrcChangedError):
+                authfile.check(rcfile)
+
+    def test_check_does_not_raise_if_file_changed_and_raise_error_false(
+        self, auth_file, rcfile, env
+    ):
+        with konch.AuthFile.load(auth_file) as authfile:
+            authfile.allow(rcfile)
+            assert authfile.check(rcfile)
+            env.writefile(rcfile, content=b"changed")
+            assert authfile.check(rcfile, raise_error=False) is False

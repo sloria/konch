@@ -90,8 +90,8 @@ class AuthFile:
         return f"AuthFile({self.data!r})"
 
     @classmethod
-    def load(cls) -> "AuthFile":
-        filepath = cls.get_path()
+    def load(cls, path: typing.Optional[Path] = None) -> "AuthFile":
+        filepath = path or cls.get_path()
         try:
             with Path(filepath).open("r", encoding="utf-8") as fp:
                 data = json.load(fp)
@@ -864,7 +864,7 @@ SEPARATOR = f"\n{'*' * 46}\n"
 
 
 def use_file(
-    filename: typing.Union[Path, str, None]
+    filename: typing.Union[Path, str, None], trust: bool = False
 ) -> typing.Union[types.ModuleType, None]:
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
@@ -892,17 +892,18 @@ def use_file(
         print_error(f'"{filename}" not found.')
         sys.exit(1)
     if config_file and Path(config_file).exists():
-        with AuthFile.load() as authfile:
-            try:
-                authfile.check(Path(config_file))
-            except KonchrcChangedError:
-                print_error(f'"{config_file}" has changed since you last used it.')
-                preview_unauthorized()
-                sys.exit(1)
-            except KonchrcNotAuthorizedError:
-                print_error(f'"{config_file}" is blocked.')
-                preview_unauthorized()
-                sys.exit(1)
+        if not trust:
+            with AuthFile.load() as authfile:
+                try:
+                    authfile.check(Path(config_file))
+                except KonchrcChangedError:
+                    print_error(f'"{config_file}" has changed since you last used it.')
+                    preview_unauthorized()
+                    sys.exit(1)
+                except KonchrcNotAuthorizedError:
+                    print_error(f'"{config_file}" is blocked.')
+                    preview_unauthorized()
+                    sys.exit(1)
 
         logger.info(f"Using {config_file}")
         # Ensure that relative imports are possible
