@@ -192,14 +192,13 @@ def style(
 ) -> str:
     use_color = not os.environ.get("NO_COLOR") and file.isatty()
     if use_color:
-        parts = []
-        if fg:
-            parts.append(f"\033[{fg}m")
-        if bold:
-            parts.append(f"\033[{BOLD}m")
-        parts.append(text)
-        parts.append(f"\033[{RESET_ALL}m")
-        return "".join(parts)
+        parts = [
+            fg and f"\033[{fg}m",
+            bold and f"\033[{BOLD}m",
+            text,
+            f"\033[{RESET_ALL}m",
+        ]
+        return "".join([e for e in parts if e])
     else:
         return text
 
