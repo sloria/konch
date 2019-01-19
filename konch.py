@@ -31,6 +31,7 @@ Environment variables:
     Defaults to ~/.local/share/konch_auth.
   KONCH_EDITOR: Editor command to use when running `konch edit`.
     Falls back to $VISUAL then $EDITOR.
+  NO_COLOR: Disable ANSI colors.
 """
 
 from __future__ import unicode_literals, print_function
@@ -168,6 +169,49 @@ class AuthFile:
         return sha1.hexdigest()
 
 
+RED = 31
+GREEN = 32
+YELLOW = 33
+BOLD = 1
+RESET_ALL = 0
+
+
+def style(
+    text: str,
+    fg: typing.Optional[int] = None,
+    *,
+    bold: bool = False,
+    file: typing.IO = sys.stdout,
+) -> str:
+    use_color = not os.environ.get("NO_COLOR") and file.isatty()
+    if use_color:
+        parts = []
+        if fg:
+            parts.append(f"\033[{fg}m")
+        if bold:
+            parts.append(f"\033[{BOLD}m")
+        parts.append(text)
+        parts.append(f"\033[{RESET_ALL}m")
+        return "".join(parts)
+    else:
+        return text
+
+
+def sprint(text: str, *args: typing.Any, **kwargs: typing.Any) -> None:
+    file = kwargs.pop("file", sys.stdout)
+    return print(style(text, file=file, *args, **kwargs), file=file)
+
+
+def print_error(text: str) -> None:
+    prefix = style("ERROR", RED, file=sys.stderr)
+    return sprint(f"{prefix}: {text}", file=sys.stderr)
+
+
+def print_warning(text: str) -> None:
+    prefix = style("WARNING", YELLOW, file=sys.stderr)
+    return sprint(f"{prefix}: {text}", file=sys.stderr)
+
+
 CONFIG_FILE = Path(".konchrc")
 DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
 
@@ -205,12 +249,14 @@ def _full_formatter(context: Context) -> str:
             for name, obj in sorted(context.items(), key=lambda i: i[0].lower())
         ]
     )
-    return f"\nContext:\n{context_str}"
+    header = style("Context:", bold=True)
+    return f"\n{header}\n{context_str}"
 
 
 def _short_formatter(context: Context) -> str:
     context_str = ", ".join(sorted(map(lambda k: k.lower(), context.keys())))
-    return f"\nContext:\n{context_str}"
+    header = style("Context:", bold=True)
+    return f"\n{header}\n{context_str}"
 
 
 def _hide_formatter(context: Context) -> str:
@@ -798,17 +844,16 @@ def reset_config() -> Config:
     return _cfg
 
 
-def get_file_directory(filename: Path) -> Path:
-    return Path(filename).parent.resolve()
-
-
 def __ensure_directory_in_path(filename: Path) -> None:
     """Ensures that a file's directory is in the Python path.
     """
-    directory = get_file_directory(filename)
+    directory = Path(filename).parent.resolve()
     if directory not in sys.path:
         logger.debug(f"Adding {directory} to sys.path")
         sys.path.insert(0, str(directory))
+
+
+SEPARATOR = f"\n{'*' * 46}\n"
 
 
 def use_file(
@@ -822,42 +867,33 @@ def use_file(
     def preview_unauthorized() -> None:
         if not config_file:
             return None
-        print()
-        print("*" * 46, file=sys.stderr)
-        print(file=sys.stderr)
+        print(SEPARATOR, file=sys.stderr)
         with Path(config_file).open("r", encoding="utf-8") as fp:
             for line in fp:
                 print(line, end="", file=sys.stderr)
-        print(file=sys.stderr)
-        print("*" * 46, file=sys.stderr)
-        print(file=sys.stderr)
-        relative_path = _relpath(Path(config_file))
+        print(SEPARATOR, file=sys.stderr)
+        relpath = _relpath(Path(config_file))
         cmd = (
-            "konch allow"
-            if relative_path == Path(CONFIG_FILE)
-            else f"konch allow {relative_path}"
+            "konch allow" if relpath == Path(CONFIG_FILE) else f"konch allow {relpath}"
         )
         print(
-            f"Verify the file's contents and run `{cmd}` to approve it.",
+            f"Verify the file's contents and run `{style(cmd, bold=True)}` to approve it.",
             file=sys.stderr,
         )
 
     if config_file and not Path(config_file).exists():
-        print(f'"{filename}" not found.', file=sys.stderr)
+        print_error(f'"{filename}" not found.')
         sys.exit(1)
     if config_file and Path(config_file).exists():
         with AuthFile.load() as authfile:
             try:
                 authfile.check(Path(config_file))
             except KonchrcChangedError:
-                print(
-                    f'"{config_file}" has changed since you last used it.',
-                    file=sys.stderr,
-                )
+                print_error(f'"{config_file}" has changed since you last used it.')
                 preview_unauthorized()
                 sys.exit(1)
             except KonchrcNotAuthorizedError:
-                print(f'"{config_file}" is blocked.', file=sys.stderr)
+                print_error(f'"{config_file}" is blocked.')
                 preview_unauthorized()
                 sys.exit(1)
 
@@ -872,9 +908,9 @@ def use_file(
         else:
             return mod
     if not config_file:
-        warnings.warn("No config file found.")
+        print_warning("No konch config file found.")
     else:
-        warnings.warn(f'"{config_file}" not found.')
+        print_warning(f'"{config_file}" not found.')
     return None
 
 
@@ -912,17 +948,17 @@ def edit_file(
     filename: typing.Optional[Path], editor: typing.Optional[str] = None
 ) -> None:
     if not filename:
-        print("filename not passed.", file=sys.stderr)
+        print_error("filename not passed.")
         sys.exit(1)
     editor = editor or get_editor()
     try:
         result = subprocess.Popen(f'{editor} "{filename}"', shell=True)
         exit_code = result.wait()
         if exit_code != 0:
-            print(f"{editor}: Editing failed!", file=sys.stderr)
+            print_error(f"{editor}: Editing failed!")
             sys.exit(1)
     except OSError as err:
-        print(f"{editor}: Editing failed: {err}", file=sys.stderr)
+        print_error(f"{editor}: Editing failed: {err}")
         sys.exit(1)
     else:
         with AuthFile.load() as authfile:
@@ -931,6 +967,10 @@ def edit_file(
 
 def init_config(config_file: Path) -> typing.NoReturn:
     if not config_file.exists():
+        print(f'Writing to "{config_file.resolve()}"...')
+        print(SEPARATOR)
+        print(INIT_TEMPLATE, end="")
+        print(SEPARATOR)
         init_template = INIT_TEMPLATE
         if DEFAULT_CONFIG_FILE.exists():  # use ~/.konchrc.default if it exists
             with Path(DEFAULT_CONFIG_FILE).open("r") as fp:
@@ -939,13 +979,17 @@ def init_config(config_file: Path) -> typing.NoReturn:
             fp.write(init_template)
         with AuthFile.load() as authfile:
             authfile.allow(config_file)
-        print(
-            "Initialized konch. Edit {} to your needs and run `konch` "
-            "to start an interactive session.".format(config_file)
-        )
+
+        relpath = _relpath(config_file)
+        is_default = relpath == Path(CONFIG_FILE)
+        edit_cmd = "konch edit" if is_default else f"konch edit {relpath}"
+        run_cmd = "konch" if is_default else f"konch -f {relpath}"
+        print(f"{style('Done!', GREEN)} ✨ 🐚 ✨")
+        print(f"To edit your config: `{style(edit_cmd, bold=True)}`")
+        print(f"To start the shell:  `{style(run_cmd, bold=True)}`")
         sys.exit(0)
     else:
-        print(f"{config_file} already exists in this directory.", file=sys.stderr)
+        print_error(f'"{config_file}" already exists in this directory.')
         sys.exit(1)
 
 
@@ -965,23 +1009,20 @@ def allow_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     else:
         filename = config_file or resolve_path(CONFIG_FILE)
     if not filename:
-        print("No config file found.", file=sys.stderr)
+        print_error("No config file found.")
         sys.exit(1)
     print(f'Authorizing "{filename}"...')
     with AuthFile.load() as authfile:
         try:
             authfile.allow(filename)
         except FileNotFoundError:
-            print(f'"{filename}" does not exist.', file=sys.stderr)
+            print_error(f'"{filename}" does not exist.')
             sys.exit(1)
         else:
-            relative_path = _relpath(filename)
-            cmd = (
-                "konch"
-                if relative_path == Path(CONFIG_FILE)
-                else f"konch -f {relative_path}"
-            )
-            print(f"Done. You can now start a shell with `{cmd}`.")
+            print(f"{style('Done!', GREEN)} ✨ 🐚 ✨")
+            relpath = _relpath(filename)
+            cmd = "konch" if relpath == Path(CONFIG_FILE) else f"konch -f {relpath}"
+            print(f"You can now start a shell with `{style(cmd, bold=True)}`.")
     sys.exit(0)
 
 
@@ -992,17 +1033,17 @@ def deny_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     else:
         filename = config_file or resolve_path(CONFIG_FILE)
     if not filename:
-        print("No config file found.", file=sys.stderr)
+        print_error("No config file found.")
         sys.exit(1)
     print(f'Removing authorization for "{filename}"...')
     with AuthFile.load() as authfile:
         try:
             authfile.deny(filename)
         except FileNotFoundError:
-            print(f"{filename} does not exist.", file=sys.stderr)
+            print_error(f'"{filename}" does not exist.')
             sys.exit(1)
         else:
-            print("Done.")
+            print(style("Done!", GREEN))
     sys.exit(0)
 
 
@@ -1042,10 +1083,10 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
 
     if args["--name"]:
         if args["--name"] not in _config_registry:
-            print('Invalid --name: "{}"'.format(args["--name"]), file=sys.stderr)
+            print_error(f'Invalid --name: "{args["--name"]}"')
             sys.exit(1)
         config_dict = _config_registry[args["--name"]]
-        logger.debug('Using named config: "{}"...'.format(args["--name"]))
+        logger.debug(f'Using named config: "{args["--name"]}"')
         logger.debug(config_dict)
     else:
         config_dict = _cfg
