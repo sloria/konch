@@ -355,6 +355,10 @@ Then add the following to your ``.konchrc``:
    added to source control.**
 
 
+.. note::
+
+   ``setup()`` and ``teardown()`` cannot be used in ``.konchrc.local``.
+
 Programmatic Usage
 ==================
 
