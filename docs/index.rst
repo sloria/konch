@@ -339,13 +339,20 @@ Then add the following to your ``.konchrc``:
     # konch.config(...)
 
     if Path(".konchrc.local").exists():
-        konch.use_file(".konchrc.local")
+        konch.use_file(".konchrc.local", trust=True)
 
 
 .. note::
 
     The ``context`` in ``.konchrc.local`` will be merged
     with the context in ``.konchrc``.
+
+.. note::
+
+   Passing ``trust=True`` allows ``.konchrc.local`` to be
+   edited without requiring approval.
+   **This is safe if (and only if) .konchrc.local is not
+   added to source control.**
 
 
 Programmatic Usage
