@@ -259,6 +259,13 @@ def test_edit(env, request):
     assert "Editing file" in res.stdout
 
 
+def test_edit_file_not_found(env, request):
+    res = env.run("konch", "edit", "notfound", expect_error=True)
+    assert res.returncode == 1
+    assert "ERROR" in res.stderr
+    assert "konch init" in res.stderr
+
+
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
 def test_edit_with_filename(env, request):
     env.run("konch", "init", "myfile")

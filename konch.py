@@ -1005,6 +1005,19 @@ def edit_config(
     config_file: typing.Optional[Path] = None, editor: typing.Optional[str] = None
 ) -> typing.NoReturn:
     filename = config_file or resolve_path(CONFIG_FILE)
+    if not filename:
+        print_error('No ".konchrc" file found.')
+        styled_cmd = style("konch init", bold=True, file=sys.stderr)
+        print(f"Run `{styled_cmd}` to create it.", file=sys.stderr)
+        sys.exit(1)
+    if not filename.exists():
+        print_error(f'"{filename}" does not exist.')
+        relpath = _relpath(filename)
+        is_default = relpath == Path(CONFIG_FILE)
+        cmd = "konch init" if is_default else f"konch init {filename}"
+        styled_cmd = style(cmd, bold=True, file=sys.stderr)
+        print(f"Run `{styled_cmd}` to create it.", file=sys.stderr)
+        sys.exit(1)
     print(f'Editing file: "{filename}"')
     edit_file(filename, editor=editor)
     sys.exit(0)

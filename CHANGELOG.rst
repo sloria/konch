@@ -2,6 +2,17 @@
 Changelog
 *********
 
+4.0.1 (unreleased)
+------------------
+
+Bug fixes:
+
+- Fix behavior when ``konch edit`` is passed a file that does not exist.
+
+Other changes:
+
+- Various documentation improvements and updates.
+
 4.0.0 (2019-01-19)
 ------------------
 
