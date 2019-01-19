@@ -954,7 +954,7 @@ import os
 # Available options:
 #   "context", "banner", "shell", "prompt", "output",
 #   "context_format", "ipy_extensions", "ipy_autoreload",
-#   "ipy_colors", "ipy_highlighting_style"
+#   "ipy_colors", "ipy_highlighting_style", "ptpy_vi_mode"
 # See: https://konch.readthedocs.io/en/latest/#configuration
 konch.config({
     "context": [
