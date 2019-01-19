@@ -28,7 +28,8 @@ def assert_in_output(s, res, message=None):
 @pytest.fixture
 def env():
     env_ = FileEnvironment(ignore_hidden=False)
-    env_.environ["KONCH_AUTH_FILE"] = str(Path(env_.base_path) / "konch_auth")
+    auth_file = Path(env_.base_path) / "konch_auth"
+    env_.environ["KONCH_AUTH_FILE"] = str(auth_file)
     env_.environ["KONCH_EDITOR"] = "echo"
     return env_
 

@@ -116,11 +116,16 @@ class AuthFile:
         except KeyError:
             pass
 
-    def check(self, filepath: typing.Union[Path, None]) -> bool:
+    def check(
+        self, filepath: typing.Union[Path, None], raise_error: bool = True
+    ) -> bool:
         if not filepath:
             return False
         if str(filepath.resolve()) not in self.data:
-            raise KonchrcNotAuthorizedError
+            if raise_error:
+                raise KonchrcNotAuthorizedError
+            else:
+                return False
         else:
             file_hash = self._hash_file(filepath)
             if file_hash != self.data[str(filepath.resolve())]:
@@ -1010,18 +1015,20 @@ def allow_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     if not filename:
         print_error("No config file found.")
         sys.exit(1)
-    print(f'Authorizing "{filename}"...')
     with AuthFile.load() as authfile:
-        try:
-            authfile.allow(filename)
-        except FileNotFoundError:
-            print_error(f'"{filename}" does not exist.')
-            sys.exit(1)
+        if authfile.check(filename, raise_error=False):
+            print_warning(f'"{filename}" is already authorized.')
         else:
-            print(f"{style('Done!', GREEN)} ✨ 🐚 ✨")
-            relpath = _relpath(filename)
-            cmd = "konch" if relpath == Path(CONFIG_FILE) else f"konch -f {relpath}"
-            print(f"You can now start a shell with `{style(cmd, bold=True)}`.")
+            try:
+                print(f'Authorizing "{filename}"...')
+                authfile.allow(filename)
+            except FileNotFoundError:
+                print_error(f'"{filename}" does not exist.')
+                sys.exit(1)
+        print(f"{style('Done!', GREEN)} ✨ 🐚 ✨")
+        relpath = _relpath(filename)
+        cmd = "konch" if relpath == Path(CONFIG_FILE) else f"konch -f {relpath}"
+        print(f"You can now start a shell with `{style(cmd, bold=True)}`.")
     sys.exit(0)
 
 
