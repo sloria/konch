@@ -3,7 +3,6 @@
 
 Usage:
   konch
-  konch init
   konch init [<config_file>] [-d]
   konch edit [<config_file>] [-d]
   konch allow [<config_file>] [-d]
