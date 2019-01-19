@@ -129,7 +129,10 @@ class AuthFile:
         else:
             file_hash = self._hash_file(filepath)
             if file_hash != self.data[str(filepath.resolve())]:
-                raise KonchrcChangedError
+                if raise_error:
+                    raise KonchrcChangedError
+                else:
+                    return False
         return True
 
     def save(self) -> None:
