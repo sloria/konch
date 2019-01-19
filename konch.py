@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """konch: Customizes your Python shell.
 
 Usage:
@@ -32,8 +32,6 @@ Environment variables:
     Falls back to $VISUAL then $EDITOR.
   NO_COLOR: Disable ANSI colors.
 """
-
-from __future__ import unicode_literals, print_function
 from collections.abc import Iterable
 from pathlib import Path
 import code
@@ -54,16 +52,6 @@ from docopt import docopt
 __version__ = "4.0.0.dev0"
 
 logger = logging.getLogger(__name__)
-
-BANNER_TEMPLATE = """{version}
-
-{text}
-{context}
-"""
-
-Context = typing.Mapping[str, typing.Any]
-Formatter = typing.Callable[[Context], str]
-ContextFormat = typing.Union[str, Formatter]
 
 
 class KonchError(Exception):
@@ -218,34 +206,9 @@ def print_warning(text: str) -> None:
     return sprint(f"{prefix}: {text}", file=sys.stderr)
 
 
-CONFIG_FILE = Path(".konchrc")
-DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
-
-INIT_TEMPLATE: str = """# vi: set ft=python :
-import konch
-import sys
-import os
-
-# Available options:
-#   "context", "banner", "shell", "prompt", "output",
-#   "context_format", "ipy_extensions", "ipy_autoreload",
-#   "ipy_colors", "ipy_highlighting_style"
-# See: https://konch.readthedocs.io/en/latest/#configuration
-konch.config({
-    "context": [
-        sys,
-        os,
-    ]
-})
-
-
-def setup():
-    pass
-
-
-def teardown():
-    pass
-"""
+Context = typing.Mapping[str, typing.Any]
+Formatter = typing.Callable[[Context], str]
+ContextFormat = typing.Union[str, Formatter]
 
 
 def _full_formatter(context: Context) -> str:
@@ -292,6 +255,13 @@ def format_context(
         else:
             raise ValueError(f'Invalid context format: "{formatter}"')
     return formatter_func(context)
+
+
+BANNER_TEMPLATE = """{version}
+
+{text}
+{context}
+"""
 
 
 def make_banner(
@@ -682,22 +652,8 @@ class AutoShell(Shell):
         return shell.start()
 
 
-SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
-    "ipy": IPythonShell,
-    "ipython": IPythonShell,
-    "bpy": BPythonShell,
-    "bpython": BPythonShell,
-    "py": PythonShell,
-    "python": PythonShell,
-    "auto": AutoShell,
-    "ptpy": PtPythonShell,
-    "ptpython": PtPythonShell,
-    "ptipy": PtIPythonShell,
-    "ptipython": PtIPythonShell,
-}
-
 CONCHES: typing.List[str] = [
-    ('"My conch told me to come save you guys."\n' '"Hooray for the magic conches!"'),
+    '"My conch told me to come save you guys."\n"Hooray for the magic conches!"',
     '"All hail the Magic Conch!"',
     '"Hooray for the magic conches!"',
     '"Uh, hello there. Magic Conch, I was wondering... '
@@ -777,6 +733,21 @@ class Config(dict):
                 self["context"].update(Config.transform_val(d["context"]))
             else:
                 self[key] = d[key]
+
+
+SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
+    "ipy": IPythonShell,
+    "ipython": IPythonShell,
+    "bpy": BPythonShell,
+    "bpython": BPythonShell,
+    "py": PythonShell,
+    "python": PythonShell,
+    "auto": AutoShell,
+    "ptpy": PtPythonShell,
+    "ptpython": PtPythonShell,
+    "ptipy": PtIPythonShell,
+    "ptipython": PtIPythonShell,
+}
 
 
 # _cfg and _config_registry are singletons that may be mutated in a .konchrc file
@@ -860,6 +831,8 @@ def __ensure_directory_in_path(filename: Path) -> None:
         sys.path.insert(0, str(directory))
 
 
+CONFIG_FILE = Path(".konchrc")
+DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
 SEPARATOR = f"\n{'*' * 46}\n"
 
 
@@ -971,6 +944,33 @@ def edit_file(
     else:
         with AuthFile.load() as authfile:
             authfile.allow(filename)
+
+
+INIT_TEMPLATE = """# vi: set ft=python :
+import konch
+import sys
+import os
+
+# Available options:
+#   "context", "banner", "shell", "prompt", "output",
+#   "context_format", "ipy_extensions", "ipy_autoreload",
+#   "ipy_colors", "ipy_highlighting_style"
+# See: https://konch.readthedocs.io/en/latest/#configuration
+konch.config({
+    "context": [
+        sys,
+        os,
+    ]
+})
+
+
+def setup():
+    pass
+
+
+def teardown():
+    pass
+"""
 
 
 def init_config(config_file: Path) -> typing.NoReturn:

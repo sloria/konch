@@ -7,11 +7,11 @@ Changelog
 
 Features:
 
+- Add ANSI coloring and improve messaging (:issue:`67`).
 - ``konch.config()`` will shallow-merge ``context`` when
   called multiple times.
 - ``konch edit`` may be passed a filename to edit.
 - ``konch.main`` accepts an ``argv`` argument.
-- Add ANSI coloring and improve messaging (:issue:`67`).
 - Add ``trust`` parameter to ``konch.use_file()``.
 
 Other changes:
