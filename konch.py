@@ -231,6 +231,7 @@ import os
 #   "context", "banner", "shell", "prompt", "output",
 #   "context_format", "ipy_extensions", "ipy_autoreload",
 #   "ipy_colors", "ipy_highlighting_style"
+# See: https://konch.readthedocs.io/en/latest/#configuration
 konch.config({
     "context": [
         sys,
