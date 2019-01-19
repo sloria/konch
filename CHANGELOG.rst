@@ -11,6 +11,7 @@ Features:
   called multiple times.
 - ``konch edit`` may be passed a filename to edit.
 - ``konch.main`` accepts an ``argv`` argument.
+- Add ANSI coloring and improve messaging (:issue:`67`).
 
 Other changes:
 
