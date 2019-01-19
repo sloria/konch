@@ -18,8 +18,8 @@ konch
    :depth: 1
 
 
-Configure your Python shell
-===========================
+About
+=====
 
 **konch** is a CLI and configuration utility for the Python shell, optimized for simplicity and productivity.
 
@@ -28,9 +28,8 @@ Configure your Python shell
 - **No external dependencies**
 - Uses **IPython**, **BPython**, or **ptpython** if available, and falls back to built-in interpreter
 - Automatically load **IPython extensions**
-- Can have multiple configurations per project using **named configs**
 
-.. image:: https://zippy.gfycat.com/EachTerrificChupacabra.gif
+.. image:: https://user-images.githubusercontent.com/2379650/51432821-2ce68180-1c0c-11e9-9c8d-8053a1b99818.gif
     :alt: Demo
 
 
@@ -59,20 +58,8 @@ Supports Python 3 (tested on 3.6 and 3.7). There are no external dependencies.
 Usage
 =====
 
-``$ konch``
------------
-
-runs the shell.
-
-``$ konch allow [<config_file>]``
----------------------------------
-
-authorizes a config file. **You MUST run this command before using a new config file**. This is a security mechanism to prevent execution of untrusted config files.
-
-By default, the auth file is stored in ``~/.local/share/konch_auth``. You can change the location by setting the ``KONCH_AUTH_FILE`` environment variable.
-
-``$ konch init``
-----------------
+``$ konch init [<config_file>]``
+--------------------------------
 
 creates a ``.konchrc`` file in your current directory.
 
@@ -89,19 +76,14 @@ Here is an example ``.konchrc`` file that includes some functions from the `requ
 
     konch.config(
         {
-            "context": {
-                "httpget": requests.get,
-                "httppost": requests.post,
-                "httpput": requests.put,
-                "httpdelete": requests.delete,
-            },
+            "context": [requests.get, requests.post, requests.put, requests.delete],
             "banner": "A humanistic HTTP shell",
         }
     )
 
-Now, when you run ``konch`` again:
+This would produce the following shell:
 
-.. image:: https://user-images.githubusercontent.com/2379650/50376317-8a6dbb00-05d9-11e9-8d42-983e40f2c264.gif
+.. image:: https://user-images.githubusercontent.com/2379650/51432393-05d88180-1c05-11e9-9782-8e2c9d06f177.png
     :alt: konch with requests
 
 .. seealso::
@@ -117,13 +99,37 @@ Now, when you run ``konch`` again:
     You can override the default file contents of ``.konchrc`` by creating a ``~/.konchrc.default`` file in your home directory.
 
 
-``$ konch edit``
-----------------
+``$ konch edit [<config_file>]``
+--------------------------------
 
 opens the current config file in your editor. Automatically authorizes the file when editing is finished.
 
 Checks the ``KONCH_EDITOR``, ``VISUAL`` and ``EDITOR`` environment
 variables (in that order) to determine which editor to use.
+
+``$ konch [-f <config_file>]``
+------------------------------
+
+runs the shell. Uses ``.konchrc`` as the configuration file, by default.
+
+``$ konch -s <shell>``
+----------------------
+
+overrides the default shell. Choose between ``ipy``, ``bpy``, ``py``, ``ptpy``, ``ptipy``, or ``auto``.
+
+
+``$ konch allow [<config_file>]``
+---------------------------------
+
+authorizes a config file. **You MUST run this command before using a new config file**. This is a security mechanism to prevent execution of untrusted code.
+
+By default, the auth file is stored in ``~/.local/share/konch_auth``. You can change the location by setting the ``KONCH_AUTH_FILE`` environment variable.
+
+
+``$ konch deny [<config_file>]``
+--------------------------------
+
+removes authorization for a config file.
 
 
 ``$ konch -n <name>``
@@ -146,9 +152,7 @@ file.
     # The default config
     konch.config({"context": [os, sys]})
 
-    konch.named_config(
-        "http", {"context": {"httpget": requests.get, "httppost": requests.post}}
-    )
+    konch.named_config("http", {"context": [requests.get, requests.post]})
 
     konch.named_config(
         "flask", {"context": [flask.Flask, flask.url_for, flask.render_template]}
@@ -171,33 +175,24 @@ You can also pass multiple names to ``named_config``:
         ["flask", "fl"], {"context": [flask.Flask, flask.url_for, flask.render_template]}
     )
 
-``$ konch -s <shell>``
-----------------------
-
-overrides the default shell. Choose between ``ipy``, ``bpy``, ``py``, ``ptpy``, ``ptipy``, or ``auto``.
-
-
-``$ konch -f <file>``
----------------------
-
-starts a session using ``<file>`` as its config file instead of the default ``.konchrc``.
-
-``$ konch deny [<config_file>]``
---------------------------------
-
-removes authorization for a config file.
-
 
 Configuration
 =============
 
-- ``context``: A dictionary or list of objects that will be be available in your shell session. May also be a callable that returns a dictionary or list of objects.
+- ``context``: A dictionary or list of objects that will be be available in your shell session. May also be a callable that returns a dictionary or list.
 - ``shell``: Default shell. May be ``'ipy'``, ``'bpy'``, ``'ptpy'``, ``'ptipy'``, ``'py'``, or ``'auto'`` (default). You can also pass a ``Shell`` class directly, such as  ``konch.IPythonShell``, ``konch.BPythonShell``, ``konch.PtPythonShell``, ``konch.PtIPythonShell``,  ``konch.PythonShell``, or ``konch.AutoShell``.
 - ``banner``: Custom banner text.
 - ``prompt``: The input prompt (not supported with BPython).
-- ``output``: The output prompt (supported in IPython and PtIPython only).
+- ``output``: (IPython and ptipython only) The output prompt.
 - ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, ``hide``, or a function that receives the context dictionary as input and returns a string.
-
+- ``ipy_extensions``:  (IPython and ptipython only) IPython extensions
+  to load at startup.
+- ``ipy_autorelaod``: (IPython and ptipython only) Whether to enable the IPython
+  ``autoreload`` extension.
+- ``ipy_colors``: (IPython only) Color scheme.
+- ``ipy_highlighting_style``: (IPython only) Syntax highlighting style.
+- ``ptpy_vi_mode``: (ptpython and ptipython only) Whether to enable vim
+  bindings.
 
 Setup and Teardown Functions
 ============================
@@ -206,20 +201,20 @@ You can optionally define ``setup()`` and/or ``teardown()`` functions which will
 
 .. code-block:: python
 
-    import os
+    from pathlib import Path
     import shutil
     import konch
 
 
     def setup():
-        os.mkdir("my_temp_dir")
+        Path("my_temp_dir").mkdir()
 
 
     def teardown():
         shutil.rmtree("my_temp_dir")
 
 
-    konch.config({"context": {"pjoin": os.path.join}})
+    konch.config({"context": [Path]})
 
 
 IPython Extras
@@ -345,7 +340,7 @@ Then add the following to your ``.konchrc``:
 .. note::
 
     The ``context`` in ``.konchrc.local`` will be merged
-    with the context in ``.konchrc``.
+    with the ``context`` in ``.konchrc``.
 
 .. note::
 

@@ -29,9 +29,8 @@ Configures your Python shell
 - **No external dependencies**
 - Uses **IPython**, **BPython**, or **ptpython** if available, and falls back to built-in interpreter
 - Automatically load **IPython extensions**
-- Can have multiple configurations per project using **named configs**
 
-.. image:: https://zippy.gfycat.com/EachTerrificChupacabra.gif
+.. image:: https://user-images.githubusercontent.com/2379650/51432821-2ce68180-1c0c-11e9-9c8d-8053a1b99818.gif
     :alt: Demo
     :target: https://konch.readthedocs.io
 
