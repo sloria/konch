@@ -368,7 +368,7 @@ def configure_ipython_prompt(
     if IPython.version_info[0] >= 5:  # Custom prompt API changed in IPython 5.0
         from pygments.token import Token
 
-        # See https://ipython.readthedocs.io/en/stable/config/details.html#custom-prompts
+        # https://ipython.readthedocs.io/en/stable/config/details.html#custom-prompts  # noqa: B950
         class CustomPrompt(IPython.terminal.prompts.Prompts):
             def in_prompt_tokens(self, *args, **kwargs):
                 if prompt is None:
@@ -447,8 +447,8 @@ class IPythonShell(Shell):
                 "IPython shell not available " "or IPython version not supported."
             )
         # Hack to show custom banner
-        # TerminalIPythonApp/start_app doesn't allow you to customize the banner directly,
-        # so we write it to stdout before starting the IPython app
+        # TerminalIPythonApp/start_app doesn't allow you to customize the
+        # banner directly, so we write it to stdout before starting the IPython app
         io.stdout.write(self.banner)
         # Pass exec_lines in order to start autoreload
         if self.ipy_autoreload:
@@ -671,8 +671,8 @@ CONCHES: typing.List[str] = [
     '"We gotta drop the load!"',
     '"Dude, we\'re falling right out the sky!!"',
     (
-        '"Oh, Magic Conch Shell, what do we need to do to get out of the Kelp Forest?"\n'
-        '"Nothing."'
+        '"Oh, Magic Conch Shell, what do we need to do to get '
+        'out of the Kelp Forest?"\n"Nothing."'
     ),
     '"The shell knows all!"',
     '"we must never question the wisdom of the Magic Conch."',
@@ -802,8 +802,8 @@ def config(config_dict: typing.Mapping) -> Config:
 
 
 def named_config(name: str, config_dict: typing.Mapping) -> None:
-    """Adds a named config to the config registry. The first argument may either be a string
-    or a collection of strings.
+    """Adds a named config to the config registry. The first argument
+    may either be a string or a collection of strings.
 
     This function should be called in a .konchrc file.
     """
@@ -857,7 +857,8 @@ def use_file(
             "konch allow" if relpath == Path(CONFIG_FILE) else f"konch allow {relpath}"
         )
         print(
-            f"Verify the file's contents and run `{style(cmd, bold=True)}` to approve it.",
+            f"Verify the file's contents and run `{style(cmd, bold=True)}` "
+            "to approve it.",
             file=sys.stderr,
         )
 

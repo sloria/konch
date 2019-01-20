@@ -1,3 +1,4 @@
+# flake8: noqa
 """Pythonic command-line interface parser that will make you smile.
 
  * http://docopt.org
