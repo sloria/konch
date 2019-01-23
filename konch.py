@@ -7,7 +7,6 @@ Usage:
   konch edit [<config_file>] [-d]
   konch allow [<config_file>] [-d]
   konch deny [<config_file>] [-d]
-  konch [--name=<name>] [-d]
   konch [--name=<name>] [--file=<file>] [--shell=<shell_name>] [-d]
 
 Options:
@@ -94,12 +93,14 @@ class AuthFile:
         return cls(data)
 
     def allow(self, filepath: Path) -> None:
+        logger.debug(f"Authorizing {filepath}")
         self.data[str(Path(filepath).resolve())] = self._hash_file(filepath)
 
     def deny(self, filepath: Path) -> None:
         if not filepath.exists():
             raise FileNotFoundError(f"{filepath} not found")
         try:
+            logger.debug(f"Removing authorization for {filepath}")
             del self.data[str(filepath.resolve())]
         except KeyError:
             pass
@@ -836,6 +837,29 @@ DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
 SEPARATOR = f"\n{'*' * 46}\n"
 
 
+def confirm(text: str, default: bool = False) -> bool:
+    """Display a confirmation prompt."""
+    choices = "Y/n" if default else "y/N"
+    prompt = f"{style(text, bold=True)} [{choices}]: "
+    while 1:
+        try:
+            print(prompt, end="")
+            value = input("").lower().strip()
+        except (KeyboardInterrupt, EOFError):
+            sys.exit(1)
+        if value in ("y", "yes"):
+            rv = True
+        elif value in ("n", "no"):
+            rv = False
+        elif value == "":
+            rv = default
+        else:
+            print_error("Error: invalid input")
+            continue
+        break
+    return rv
+
+
 def use_file(
     filename: typing.Union[Path, str, None], trust: bool = False
 ) -> typing.Union[types.ModuleType, None]:
@@ -852,15 +876,6 @@ def use_file(
             for line in fp:
                 print(line, end="", file=sys.stderr)
         print(SEPARATOR, file=sys.stderr)
-        relpath = _relpath(Path(config_file))
-        cmd = (
-            "konch allow" if relpath == Path(CONFIG_FILE) else f"konch allow {relpath}"
-        )
-        print(
-            f"Verify the file's contents and run `{style(cmd, bold=True)}` "
-            "to approve it.",
-            file=sys.stderr,
-        )
 
     if config_file and not Path(config_file).exists():
         print_error(f'"{filename}" not found.')
@@ -873,11 +888,19 @@ def use_file(
                 except KonchrcChangedError:
                     print_error(f'"{config_file}" has changed since you last used it.')
                     preview_unauthorized()
-                    sys.exit(1)
+                    if confirm("Would you like to authorize it?"):
+                        authfile.allow(Path(config_file))
+                        print()
+                    else:
+                        sys.exit(1)
                 except KonchrcNotAuthorizedError:
                     print_error(f'"{config_file}" is blocked.')
                     preview_unauthorized()
-                    sys.exit(1)
+                    if confirm("Would you like to authorize it?"):
+                        authfile.allow(Path(config_file))
+                        print()
+                    else:
+                        sys.exit(1)
 
         logger.info(f"Using {config_file}")
         # Ensure that relative imports are possible
