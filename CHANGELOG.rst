@@ -2,6 +2,14 @@
 Changelog
 *********
 
+4.1.0 (unreleased)
+------------------
+
+Features:
+
+- Use a ``[y/N]`` prompt for authorizing a config file instead of
+  requiring user to run ``konch allow``.
+
 4.0.1 (2019-01-19)
 ------------------
 

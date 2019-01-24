@@ -121,7 +121,7 @@ overrides the default shell. Choose between ``ipy``, ``bpy``, ``py``, ``ptpy``, 
 ``$ konch allow [<config_file>]``
 ---------------------------------
 
-authorizes a config file. **You MUST run this command before using a new config file**. This is a security mechanism to prevent execution of untrusted code.
+authorizes a config file. **You MUST authorize new or edited config files before executing them**. This is a security mechanism to prevent execution of untrusted code.
 
 By default, the auth file is stored in ``~/.local/share/konch_auth``. You can change the location by setting the ``KONCH_AUTH_FILE`` environment variable.
 
