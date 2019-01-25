@@ -3,21 +3,6 @@ import shlex
 from setuptools import setup, Command
 
 
-class Shell(Command):
-    user_options = [("args=", "a", "Arguments to pass to konch")]
-
-    def initialize_options(self):
-        self.args = ""
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        import konch
-
-        konch.main(shlex.split(self.args))
-
-
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
@@ -31,6 +16,32 @@ EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + ["ptpython", "tox"]
 )
 PYTHON_REQUIRES = ">=3.6"
+
+
+class Shell(Command):
+    user_options = [
+        ("name=", "n", "Named config to use."),
+        ("shell=", "s", "Shell to use."),
+        ("file=", "f", "File path of konch config file to execute."),
+    ]
+
+    def initialize_options(self):
+        self.name = None
+        self.shell = None
+        self.file = None
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import konch
+
+        argv = []
+        for each in ("name", "shell", "file"):
+            opt = getattr(self, each)
+            if opt:
+                argv.append(f"--{each}={opt}")
+        konch.main(argv)
 
 
 def find_version(fname):

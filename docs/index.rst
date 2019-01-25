@@ -418,10 +418,16 @@ the following ``Command`` class.
 
 
     class Shell(Command):
-        user_options = [("args=", "a", "Arguments to pass to konch")]
+        user_options = [
+            ("name=", "n", "Named config to use."),
+            ("shell=", "s", "Shell to use."),
+            ("file=", "f", "File path of konch config file to execute."),
+        ]
 
         def initialize_options(self):
-            self.args = ""
+            self.name = None
+            self.shell = None
+            self.file = None
 
         def finalize_options(self):
             pass
@@ -429,8 +435,12 @@ the following ``Command`` class.
         def run(self):
             import konch
 
-            konch.main(shlex.split(self.args))
-
+            argv = []
+            for each in ("name", "shell", "file"):
+                opt = getattr(self, each)
+                if opt:
+                    argv.append(f"--{each}={opt}")
+            konch.main(argv)
 
     setup(
         # ...,
