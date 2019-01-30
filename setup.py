@@ -1,5 +1,4 @@
 import re
-import shlex
 from setuptools import setup, Command
 
 

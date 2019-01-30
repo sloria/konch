@@ -442,6 +442,7 @@ the following ``Command`` class.
                     argv.append(f"--{each}={opt}")
             konch.main(argv)
 
+
     setup(
         # ...,
         cmdclass={"shell": Shell}
