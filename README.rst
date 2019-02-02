@@ -4,7 +4,7 @@ konch
 
 .. image:: https://badgen.net/pypi/v/konch
   :alt: pypi badge
-  :target: https://badge.fury.io/py/konch
+  :target: https://pypi.org/project/konch/
 
 .. image:: https://badgen.net/travis/sloria/konch/master
   :alt: travis-ci status
