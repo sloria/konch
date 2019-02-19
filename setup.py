@@ -8,7 +8,7 @@ EXTRAS_REQUIRE = {
         "mypy==0.670",
         "flake8==3.7.5",
         "flake8-bugbear==18.8.0",
-        "pre-commit==1.14.3",
+        "pre-commit==1.14.4",
     ],
 }
 EXTRAS_REQUIRE["dev"] = (
