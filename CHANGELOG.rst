@@ -2,6 +2,13 @@
 Changelog
 *********
 
+4.1.1 (unreleased)
+------------------
+
+Bug fixes:
+
+- Fix casing when using `"context_format": "short"`.
+
 4.1.0 (2019-01-24)
 ------------------
 

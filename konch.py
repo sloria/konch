@@ -225,7 +225,7 @@ def _full_formatter(context: Context) -> str:
 
 
 def _short_formatter(context: Context) -> str:
-    context_str = ", ".join(sorted(map(lambda k: k.lower(), context.keys())))
+    context_str = ", ".join(sorted(context.keys(), key=str.lower))
     header = style("Context:", bold=True)
     return f"\n{header}\n{context_str}"
 
