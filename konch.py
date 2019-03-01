@@ -48,7 +48,7 @@ import warnings
 
 from docopt import docopt
 
-__version__ = "4.1.0"
+__version__ = "4.1.1"
 
 logger = logging.getLogger(__name__)
 
