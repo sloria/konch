@@ -10,6 +10,13 @@ Features:
 - Add BPython Curses shell (:pr:`78`). Thanks :user:`goandbuild` 
   for the suggestion and PR.
 
+4.1.1 (2019-02-28)
+------------------
+
+Bug fixes:
+
+- Fix casing when using `"context_format": "short"`.
+
 4.1.0 (2019-01-24)
 ------------------
 
