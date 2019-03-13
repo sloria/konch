@@ -617,15 +617,6 @@ class BPythonShell(Shell):
 class BPythonCursesShell(Shell):
     """The BPython Curses shell."""
 
-    def _embed(self, **kwargs) -> None:
-        from bpython.cli import main
-
-        try:
-            kwargs["args"]
-        except KeyError:
-            kwargs["args"] = ["-i", "-q"]
-        main(**kwargs)
-
     def check_availability(self) -> bool:
         try:
             import bpython.cli  # noqa: F401
@@ -635,7 +626,7 @@ class BPythonCursesShell(Shell):
 
     def start(self) -> None:
         try:
-            from bpython.cli import main  # noqa: F401
+            from bpython.cli import main
         except ImportError:
             raise ShellNotAvailableError("BPython Curses shell not available.")
         if self.prompt:
@@ -644,7 +635,7 @@ class BPythonCursesShell(Shell):
             warnings.warn(
                 "Custom output templates not supported by BPython Curses shell."
             )
-        self._embed(banner=self.banner, locals_=self.context)
+        main(banner=self.banner, locals_=self.context, args=["-i", "-q"])
         return None
 
 
