@@ -2,6 +2,14 @@
 Changelog
 *********
 
+4.2.0 (unreleased)
+------------------
+
+Features:
+
+- Add BPython Curses shell (:pr:`78`). Thanks :user:`goandbuild` 
+  for the suggestion and PR.
+
 4.1.0 (2019-01-24)
 ------------------
 
