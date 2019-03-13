@@ -16,7 +16,8 @@ Options:
   edit                       Edit your .konchrc file.
   -n --name=<name>           Named config to use.
   -s --shell=<shell_name>    Shell to use. Can be either "ipy" (IPython),
-                              "bpy" (BPython), "ptpy" (PtPython), "ptipy" (PtIPython),
+                              "bpy" (BPython), "bpyc" (BPython Curses),
+                              "ptpy" (PtPython), "ptipy" (PtIPython),
                               "py" (built-in Python shell), or "auto".
                               Overrides the 'shell' option in .konchrc.
   -f --file=<file>           File path of konch config file to execute. If not provided,
@@ -613,13 +614,45 @@ class BPythonShell(Shell):
         return None
 
 
+class BPythonCursesShell(Shell):
+    """The BPython Curses shell."""
+
+    def check_availability(self) -> bool:
+        try:
+            import bpython.cli  # noqa: F401
+        except ImportError:
+            raise ShellNotAvailableError("BPython Curses shell not available.")
+        return True
+
+    def start(self) -> None:
+        try:
+            from bpython.cli import main
+        except ImportError:
+            raise ShellNotAvailableError("BPython Curses shell not available.")
+        if self.prompt:
+            warnings.warn("Custom prompts not supported by BPython Curses shell.")
+        if self.output:
+            warnings.warn(
+                "Custom output templates not supported by BPython Curses shell."
+            )
+        main(banner=self.banner, locals_=self.context, args=["-i", "-q"])
+        return None
+
+
 class AutoShell(Shell):
     """Shell that runs PtIpython, PtPython, IPython, or BPython if available.
     Falls back to built-in Python shell.
     """
 
     # Shell classes in precedence order
-    SHELLS = [PtIPythonShell, PtPythonShell, IPythonShell, BPythonShell, PythonShell]
+    SHELLS = [
+        PtIPythonShell,
+        PtPythonShell,
+        IPythonShell,
+        BPythonShell,
+        BPythonCursesShell,
+        PythonShell,
+    ]
 
     def __init__(self, context: Context, banner: str, **kwargs):
         Shell.__init__(self, context, **kwargs)
@@ -741,6 +774,8 @@ SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
     "ipython": IPythonShell,
     "bpy": BPythonShell,
     "bpython": BPythonShell,
+    "bpyc": BPythonCursesShell,
+    "bpython-curses": BPythonCursesShell,
     "py": PythonShell,
     "python": PythonShell,
     "auto": AutoShell,
