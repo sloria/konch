@@ -516,7 +516,7 @@ class PtPythonShell(Shell):
         def configure(repl):
             path = config_dir / "config.py"
             if path.exists():
-                run_config(repl, path)
+                run_config(repl, str(path))
 
         embed(
             globals=self.context,
@@ -560,7 +560,7 @@ class PtIPythonShell(PtPythonShell):
         def configure(repl):
             path = config_dir / "config.py"
             if path.exists():
-                run_config(repl, path)
+                run_config(repl, str(path))
 
         # Startup path
         startup_paths = []
