@@ -187,7 +187,7 @@ Configuration
 - ``context_format``: Format to display ``context``. May be ``'full'``, ``'short'``, ``hide``, or a function that receives the context dictionary as input and returns a string.
 - ``ipy_extensions``:  (IPython and ptipython only) IPython extensions
   to load at startup.
-- ``ipy_autorelaod``: (IPython and ptipython only) Whether to enable the IPython
+- ``ipy_autoreload``: (IPython and ptipython only) Whether to enable the IPython
   ``autoreload`` extension.
 - ``ipy_colors``: (IPython only) Color scheme.
 - ``ipy_highlighting_style``: (IPython only) Syntax highlighting style.
