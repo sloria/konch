@@ -2,6 +2,14 @@
 Changelog
 *********
 
+4.2.1 (2019-03-16)
+------------------
+
+Bug fixes:
+
+- Prevent error when ptpython config file exists (:issue:`84`).
+  Thanks :user:`svanburen`.
+
 4.2.0 (2019-03-12)
 ------------------
 
