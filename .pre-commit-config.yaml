@@ -10,7 +10,7 @@ repos:
   hooks:
   - id: black
     exclude: docopt.py
-    language_version:python3
+    language_version: python3
     args: [--target-version=py36]
 - repo: https://gitlab.com/pycqa/flake8
   rev: 3.7.7
