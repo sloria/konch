@@ -5,7 +5,7 @@ repos:
   - id: pyupgrade
     exclude: docopt.py
     args: [--py36-plus]
-- repo: https://github.com/ambv/black
+- repo: https://github.com/python/black
   rev: 19.3b0
   hooks:
   - id: black
