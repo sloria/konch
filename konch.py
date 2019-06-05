@@ -49,10 +49,9 @@ import warnings
 
 from docopt import docopt
 
-__version__ = "4.2.1"
+__version__ = "4.2.2"
 
 logger = logging.getLogger(__name__)
-
 
 class KonchError(Exception):
     pass
@@ -282,11 +281,19 @@ def make_banner(
     return out
 
 
+def get_obj_name(obj: typing.Any) -> str:
+    try:
+        name = obj.__name__
+    except AttributeError:
+        name = ''
+    return name
+
+
 def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return {obj.__name__.split(".")[-1]: obj for obj in context_list}
+    return {get_obj_name(obj).split(".")[-1]: obj for obj in context_list}
 
 
 def _relpath(p: Path) -> Path:
@@ -1005,7 +1012,9 @@ def edit_file(
             authfile.allow(filename)
 
 
-INIT_TEMPLATE = """# vi: set ft=python :
+INIT_TEMPLATE = """#!/opt/conda/bin/python
+# -*- coding: utf-8 -*-
+# vi: set ft=python :
 import konch
 import sys
 import os

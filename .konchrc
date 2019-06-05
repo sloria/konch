@@ -1,29 +1,46 @@
+#!/opt/conda/bin/python
+# -*- coding: utf-8 -*-
 # vi: set ft=python :
 from pathlib import Path
 
 import konch
+import sys
+import os
 from test_konch import env
 import IPython
 import bpython
 import ptpython
 
-konch.config(
-    {
-        "context": [
-            konch,
-            env,
-            Path,
-            IPython,
-            bpython,
-            ptpython,
-        ],
-        "prompt": "[konch] >>> ",
-        "ipy_colors": "linux",
-        "ipy_autoreload": True,
-        "ptpy_vi_mode": True,
-        "context_format": "full",
-    }
-)
+konch.config({
+    "context": [
+        sys,
+        os,
+        konch,
+        env,
+        Path,
+        IPython,
+        bpython,
+        ptpython,
+    ],
+    "prompt":
+    "[konch] >>> ",
+    "ipy_colors":
+    "linux",
+    "ipy_autoreload":
+    True,
+    "ptpy_vi_mode":
+    True,
+    "context_format":
+    "full",
+})
 
 if Path(".konchrc.local").exists():
     konch.use_file(".konchrc.local", trust=True)
+
+
+def setup():
+    pass
+
+
+def teardown():
+    pass
