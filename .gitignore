@@ -49,3 +49,6 @@ README.html
 
 # Visual Studio Code
 .vscode/
+
+.pytest_cache/
+__pycache__

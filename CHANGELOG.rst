@@ -2,6 +2,14 @@
 Changelog
 *********
 
+4.2.2 (2019-06-06)
+------------------
+
+Bug fixes:
+
+- Prevent error when imported objects have no __name__ attribute.
+- Add Python header to .konchrc file.
+
 4.2.1 (2019-03-16)
 ------------------
 
@@ -15,7 +23,7 @@ Bug fixes:
 
 Features:
 
-- Add BPython Curses shell (:pr:`78`). Thanks :user:`goandbuild` 
+- Add BPython Curses shell (:pr:`78`). Thanks :user:`goandbuild`
   for the suggestion and PR.
 
 4.1.1 (2019-02-28)
