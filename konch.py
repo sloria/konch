@@ -53,6 +53,7 @@ __version__ = "4.2.2"
 
 logger = logging.getLogger(__name__)
 
+
 class KonchError(Exception):
     pass
 
@@ -285,7 +286,7 @@ def get_obj_name(obj: typing.Any) -> str:
     try:
         name = obj.__name__
     except AttributeError:
-        name = ''
+        name = ""
     return name
 
 
