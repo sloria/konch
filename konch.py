@@ -36,7 +36,7 @@ from collections.abc import Iterable
 from pathlib import Path
 import code
 import hashlib
-import imp
+import importlib.machinery
 import json
 import logging
 import os
@@ -951,7 +951,9 @@ def use_file(
         __ensure_directory_in_path(Path(config_file))
         mod = None
         try:
-            mod = imp.load_source("konchrc", str(config_file))
+            loader = importlib.machinery.SourceFileLoader("konchrc", str(config_file))
+            mod = types.ModuleType(loader.name)
+            loader.exec_module(mod)
         except UnboundLocalError:  # File not found
             pass
         else:
