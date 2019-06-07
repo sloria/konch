@@ -20,9 +20,9 @@ Options:
                               "ptpy" (PtPython), "ptipy" (PtIPython),
                               "py" (built-in Python shell), or "auto".
                               Overrides the 'shell' option in .konchrc.
-  -f --file=<file>           File path of konch config file to execute. If not provided,
-                               konch will use the .konchrc file in the current
-                               directory.
+  -f --file=<file>           File path of konch config file to execute. If not
+                             provided, konch will use the .konchrc file in the
+                             current directory.
   -d --debug                 Enable debugging/verbose mode.
 
 Environment variables:
@@ -283,6 +283,7 @@ def make_banner(
 
 
 def get_obj_name(obj: typing.Any) -> str:
+    """Try to get object __name__ attribute, otherwise return blank."""
     try:
         name = obj.__name__
     except AttributeError:
@@ -1146,6 +1147,20 @@ def parse_args(argv: typing.Optional[typing.Sequence] = None) -> typing.Dict[str
     return docopt(__doc__, argv=argv, version=__version__)
 
 
+def get_config(mod: typing.Optional[types.ModuleType]) -> Config:
+    """Get _cfg object from loaded module."""
+    try:
+        k_atr = "konch"
+        if hasattr(mod, k_atr):
+            k = getattr(mod, k_atr)
+            c_atr = "_cfg"
+            if hasattr(k, c_atr):
+                config = getattr(k, c_atr)
+    except AttributeError:
+        config = _cfg
+    return config
+
+
 def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
     """Main entry point for the konch CLI."""
     args = parse_args(argv)
@@ -1170,6 +1185,7 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
             deny_config(config_file)
 
     mod = use_file(Path(args["--file"]) if args["--file"] else None)
+    _cfg = get_config(mod)
     if hasattr(mod, "setup"):
         mod.setup()  # type: ignore
 
@@ -1182,7 +1198,7 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
         logger.debug(config_dict)
     else:
         config_dict = _cfg
-    # Allow default shell to be overriden by command-line argument
+    # Allow default shell to be overridden by command-line argument
     shell_name = args["--shell"]
     if shell_name:
         config_dict["shell"] = SHELL_MAP.get(shell_name.lower(), AutoShell)
