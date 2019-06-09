@@ -287,7 +287,7 @@ def get_obj_name(obj: typing.Any) -> str:
     try:
         name = obj.__name__
     except AttributeError:
-        name = ""
+        name = obj.__hash__
     return name
 
 
