@@ -1145,6 +1145,20 @@ def parse_args(argv: typing.Optional[typing.Sequence] = None) -> typing.Dict[str
     return docopt(__doc__, argv=argv, version=__version__)
 
 
+def get_config(mod: typing.Optional[types.ModuleType]) -> Config:
+    """Get _cfg object from loaded module."""
+    try:
+        k_atr = "konch"
+        if hasattr(mod, k_atr):
+            k = getattr(mod, k_atr)
+            c_atr = "_cfg"
+            if hasattr(k, c_atr):
+                config = getattr(k, c_atr)
+    except AttributeError:
+        config = _cfg
+    return config
+
+
 def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
     """Main entry point for the konch CLI."""
     args = parse_args(argv)
@@ -1169,6 +1183,7 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
             deny_config(config_file)
 
     mod = use_file(Path(args["--file"]) if args["--file"] else None)
+    _cfg = get_config(mod)
     if hasattr(mod, "setup"):
         mod.setup()  # type: ignore
 
