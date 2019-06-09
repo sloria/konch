@@ -282,11 +282,20 @@ def make_banner(
     return out
 
 
+def get_obj_name(obj: typing.Any) -> str:
+    """Try to get object __name__ attribute, otherwise return blank."""
+    try:
+        name = obj.__name__
+    except AttributeError:
+        name = ""
+    return name
+
+
 def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return {obj.__name__.split(".")[-1]: obj for obj in context_list}
+    return {get_obj_name(obj).split(".")[-1]: obj for obj in context_list}
 
 
 def _relpath(p: Path) -> Path:
