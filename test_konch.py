@@ -396,6 +396,12 @@ def test_version(env):
     assert konch.__version__ in res.stdout
 
 
+def test_nonblank_context(env):
+    env.run("konch", "init")
+    res = env.run("python", "-m", "konch", expect_stderr=True)
+    assert "<module 'sys'" in res.stdout
+
+
 TEST_CONFIG_WITH_NAMES = """
 import konch
 
