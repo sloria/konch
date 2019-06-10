@@ -1177,7 +1177,7 @@ def get_config_from_module(mod: typing.Optional[types.ModuleType]) -> Config:
             if obj in config["context"].values():
                 ctx[obj_name] = obj
             else:
-                logger.warning(f"Object not in context: {obj}")
+                logger.info(f"Object not in context: {obj}")
         except UnboundLocalError:
             ctx[obj_name] = obj
     logger.debug(f"Getting context from module: {ctx}")
