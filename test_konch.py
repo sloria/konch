@@ -178,6 +178,16 @@ def test_config_update_context_converts_list():
     assert config["context"] == {"math": math}
 
 
+def test_config_blank_name():
+    class FakeModule:
+        import math
+
+        del math.__name__
+
+    config = konch.get_config_from_module(FakeModule)
+    assert "math" in config["context"].keys()
+
+
 def test_config_shallow_merges_context():
     config = konch.Config()
     config.update({"context": {"foo": 42}, "banner": "bar"})

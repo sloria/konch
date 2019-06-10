@@ -282,11 +282,20 @@ def make_banner(
     return out
 
 
+def get_obj_name(obj: typing.Any) -> str:
+    """Try to get object __name__ attribute, otherwise return hash."""
+    try:
+        name = obj.__name__
+    except AttributeError:
+        name = obj.__hash__
+    return name
+
+
 def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return {obj.__name__.split(".")[-1]: obj for obj in context_list}
+    return {get_obj_name(obj).split(".")[-1]: obj for obj in context_list}
 
 
 def _relpath(p: Path) -> Path:
@@ -1136,8 +1145,19 @@ def parse_args(argv: typing.Optional[typing.Sequence] = None) -> typing.Dict[str
     return docopt(__doc__, argv=argv, version=__version__)
 
 
-def get_config(mod: typing.Optional[types.ModuleType]) -> Config:
-    """Get _cfg object from loaded module."""
+BUILTINS: typing.List[str] = [
+    "__builtins__",
+    "__doc__",
+    "__file__",
+    "__loader__",
+    "__name__",
+    "__package__",
+    "__spec__",
+]
+
+
+def get_config_from_module(mod: typing.Optional[types.ModuleType]) -> Config:
+    """Get _cfg object from module and load context."""
     try:
         k_atr = "konch"
         if hasattr(mod, k_atr):
@@ -1147,6 +1167,25 @@ def get_config(mod: typing.Optional[types.ModuleType]) -> Config:
                 config = getattr(k, c_atr)
     except AttributeError:
         config = _cfg
+    ctx = {}
+    for obj_name in dir(mod):
+        if obj_name in BUILTINS:
+            continue
+        logger.debug(f"obj_name: {obj_name}")
+        obj = getattr(mod, obj_name)
+        try:
+            if obj in config["context"].values():
+                ctx[obj_name] = obj
+            else:
+                logger.warning(f"Object not in context: {obj}")
+        except UnboundLocalError:
+            ctx[obj_name] = obj
+    logger.debug(f"Getting context from module: {ctx}")
+    try:
+        config["context"] = ctx
+    except UnboundLocalError:
+        config = Config()
+        config["context"] = ctx
     return config
 
 
@@ -1174,7 +1213,7 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
             deny_config(config_file)
 
     mod = use_file(Path(args["--file"]) if args["--file"] else None)
-    _cfg = get_config(mod)
+    _cfg = get_config_from_module(mod)
     if hasattr(mod, "setup"):
         mod.setup()  # type: ignore
 
