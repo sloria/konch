@@ -946,12 +946,31 @@ def use_file(
         except UnboundLocalError:  # File not found
             pass
         else:
+            __ensure_global_cfg_loaded(mod)
             return mod
     if not config_file:
         print_warning("No konch config file found.")
     else:
         print_warning(f'"{config_file}" not found.')
     return None
+
+
+def __ensure_global_cfg_loaded(mod: typing.Union[types.ModuleType, None]) -> None:
+    try:
+        if (
+            globals()["_cfg"] is None
+            or globals()["_cfg"] == {}
+            or globals()["_cfg"] == Config()
+        ):
+            raise UnboundLocalError
+    except UnboundLocalError:
+        k_atr = "konch"
+        if hasattr(mod, k_atr):
+            k = getattr(mod, k_atr)
+            c_atr = "_cfg"
+            if hasattr(k, c_atr):
+                _cfg = getattr(k, c_atr)
+                globals()["_cfg"] = _cfg
 
 
 def resolve_path(filename: Path) -> typing.Union[Path, None]:
