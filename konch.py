@@ -1005,12 +1005,14 @@ def __ensure_ctx_names(mod: typing.Union[types.ModuleType, None]) -> None:
         for key, value in config["context"].items():
             if key != str(value.__hash__):
                 ctx[key] = value
-        for obj_name in dir(mod):
-            if obj_name in BUILTINS or obj_name in ctx.keys():
-                continue
-            obj = getattr(mod, obj_name)
-            if obj in config["context"].values():
-                ctx[obj_name] = obj
+            else:
+                for obj_name in dir(mod):
+                    if obj_name in BUILTINS or obj_name in ctx.keys():
+                        continue
+                    obj = getattr(mod, obj_name)
+                    if obj in config["context"].values():
+                        ctx[obj_name] = obj
+                        break
         logger.debug(f"Updating context for config `{name}`: {ctx}")
         config["context"] = ctx
         globals()["_config_registry"][name] = config
