@@ -956,6 +956,7 @@ def use_file(
 
 
 def __ensure_global_cfg_loaded(mod: typing.Union[types.ModuleType, None]) -> None:
+    """Load global config if not already loaded."""
     try:
         if (
             globals()["_cfg"] is None

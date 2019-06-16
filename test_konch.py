@@ -396,7 +396,8 @@ def test_version(env):
     assert konch.__version__ in res.stdout
 
 
-def test_nonblank_context(env):
+def test_nonblank_config(env):
+    """Ensure config is loaded when launched via python command."""
     env.run("konch", "init")
     res = env.run("python", "-m", "konch", expect_stderr=True)
     assert "<module 'sys'" in res.stdout
