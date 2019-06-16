@@ -440,6 +440,16 @@ def teardown():
 """
 
 
+TEST_CONFIG_WITH_BLANK_NAME = """
+import konch
+import math as fake
+del(fake.__name__)
+konch.config({
+    'context': [fake]
+    })
+"""
+
+
 @pytest.fixture
 def names_env(request, env):
     fpath = Path(env.base_path) / ".konchrc"
@@ -468,6 +478,17 @@ def folderenv(request, env):
     folder.mkdir(parents=True)
     yield env
     folder.rmdir()
+
+
+@pytest.fixture
+def blank_name_env(request, env):
+    fpath = Path(env.base_path) / ".konchrc"
+    with fpath.open("w") as fp:
+        fp.write(TEST_CONFIG_WITH_BLANK_NAME)
+
+    env.run("konch", "allow", fpath)
+    yield env
+    fpath.unlink()
 
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
@@ -507,6 +528,13 @@ def test_selecting_name_that_doesnt_exist(names_env):
     res = names_env.run("konch", "-n", "doesntexist", expect_error=True)
     assert res.returncode == 1
     assert "Invalid --name" in res.stderr
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_blank_name(blank_name_env):
+    """Check handling of modules with no __name__."""
+    res = blank_name_env.run("konch", expect_stderr=True)
+    assert_in_output("fake", res)
 
 
 def test_resolve_path(folderenv):

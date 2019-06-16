@@ -282,11 +282,21 @@ def make_banner(
     return out
 
 
+def get_obj_name(obj: typing.Any) -> str:
+    """Try to get object __name__ attribute.
+    Otherwise, return hash as a temp name to avoid errors."""
+    try:
+        name = obj.__name__.split(".")[-1]
+    except AttributeError:
+        name = str(obj.__hash__)
+    return name
+
+
 def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return {obj.__name__.split(".")[-1]: obj for obj in context_list}
+    return {get_obj_name(obj): obj for obj in context_list}
 
 
 def _relpath(p: Path) -> Path:
@@ -947,6 +957,7 @@ def use_file(
             pass
         else:
             __ensure_global_cfg_loaded(mod)
+            __ensure_ctx_names(mod)
             return mod
     if not config_file:
         print_warning("No konch config file found.")
@@ -972,6 +983,34 @@ def __ensure_global_cfg_loaded(mod: typing.Union[types.ModuleType, None]) -> Non
             if hasattr(k, c_atr):
                 _cfg = getattr(k, c_atr)
                 globals()["_cfg"] = _cfg
+                globals()["_config_registry"]["default"] = globals()["_cfg"]
+
+
+BUILTINS: typing.List[str] = [
+    "__builtins__",
+    "__doc__",
+    "__file__",
+    "__loader__",
+    "__name__",
+    "__package__",
+    "__spec__",
+]
+
+
+def __ensure_ctx_names(mod: typing.Union[types.ModuleType, None]) -> None:
+    """Rebuild context dicts with var names from imported module."""
+    for name, config in globals()["_config_registry"].items():
+        ctx = {}
+        for obj_name in dir(mod):
+            if obj_name in BUILTINS:
+                continue
+            obj = getattr(mod, obj_name)
+            if obj in config["context"].values():
+                ctx[obj_name] = obj
+        logger.debug(f"Updating context for config `{name}`: {ctx}")
+        config["context"] = ctx
+        globals()["_config_registry"][name] = config
+    globals()["_cfg"] = globals()["_config_registry"]["default"]
 
 
 def resolve_path(filename: Path) -> typing.Union[Path, None]:
