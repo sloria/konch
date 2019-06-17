@@ -33,10 +33,12 @@ Environment variables:
   NO_COLOR: Disable ANSI colors.
 """
 from collections.abc import Iterable
+from importlib.abc import Loader
+from importlib.machinery import SourceFileLoader
+from importlib.util import spec_from_loader, module_from_spec
 from pathlib import Path
 import code
 import hashlib
-import importlib.machinery
 import json
 import logging
 import os
@@ -942,9 +944,14 @@ def use_file(
         __ensure_directory_in_path(Path(config_file))
         mod = None
         try:
-            loader = importlib.machinery.SourceFileLoader("konchrc", str(config_file))
-            mod = types.ModuleType(loader.name)
-            loader.exec_module(mod)
+            mod_name = "konchrc"
+            # https://stackoverflow.com/a/43602557/10293068
+            spec = spec_from_loader(
+                mod_name, SourceFileLoader(mod_name, str(config_file))
+            )
+            mod = module_from_spec(spec)
+            assert isinstance(spec.loader, Loader)
+            spec.loader.exec_module(mod)
         except UnboundLocalError:  # File not found
             pass
         else:
