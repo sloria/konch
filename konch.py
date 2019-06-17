@@ -946,10 +946,10 @@ def use_file(
         try:
             mod_name = "konchrc"
             # https://stackoverflow.com/a/43602557/10293068
-            spec = spec_from_loader(
-                mod_name, SourceFileLoader(mod_name, str(config_file))
-            )
+            loader = SourceFileLoader(mod_name, str(config_file))
+            spec = spec_from_loader(mod_name, loader)
             mod = module_from_spec(spec)
+            # https://github.com/python/typeshed/issues/2793
             assert isinstance(spec.loader, Loader)
             spec.loader.exec_module(mod)
         except UnboundLocalError:  # File not found
