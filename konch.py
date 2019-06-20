@@ -33,7 +33,6 @@ Environment variables:
   NO_COLOR: Disable ANSI colors.
 """
 from collections.abc import Iterable
-from importlib.machinery import SourceFileLoader
 from pathlib import Path
 import code
 import hashlib
@@ -803,6 +802,8 @@ SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
 # _cfg and _config_registry are singletons that may be mutated in a .konchrc file
 _cfg = Config()
 _config_registry = {"default": _cfg}
+_setup = None
+_teardown = None
 
 
 def start(
@@ -909,9 +910,7 @@ def confirm(text: str, default: bool = False) -> bool:
     return rv
 
 
-def use_file(
-    filename: typing.Union[Path, str, None], trust: bool = False
-) -> typing.Union[types.ModuleType, None]:
+def use_file(filename: typing.Union[Path, str, None], trust: bool = False) -> None:
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
     """
@@ -954,9 +953,18 @@ def use_file(
         logger.info(f"Using {config_file}")
         # Ensure that relative imports are possible
         __ensure_directory_in_path(Path(config_file))
-        mod = None
         try:
-            mod = SourceFileLoader("konchrc", str(config_file)).load_module("konchrc")
+            with open(config_file, "rb") as f:
+                code = compile(f.read(), config_file, "exec")
+                exec(code, globals(), globals())
+                try:
+                    globals()["_setup"] = setup  # type: ignore
+                except NameError:
+                    pass
+                try:
+                    globals()["_teardown"] = teardown  # type: ignore
+                except NameError:
+                    pass
         except UnboundLocalError:  # File not found
             pass
         except NoNameError as error:
@@ -966,7 +974,7 @@ def use_file(
             )
             sys.exit(1)
         else:
-            return mod
+            return
     if not config_file:
         print_warning("No konch config file found.")
     else:
@@ -1026,7 +1034,6 @@ def edit_file(
 
 
 INIT_TEMPLATE = """# vi: set ft=python :
-import konch
 import sys
 import os
 
@@ -1035,7 +1042,7 @@ import os
 #   "context_format", "ipy_extensions", "ipy_autoreload",
 #   "ipy_colors", "ipy_highlighting_style", "ptpy_vi_mode"
 # See: https://konch.readthedocs.io/en/latest/#configuration
-konch.config({
+config({
     "context": [
         sys,
         os,
@@ -1179,9 +1186,9 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
         elif args["deny"]:
             deny_config(config_file)
 
-    mod = use_file(Path(args["--file"]) if args["--file"] else None)
-    if hasattr(mod, "setup"):
-        mod.setup()  # type: ignore
+    use_file(Path(args["--file"]) if args["--file"] else None)
+    if _setup is not None:
+        _setup()
 
     if args["--name"]:
         if args["--name"] not in _config_registry:
@@ -1199,8 +1206,8 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
     logger.debug(f"Starting with config {config_dict}")
     start(**config_dict)
 
-    if hasattr(mod, "teardown"):
-        mod.teardown()  # type: ignore
+    if _teardown is not None:
+        _teardown()
     sys.exit(0)
 
 
