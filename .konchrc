@@ -9,14 +9,7 @@ import ptpython
 
 konch.config(
     {
-        "context": [
-            konch,
-            env,
-            Path,
-            IPython,
-            bpython,
-            ptpython,
-        ],
+        "context": [konch, env, Path, IPython, bpython, ptpython],
         "prompt": "[konch] >>> ",
         "ipy_colors": "linux",
         "ipy_autoreload": True,
