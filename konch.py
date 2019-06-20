@@ -33,10 +33,10 @@ Environment variables:
   NO_COLOR: Disable ANSI colors.
 """
 from collections.abc import Iterable
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 import code
 import hashlib
-import imp
 import json
 import logging
 import os
@@ -942,7 +942,7 @@ def use_file(
         __ensure_directory_in_path(Path(config_file))
         mod = None
         try:
-            mod = imp.load_source("konchrc", str(config_file))
+            mod = SourceFileLoader("konchrc", str(config_file)).load_module("konchrc")
         except UnboundLocalError:  # File not found
             pass
         else:
