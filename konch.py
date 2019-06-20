@@ -62,6 +62,12 @@ class ShellNotAvailableError(KonchError):
     pass
 
 
+class NoNameError(KonchError):
+    def __init__(self, message: str, obj: typing.Any):
+        self.obj = obj
+        super().__init__(message)
+
+
 class KonchrcNotAuthorizedError(KonchError):
     pass
 
@@ -282,11 +288,19 @@ def make_banner(
     return out
 
 
+def get_name(obj: typing.Any) -> str:
+    try:
+        fullname = obj.__name__
+    except AttributeError as error:
+        raise NoNameError(f"Object {obj} has no __name__", obj) from error
+    return fullname.split(".")[-1]
+
+
 def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
-    return {obj.__name__.split(".")[-1]: obj for obj in context_list}
+    return {get_name(obj): obj for obj in context_list}
 
 
 def _relpath(p: Path) -> Path:
@@ -945,6 +959,12 @@ def use_file(
             mod = SourceFileLoader("konchrc", str(config_file)).load_module("konchrc")
         except UnboundLocalError:  # File not found
             pass
+        except NoNameError as error:
+            print_error(
+                f"Object {error.obj} in `context` has no __name__ attribute. "
+                "Use a context dictionary instead."
+            )
+            sys.exit(1)
         else:
             return mod
     if not config_file:

@@ -432,6 +432,16 @@ def teardown():
     print('teardown!')
 """
 
+TEST_CONFIG_WITH_NAMELESS_OBJECT = """
+import konch
+
+nameless = object()
+
+konch.config({
+    'context': [nameless]
+})
+"""
+
 
 @pytest.fixture
 def names_env(request, env):
@@ -449,6 +459,17 @@ def setup_env(request, env):
     fpath = Path(env.base_path) / ".konchrc"
     with fpath.open("w") as fp:
         fp.write(TEST_CONFIG_WITH_SETUP_AND_TEARDOWN)
+
+    env.run("konch", "allow", fpath)
+    yield env
+    fpath.unlink()
+
+
+@pytest.fixture
+def nameless_env(request, env):
+    fpath = Path(env.base_path) / ".konchrc"
+    with fpath.open("w") as fp:
+        fp.write(TEST_CONFIG_WITH_NAMELESS_OBJECT)
 
     env.run("konch", "allow", fpath)
     yield env
@@ -500,6 +521,15 @@ def test_selecting_name_that_doesnt_exist(names_env):
     res = names_env.run("konch", "-n", "doesntexist", expect_error=True)
     assert res.returncode == 1
     assert "Invalid --name" in res.stderr
+
+
+# Regression test for https://github.com/sloria/konch/issues/105
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_context_list_with_nameless_object_returns_error(nameless_env):
+    res = nameless_env.run("konch", expect_error=True)
+    assert res.returncode == 1
+    assert "has no __name__" in res.stderr
+    assert "Use a context dictionary instead" in res.stderr
 
 
 def test_resolve_path(folderenv):

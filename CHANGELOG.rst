@@ -5,9 +5,12 @@ Changelog
 4.2.2 (unreleased)
 ------------------
 
-- Bug fixes:
+Bug fixes:
 
 - Remove usage of deprecated ``imp`` module.
+- Handle ``AttributeError`` when object in context list has no
+  ``__name__`` attribute (:issue:`105`). Thanks :user:`brl0` for
+  reporting.
 
 4.2.1 (2019-03-16)
 ------------------
