@@ -2,6 +2,13 @@
 Changelog
 *********
 
+4.2.2 (unreleased)
+------------------
+
+- Bug fixes:
+
+- Remove usage of deprecated ``imp`` module.
+
 4.2.1 (2019-03-16)
 ------------------
 
