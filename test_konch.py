@@ -100,23 +100,23 @@ def test_make_banner_custom_format():
 
 
 def test_cfg_defaults():
-    assert konch._cfg["shell"] == konch.AutoShell
-    assert konch._cfg["banner"] is None
-    assert konch._cfg["context"] == {}
-    assert konch._cfg["context_format"] == "full"
+    assert konch._konch_cfg["shell"] == konch.AutoShell
+    assert konch._konch_cfg["banner"] is None
+    assert konch._konch_cfg["context"] == {}
+    assert konch._konch_cfg["context_format"] == "full"
 
 
 def test_config():
-    assert konch._cfg == konch.Config()
+    assert konch._konch_cfg == konch.Config()
     konch.config({"banner": "Foo bar"})
-    assert konch._cfg["banner"] == "Foo bar"
+    assert konch._konch_cfg["banner"] == "Foo bar"
 
 
 def test_reset_config():
-    assert konch._cfg == konch.Config()
+    assert konch._konch_cfg == konch.Config()
     konch.config({"banner": "Foo bar"})
     konch.reset_config()
-    assert konch._cfg == konch.Config()
+    assert konch._konch_cfg == konch.Config()
 
 
 def test_parse_args():
@@ -146,13 +146,13 @@ def test_context_list2dict():
 
 
 def test_config_list():
-    assert konch._cfg == konch.Config()
+    assert konch._konch_cfg == konch.Config()
 
     def my_func():
         return
 
     konch.config({"context": [my_func]})
-    assert konch._cfg["context"]["my_func"] == my_func
+    assert konch._konch_cfg["context"]["my_func"] == my_func
 
 
 def test_config_converts_list_context():
@@ -206,12 +206,12 @@ def test_config_shallow_merges_context():
 
 
 def test_named_config_adds_to_registry():
-    assert konch._config_registry["default"] == konch._cfg
-    assert len(konch._config_registry.keys()) == 1
+    assert konch._konch_config_registry["default"] == konch._konch_cfg
+    assert len(konch._konch_config_registry.keys()) == 1
     konch.named_config("mynamespace", {"context": {"foo": 42}})
-    assert len(konch._config_registry.keys()) == 2
+    assert len(konch._konch_config_registry.keys()) == 2
     # reset config_registry
-    konch._config_registry = {"default": konch._cfg}
+    konch._konch_config_registry = {"default": konch._konch_cfg}
 
 
 def test_context_can_be_callable():
@@ -394,6 +394,12 @@ def test_version(env):
     assert konch.__version__ in res.stdout
     res = env.run("konch", "-v")
     assert konch.__version__ in res.stdout
+
+
+def test_nonblank_context(env):
+    env.run("konch", "init")
+    res = env.run("python", "-m", "konch", expect_stderr=True)
+    assert "<module 'sys'" in res.stdout
 
 
 TEST_CONFIG_WITH_NAMES = """

@@ -801,8 +801,8 @@ SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
 
 
 # _cfg and _config_registry are singletons that may be mutated in a .konchrc file
-_cfg = Config()
-_config_registry = {"default": _cfg}
+_konch_cfg = Config()
+_konch_config_registry = {"default": _konch_cfg}
 
 
 def start(
@@ -820,15 +820,15 @@ def start(
     if banner is None:
         banner = speak()
     # Default to global config
-    context_ = context or _cfg["context"]
-    banner_ = banner or _cfg["banner"]
+    context_ = context or _konch_cfg["context"]
+    banner_ = banner or _konch_cfg["banner"]
     if isinstance(shell, type) and issubclass(shell, Shell):
         shell_ = shell
     else:
-        shell_ = SHELL_MAP.get(shell or _cfg["shell"], _cfg["shell"])
-    prompt_ = prompt or _cfg["prompt"]
-    output_ = output or _cfg["output"]
-    context_format_ = context_format or _cfg["context_format"]
+        shell_ = SHELL_MAP.get(shell or _konch_cfg["shell"], _konch_cfg["shell"])
+    prompt_ = prompt or _konch_cfg["prompt"]
+    output_ = output or _konch_cfg["output"]
+    context_format_ = context_format or _konch_cfg["context_format"]
     shell_(
         context=context_,
         banner=banner_,
@@ -847,8 +847,8 @@ def config(config_dict: typing.Mapping) -> Config:
         'shell' (default shell class to use).
     """
     logger.debug(f"Updating with {config_dict}")
-    _cfg.update(config_dict)
-    return _cfg
+    _konch_cfg.update(config_dict)
+    return _konch_cfg
 
 
 def named_config(name: str, config_dict: typing.Mapping) -> None:
@@ -863,13 +863,13 @@ def named_config(name: str, config_dict: typing.Mapping) -> None:
         else [name]
     )
     for each in names:
-        _config_registry[each] = Config(**config_dict)
+        _konch_config_registry[each] = Config(**config_dict)
 
 
 def reset_config() -> Config:
-    global _cfg
-    _cfg = Config()
-    return _cfg
+    global _konch_cfg
+    _konch_cfg = Config()
+    return _konch_cfg
 
 
 def __ensure_directory_in_path(filename: Path) -> None:
@@ -957,6 +957,7 @@ def use_file(
         mod = None
         try:
             mod = SourceFileLoader("konchrc", str(config_file)).load_module("konchrc")
+            __ensure_global_cfg_loaded(mod)
         except UnboundLocalError:  # File not found
             pass
         except NoNameError as error:
@@ -972,6 +973,27 @@ def use_file(
     else:
         print_warning(f'"{config_file}" not found.')
     return None
+
+
+def __ensure_global_cfg_loaded(mod: typing.Union[types.ModuleType, None]) -> None:
+    """Load global config if not already loaded."""
+    try:
+        if (
+            globals()["_konch_cfg"] is None
+            or globals()["_konch_cfg"] == {}
+            or globals()["_konch_cfg"] == Config()
+        ):
+            raise UnboundLocalError
+    except UnboundLocalError:
+        for m in dir(mod):
+            k = getattr(mod, m)
+            c_atr = "_konch_cfg"
+            if hasattr(k, c_atr):
+                _cfg = getattr(k, c_atr)
+                globals()["_konch_cfg"].update(_cfg)
+                globals()["_konch_config_registry"]["default"].update(
+                    globals()["_konch_cfg"]
+                )
 
 
 def resolve_path(filename: Path) -> typing.Union[Path, None]:
@@ -1184,14 +1206,14 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
         mod.setup()  # type: ignore
 
     if args["--name"]:
-        if args["--name"] not in _config_registry:
+        if args["--name"] not in _konch_config_registry:
             print_error(f'Invalid --name: "{args["--name"]}"')
             sys.exit(1)
-        config_dict = _config_registry[args["--name"]]
+        config_dict = _konch_config_registry[args["--name"]]
         logger.debug(f'Using named config: "{args["--name"]}"')
         logger.debug(config_dict)
     else:
-        config_dict = _cfg
+        config_dict = _konch_cfg
     # Allow default shell to be overriden by command-line argument
     shell_name = args["--shell"]
     if shell_name:
