@@ -68,6 +68,11 @@ class NoNameError(KonchError):
         super().__init__(message)
 
 
+class EmptyConfigError(KonchError):
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 class KonchrcNotAuthorizedError(KonchError):
     pass
 
@@ -977,23 +982,26 @@ def use_file(
 
 def __ensure_global_cfg_loaded(mod: typing.Union[types.ModuleType, None]) -> None:
     """Load global config if not already loaded."""
+    global _konch_cfg
+    global _konch_config_registry
     try:
-        if (
-            globals()["_konch_cfg"] is None
-            or globals()["_konch_cfg"] == {}
-            or globals()["_konch_cfg"] == Config()
-        ):
-            raise UnboundLocalError
-    except UnboundLocalError:
+        if _konch_cfg is None or _konch_cfg == {} or _konch_cfg == Config():
+            raise EmptyConfigError(f"_konch_cfg is empty: {_konch_cfg}")
+    except (UnboundLocalError, EmptyConfigError) as error:
+        logger.debug(f"Error getting _konch_cfg or it is empty\n{error}")
         for m in dir(mod):
             k = getattr(mod, m)
             c_atr = "_konch_cfg"
             if hasattr(k, c_atr):
                 _cfg = getattr(k, c_atr)
-                globals()["_konch_cfg"].update(_cfg)
-                globals()["_konch_config_registry"]["default"].update(
-                    globals()["_konch_cfg"]
-                )
+                logger.debug(f"Updating _konch_cfg from `{m}` with: {_cfg}")
+                _konch_cfg.update(_cfg)
+                r_atr = "_konch_config_registry"
+                if hasattr(k, r_atr):
+                    _reg = getattr(k, r_atr)
+                    logger.debug(f"Updating registry from `{m}` with: {_reg}")
+                    _konch_config_registry.update(_reg)
+                _konch_config_registry["default"].update(_konch_cfg)
 
 
 def resolve_path(filename: Path) -> typing.Union[Path, None]:
