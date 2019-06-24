@@ -561,7 +561,7 @@ def test_context_list_with_nameless_object_returns_error(nameless_env):
 
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
 def test_unchanged_konchrc(old_konchrc_env):
-    res = old_konchrc_env.run("python", "-m", "konch", expect_stderr=True)
+    res = old_konchrc_env.run("konch", expect_stderr=True)
     assert "<module 'sys'" in res.stdout
 
 
