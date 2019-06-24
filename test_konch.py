@@ -396,6 +396,12 @@ def test_version(env):
     assert konch.__version__ in res.stdout
 
 
+def test_nonblank_context(env):
+    env.run("konch", "init")
+    res = env.run("python", "-m", "konch", expect_stderr=True)
+    assert "<module 'sys'" in res.stdout
+
+
 TEST_CONFIG_WITH_NAMES = """
 import konch
 
@@ -443,6 +449,16 @@ konch.config({
 """
 
 
+TEST_CONFIG_UNCHANGED_KONCHRC = """
+import konch
+import sys
+
+konch.config({
+    'context': [sys]
+})
+"""
+
+
 @pytest.fixture
 def names_env(request, env):
     fpath = Path(env.base_path) / ".konchrc"
@@ -470,6 +486,17 @@ def nameless_env(request, env):
     fpath = Path(env.base_path) / ".konchrc"
     with fpath.open("w") as fp:
         fp.write(TEST_CONFIG_WITH_NAMELESS_OBJECT)
+
+    env.run("konch", "allow", fpath)
+    yield env
+    fpath.unlink()
+
+
+@pytest.fixture
+def old_konchrc_env(request, env):
+    fpath = Path(env.base_path) / ".konchrc"
+    with fpath.open("w") as fp:
+        fp.write(TEST_CONFIG_UNCHANGED_KONCHRC)
 
     env.run("konch", "allow", fpath)
     yield env
@@ -530,6 +557,12 @@ def test_context_list_with_nameless_object_returns_error(nameless_env):
     assert res.returncode == 1
     assert "has no __name__" in res.stderr
     assert "Use a context dictionary instead" in res.stderr
+
+
+@pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
+def test_unchanged_konchrc(old_konchrc_env):
+    res = old_konchrc_env.run("python", "-m", "konch", expect_stderr=True)
+    assert "<module 'sys'" in res.stdout
 
 
 def test_resolve_path(folderenv):

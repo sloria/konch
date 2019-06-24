@@ -7,7 +7,7 @@ import IPython
 import bpython
 import ptpython
 
-konch.config(
+_cfg = konch.config(
     {
         "context": [konch, env, Path, IPython, bpython, ptpython],
         "prompt": "[konch] >>> ",

@@ -957,6 +957,10 @@ def use_file(
         mod = None
         try:
             mod = SourceFileLoader("konchrc", str(config_file)).load_module("konchrc")
+            if hasattr(mod, "_cfg"):
+                global _cfg
+                _cfg = mod._cfg  # type: ignore
+                logger.debug(f"Updated global _cfg: {_cfg}")
         except UnboundLocalError:  # File not found
             pass
         except NoNameError as error:
@@ -1035,7 +1039,7 @@ import os
 #   "context_format", "ipy_extensions", "ipy_autoreload",
 #   "ipy_colors", "ipy_highlighting_style", "ptpy_vi_mode"
 # See: https://konch.readthedocs.io/en/latest/#configuration
-konch.config({
+_cfg = konch.config({
     "context": [
         sys,
         os,
