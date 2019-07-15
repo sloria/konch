@@ -5,7 +5,7 @@ from setuptools import setup, Command
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
-        "mypy==0.711",
+        "mypy==0.720",
         "flake8==3.7.8",
         "flake8-bugbear==19.3.0",
         "pre-commit==1.17.0",
