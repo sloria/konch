@@ -400,8 +400,10 @@ def configure_ipython_prompt(
                 if isinstance(output, (str, bytes)):
                     return [(Token.OutPrompt, output)]
                 else:
-                    return prompt
+                    return output
 
+        if isinstance(prompt, IPython.terminal.prompts.Prompts):
+            CustomPrompt = prompt
         config.TerminalInteractiveShell.prompts_class = CustomPrompt
     else:
         prompt_config = config.PromptManager
