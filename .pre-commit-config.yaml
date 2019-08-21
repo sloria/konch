@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/asottile/pyupgrade
-  rev: v1.16.3
+  rev: v1.22.1
   hooks:
   - id: pyupgrade
     exclude: docopt.py
@@ -13,16 +13,16 @@ repos:
     language_version: python3
     args: [--target-version=py36]
 - repo: https://gitlab.com/pycqa/flake8
-  rev: 3.7.7
+  rev: 3.7.8
   hooks:
   - id: flake8
     additional_dependencies: [flake8-bugbear==19.3.0]
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v0.701
+  rev: v0.720
   hooks:
   - id: mypy
 - repo: https://github.com/asottile/blacken-docs
-  rev: v0.5.0
+  rev: v1.3.0
   hooks:
   - id: blacken-docs
     additional_dependencies: [black==19.3b0]
