@@ -19,7 +19,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 project = "konch"
-copyright = "2014-{:%Y}".format(dt.datetime.utcnow())
+copyright = f"2014-{dt.datetime.utcnow():%Y}"
 
 version = release = konch.__version__
 

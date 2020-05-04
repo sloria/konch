@@ -6,9 +6,9 @@ EXTRAS_REQUIRE = {
     "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
         "mypy==0.770",
-        "flake8==3.7.9",
+        "flake8==3.8.0a2",
         "flake8-bugbear==20.1.4",
-        "pre-commit==2.3.0",
+        "pre-commit~=2.3",
     ],
 }
 EXTRAS_REQUIRE["dev"] = (
@@ -48,7 +48,7 @@ def find_version(fname):
     Raises RuntimeError if not found.
     """
     version = ""
-    with open(fname, "r") as fp:
+    with open(fname) as fp:
         reg = re.compile(r'__version__ = [\'"]([^\'"]*)[\'"]')
         for line in fp:
             m = reg.match(line)
