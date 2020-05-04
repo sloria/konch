@@ -2,6 +2,11 @@
 Changelog
 *********
 
+(unreleased)
+------------
+
+- Test against Python 3.8.
+
 4.2.2 (2019-06-19)
 ------------------
 
