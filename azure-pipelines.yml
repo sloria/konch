@@ -1,6 +1,6 @@
 trigger:
   branches:
-    include: [dev, 2.x-line, test-me-*]
+    include: [master]
   tags:
     include: ['*']
 
