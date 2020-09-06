@@ -814,8 +814,7 @@ def start(
     context_format: str = "full",
     **kwargs: typing.Any,
 ) -> None:
-    """Start up the konch shell. Takes the same parameters as Shell.__init__.
-    """
+    """Start up the konch shell. Takes the same parameters as Shell.__init__."""
     logger.debug(f"Using shell: {shell!r}")
     if banner is None:
         banner = speak()
@@ -873,8 +872,7 @@ def reset_config() -> Config:
 
 
 def __ensure_directory_in_path(filename: Path) -> None:
-    """Ensures that a file's directory is in the Python path.
-    """
+    """Ensures that a file's directory is in the Python path."""
     directory = Path(filename).parent.resolve()
     if directory not in sys.path:
         logger.debug(f"Adding {directory} to sys.path")
