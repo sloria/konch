@@ -5,7 +5,7 @@ Changelog
 (unreleased)
 ------------
 
-- Test against Python 3.8.
+- Test against Python 3.8 and 3.9.
 
 4.2.2 (2019-06-19)
 ------------------
