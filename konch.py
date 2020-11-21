@@ -885,7 +885,7 @@ DEFAULT_CONFIG_PATHS = {
         Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
         / "konchrc.default"
     ),
-    "home": Path.home() / ".konchrc.default"
+    "home": Path.home() / ".konchrc.default",
 }
 for _, DEFAULT_CONFIG_FILE in DEFAULT_CONFIG_PATHS.items():
     if DEFAULT_CONFIG_FILE.exists():
