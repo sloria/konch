@@ -880,7 +880,19 @@ def __ensure_directory_in_path(filename: Path) -> None:
 
 
 CONFIG_FILE = Path(".konchrc")
-DEFAULT_CONFIG_FILE = Path.home() / ".konchrc.default"
+DEFAULT_CONFIG_PATHS = {
+    "xdg": (
+        Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+        / "konchrc.default"
+    ),
+    "home": Path.home() / ".konchrc.default"
+}
+for _, DEFAULT_CONFIG_FILE in DEFAULT_CONFIG_PATHS.items():
+    if DEFAULT_CONFIG_FILE.exists():
+        break
+else:
+    DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_PATHS["xdg"]
+
 SEPARATOR = f"\n{'*' * 46}\n"
 
 
@@ -1057,7 +1069,7 @@ def init_config(config_file: Path) -> typing.NoReturn:
         print(INIT_TEMPLATE, end="")
         print(SEPARATOR)
         init_template = INIT_TEMPLATE
-        if DEFAULT_CONFIG_FILE.exists():  # use ~/.konchrc.default if it exists
+        if DEFAULT_CONFIG_FILE.exists():
             with Path(DEFAULT_CONFIG_FILE).open("r") as fp:
                 init_template = fp.read()
         with Path(config_file).open("w") as fp:
