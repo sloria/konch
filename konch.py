@@ -880,18 +880,13 @@ def __ensure_directory_in_path(filename: Path) -> None:
 
 
 CONFIG_FILE = Path(".konchrc")
-DEFAULT_CONFIG_PATHS = {
-    "xdg": (
-        Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-        / "konchrc.default"
-    ),
-    "home": Path.home() / ".konchrc.default",
-}
-for _, DEFAULT_CONFIG_FILE in DEFAULT_CONFIG_PATHS.items():
+for DEFAULT_CONFIG_FILE in (
+    Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+    / "konchrc.default",
+    Path.home() / ".konchrc.default",
+):
     if DEFAULT_CONFIG_FILE.exists():
         break
-else:
-    DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_PATHS["xdg"]
 
 SEPARATOR = f"\n{'*' * 46}\n"
 
