@@ -2,8 +2,15 @@
 Changelog
 *********
 
-(unreleased)
-------------
+4.3.0 (unreleased)
+------------------
+
+Features:
+
+- Follow XDG standard in config file discovery (:issue:`177`).
+  Thanks :user:`rpdelaney` for PR and the suggestion.
+
+Other changes:
 
 - Test against Python 3.8 and 3.9.
 
