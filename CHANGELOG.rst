@@ -2,6 +2,14 @@
 Changelog
 *********
 
+4.4.0 (unreleased)
+------------------
+
+Other changes:
+
+- Drop support for Python 3.6 (EOL).
+- Test against Python 3.10.
+
 4.3.0 (2020-11-29)
 ------------------
 
