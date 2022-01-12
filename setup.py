@@ -1,20 +1,20 @@
 import re
-from setuptools import setup, Command
 
+from setuptools import Command, setup
 
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
         "mypy==0.910",
         "flake8==3.9.2",
-        "flake8-bugbear==20.11.1",
-        "pre-commit~=2.3",
+        "flake8-bugbear==21.4.3",
+        "pre-commit~=2.16",
     ],
 }
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + ["ptpython", "tox"]
 )
-PYTHON_REQUIRES = ">=3.6"
+PYTHON_REQUIRES = ">=3.7"
 
 
 class Shell(Command):
@@ -89,10 +89,10 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: System :: Shells",
     ],
     py_modules=["konch", "docopt"],

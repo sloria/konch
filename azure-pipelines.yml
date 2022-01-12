@@ -2,7 +2,7 @@ trigger:
   branches:
     include: [master]
   tags:
-    include: ['*']
+    include: ["*"]
 
 resources:
   repositories:
@@ -13,11 +13,11 @@ resources:
       ref: refs/heads/sloria
 
 jobs:
-- template: job--python-tox.yml@sloria
-  parameters:
-    toxenvs: [lint, py36, py36-ptpython, py37, py38, py39, docs]
-    os: linux
-- template: job--pypi-release.yml@sloria
-  parameters:
-    dependsOn:
-      - tox_linux
+  - template: job--python-tox.yml@sloria
+    parameters:
+      toxenvs: [lint, py37, py37-ptpython, py310, docs]
+      os: linux
+  - template: job--pypi-release.yml@sloria
+    parameters:
+      dependsOn:
+        - tox_linux
