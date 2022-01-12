@@ -32,9 +32,6 @@ Environment variables:
     Falls back to $VISUAL then $EDITOR.
   NO_COLOR: Disable ANSI colors.
 """
-from collections.abc import Iterable
-from importlib.machinery import SourceFileLoader
-from pathlib import Path
 import code
 import hashlib
 import json
@@ -43,9 +40,12 @@ import os
 import random
 import subprocess
 import sys
-import typing
 import types
+import typing
 import warnings
+from collections.abc import Iterable
+from importlib.machinery import SourceFileLoader
+from pathlib import Path
 
 from docopt import docopt
 
@@ -456,7 +456,6 @@ class IPythonShell(Shell):
     def start(self) -> None:
         try:
             from IPython import start_ipython
-            from IPython.utils import io
             from traitlets.config.loader import Config as IPyConfig
         except ImportError:
             raise ShellNotAvailableError(
@@ -465,7 +464,7 @@ class IPythonShell(Shell):
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the
         # banner directly, so we write it to stdout before starting the IPython app
-        io.stdout.write(self.banner)
+        sys.stdout.write(self.banner)
         # Pass exec_lines in order to start autoreload
         if self.ipy_autoreload:
             if not isinstance(self.ipy_autoreload, bool):
@@ -554,17 +553,17 @@ class PtIPythonShell(PtPythonShell):
 
     def check_availability(self) -> bool:
         try:
-            import ptpython.ipython  # noqa: F401
             import IPython  # noqa: F401
+            import ptpython.ipython  # noqa: F401
         except ImportError:
             raise ShellNotAvailableError("PtIPython shell not available.")
         return True
 
     def start(self) -> None:
         try:
+            from IPython.terminal.ipapp import load_default_config
             from ptpython.ipython import embed
             from ptpython.repl import run_config
-            from IPython.terminal.ipapp import load_default_config
         except ImportError:
             raise ShellNotAvailableError("PtIPython shell not available.")
 
