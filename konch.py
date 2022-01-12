@@ -49,7 +49,7 @@ from pathlib import Path
 
 from docopt import docopt
 
-__version__ = "4.3.0"
+__version__ = "4.4.0"
 
 logger = logging.getLogger(__name__)
 

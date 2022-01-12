@@ -2,8 +2,12 @@
 Changelog
 *********
 
-4.4.0 (unreleased)
+4.4.0 (2022-01-12)
 ------------------
+
+Bug fixes:
+
+- Fix compatibility with IPython 8.0 (:issue:`211`).
 
 Other changes:
 
