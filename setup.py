@@ -8,13 +8,13 @@ EXTRAS_REQUIRE = {
         "mypy==0.910",
         "flake8==3.9.2",
         "flake8-bugbear==21.4.3",
-        "pre-commit~=2.16",
+        "pre-commit~=3.5",
     ],
 }
 EXTRAS_REQUIRE["dev"] = (
     EXTRAS_REQUIRE["tests"] + EXTRAS_REQUIRE["lint"] + ["ptpython", "tox"]
 )
-PYTHON_REQUIRES = ">=3.7"
+PYTHON_REQUIRES = ">=3.8"
 
 
 class Shell(Command):
@@ -89,10 +89,10 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: System :: Shells",
     ],
     py_modules=["konch", "docopt"],

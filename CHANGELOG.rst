@@ -2,6 +2,15 @@
 Changelog
 *********
 
+4.5.0 (unreleased)
+------------------
+
+Other changes:
+
+- Drop support for Python 3.7 (EOL).
+- Test against Python 3.11.
+
+
 4.4.0 (2022-01-12)
 ------------------
 

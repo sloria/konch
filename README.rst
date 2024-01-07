@@ -6,9 +6,9 @@ konch
   :alt: pypi badge
   :target: https://pypi.org/project/konch/
 
-.. image:: https://dev.azure.com/sloria/sloria/_apis/build/status/sloria.konch?branchName=master
+.. image:: https://github.com/sloria/konch/actions/workflows/build-release.yml/badge.svg
   :alt: ci status
-  :target: https://dev.azure.com/sloria/sloria/_build/latest?definitionId=16&branchName=master
+  :target: https://github.com/sloria/konch/actions/workflows/build-release.yml
 
 .. image:: https://readthedocs.org/projects/konch/badge/
    :target: https://konch.readthedocs.io/
