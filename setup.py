@@ -5,9 +5,9 @@ from setuptools import Command, setup
 EXTRAS_REQUIRE = {
     "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
-        "mypy==0.910",
-        "flake8==3.9.2",
-        "flake8-bugbear==21.4.3",
+        "mypy==1.8.0",
+        "flake8==7.0.0",
+        "flake8-bugbear==23.12.2",
         "pre-commit~=3.5",
     ],
 }
