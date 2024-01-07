@@ -201,7 +201,7 @@ def style(
 
 def sprint(text: str, *args: typing.Any, **kwargs: typing.Any) -> None:
     file = kwargs.pop("file", sys.stdout)
-    return print(style(text, file=file, *args, **kwargs), file=file)
+    return print(style(text, *args, **kwargs, file=file), file=file)
 
 
 def print_error(text: str) -> None:
@@ -371,7 +371,9 @@ class PythonShell(Shell):
         if self.prompt:
             sys.ps1 = self.prompt
         if self.output:
-            warnings.warn("Custom output templates not supported by PythonShell.")
+            warnings.warn(
+                "Custom output templates not supported by PythonShell.", stacklevel=2
+            )
         code.interact(self.banner, local=self.context)
         return None
 
@@ -542,7 +544,6 @@ class PtPythonShell(Shell):
 
 
 class PtIPythonShell(PtPythonShell):
-
     banner_template: str = "{text}\n{context}"
 
     def __init__(
@@ -620,9 +621,11 @@ class BPythonShell(Shell):
         except ImportError:
             raise ShellNotAvailableError("BPython shell not available.")
         if self.prompt:
-            warnings.warn("Custom prompts not supported by BPythonShell.")
+            warnings.warn("Custom prompts not supported by BPythonShell.", stacklevel=2)
         if self.output:
-            warnings.warn("Custom output templates not supported by BPythonShell.")
+            warnings.warn(
+                "Custom output templates not supported by BPythonShell.", stacklevel=2
+            )
         embed(banner=self.banner, locals_=self.context)
         return None
 
@@ -643,10 +646,13 @@ class BPythonCursesShell(Shell):
         except ImportError:
             raise ShellNotAvailableError("BPython Curses shell not available.")
         if self.prompt:
-            warnings.warn("Custom prompts not supported by BPython Curses shell.")
+            warnings.warn(
+                "Custom prompts not supported by BPython Curses shell.", stacklevel=2
+            )
         if self.output:
             warnings.warn(
-                "Custom output templates not supported by BPython Curses shell."
+                "Custom output templates not supported by BPython Curses shell.",
+                stacklevel=2,
             )
         main(banner=self.banner, locals_=self.context, args=["-i", "-q"])
         return None
