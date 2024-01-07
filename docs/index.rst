@@ -48,7 +48,7 @@ Install/Upgrade
 
     $ pip install -U konch
 
-Supports Python 3 (tested on 3.6 and 3.7). There are no external dependencies.
+Supports Python>=3.8. There are no external dependencies.
 
 .. note::
 
