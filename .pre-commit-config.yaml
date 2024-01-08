@@ -5,7 +5,7 @@ repos:
   - id: pyupgrade
     exclude: docopt.py
     args: [--py38-plus]
-- repo: https://github.com/python/black
+- repo: https://github.com/psf/black
   rev: 23.12.1
   hooks:
   - id: black
