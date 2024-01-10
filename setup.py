@@ -3,7 +3,7 @@ import re
 from setuptools import Command, setup
 
 EXTRAS_REQUIRE = {
-    "tests": ["pytest", "mock", "scripttest==1.3", "ipython", "bpython"],
+    "tests": ["pytest", "scripttest==1.3", "ipython", "bpython"],
     "lint": [
         "mypy==1.8.0",
         "flake8==7.0.0",
@@ -97,6 +97,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: System :: Shells",
     ],
     py_modules=["konch", "docopt"],

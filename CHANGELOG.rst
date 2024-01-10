@@ -8,7 +8,7 @@ Changelog
 Other changes:
 
 - Drop support for Python 3.7 (EOL).
-- Test against Python 3.11.
+- Test against Python 3.11 and Python 3.12.
 
 
 4.4.0 (2022-01-12)
