@@ -47,7 +47,7 @@ from collections.abc import Iterable
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
-from docopt import docopt
+from .docopt import docopt
 
 __version__ = "4.4.0"
 
