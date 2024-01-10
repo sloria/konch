@@ -5,6 +5,12 @@ Changelog
 4.5.0 (unreleased)
 ------------------
 
+Features:
+
+- Install konch within a `konch` package. This prevents `docopt.py`
+  from polluting the site packages directory.
+- Add `py.typed` marker file for PEP 561 compatibility.
+
 Other changes:
 
 - Drop support for Python 3.7 (EOL).

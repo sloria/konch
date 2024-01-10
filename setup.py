@@ -72,7 +72,7 @@ def read(fname):
 
 setup(
     name="konch",
-    version=find_version("konch.py"),
+    version=find_version("src/konch/__init__.py"),
     description=(
         "CLI and configuration utility for the Python shell, optimized "
         "for simplicity and productivity."
@@ -100,7 +100,9 @@ setup(
         "Programming Language :: Python :: 3.12",
         "Topic :: System :: Shells",
     ],
-    py_modules=["konch", "docopt"],
+    packages=["konch"],
+    package_dir={"": "src"},
+    package_data={"konch": ["py.typed"]},
     entry_points={"console_scripts": ["konch = konch:main"]},
     project_urls={
         "Changelog": "https://konch.readthedocs.io/en/latest/changelog.html",

@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 
 import pytest
-from docopt import DocoptExit
+from konch.docopt import DocoptExit
 from scripttest import TestFileEnvironment as FileEnvironment
 
 import konch
