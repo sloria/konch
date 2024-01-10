@@ -1,7 +1,10 @@
 name: build
 on:
   push:
+    branches: ["dev", "*.x-line"]
+    tags: ["*"]
   pull_request:
+
 jobs:
   tests:
     name: ${{ matrix.name }}
@@ -12,7 +15,7 @@ jobs:
         include:
           - { name: "3.8", python: "3.8", tox: py38 }
           - { name: "3.8-ptpython", python: "3.8", tox: py38-ptpython }
-          - { name: "3.11", python: "3.11", tox: py311 }
+          - { name: "3.12", python: "3.12", tox: py312 }
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-python@v4.3.0
@@ -26,6 +29,7 @@ jobs:
   lint-pre-release:
     name: lint
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags')
     steps:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-python@v4.3.0
