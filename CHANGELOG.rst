@@ -2,6 +2,13 @@
 Changelog
 *********
 
+5.0.0 (unreleased)
+------------------
+
+* *Backwards-incompatible*: Remove ``konch.__version__`` attribute.
+  Use ``importlib.metadata.version("konch")`` instead.
+
+
 4.5.0 (2024-01-10)
 ------------------
 
