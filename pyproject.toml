@@ -45,7 +45,7 @@ include = [
   "NOTICE",
   "tox.ini",
 ]
-exclude = ["docs/_build/"]
+exclude = ["docs/_build/", "tests/test-output"]
 
 [tool.ruff]
 src = ["src"]

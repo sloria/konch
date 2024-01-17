@@ -14,10 +14,6 @@ konch
    :target: https://konch.readthedocs.io/
    :alt: Documentation
 
-.. image:: https://badgen.net/badge/code%20style/black/000
-   :target: https://github.com/ambv/black
-   :alt: Code style: Black
-
 
 Configures your Python shell
 ============================
