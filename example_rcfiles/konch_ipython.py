@@ -1,8 +1,9 @@
 import datetime
 
-import konch
-import pandas
 import numpy
+import pandas
+
+import konch
 
 konch.config(
     {

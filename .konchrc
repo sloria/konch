@@ -2,14 +2,13 @@
 from pathlib import Path
 
 import konch
-from test_konch import env
 import IPython
 import bpython
 import ptpython
 
 konch.config(
     {
-        "context": [konch, env, Path, IPython, bpython, ptpython],
+        "context": [konch, Path, IPython, bpython, ptpython],
         "prompt": "[konch] >>> ",
         "ipy_colors": "linux",
         "ipy_autoreload": True,

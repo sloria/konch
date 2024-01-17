@@ -1,13 +1,13 @@
+import importlib.metadata
+import os
 import sys
 from pathlib import Path
-import os
 
 import pytest
-from konch.docopt import DocoptExit
 from scripttest import TestFileEnvironment as FileEnvironment
 
 import konch
-
+from konch.docopt import DocoptExit
 
 try:
     import ptpython  # noqa: F401
@@ -389,10 +389,11 @@ def test_custom_prompt(fileenv):
 
 
 def test_version(env):
+    konch_version = importlib.metadata.version("konch")
     res = env.run("konch", "--version")
-    assert konch.__version__ in res.stdout
+    assert konch_version in res.stdout
     res = env.run("konch", "-v")
-    assert konch.__version__ in res.stdout
+    assert konch_version in res.stdout
 
 
 TEST_CONFIG_WITH_NAMES = """
