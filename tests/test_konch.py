@@ -1,13 +1,12 @@
+import os
 import sys
 from pathlib import Path
-import os
 
 import pytest
-from konch.docopt import DocoptExit
 from scripttest import TestFileEnvironment as FileEnvironment
 
 import konch
-
+from konch.docopt import DocoptExit
 
 try:
     import ptpython  # noqa: F401
