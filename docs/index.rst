@@ -379,7 +379,6 @@ To use a config file:
 Get command-line arguments using ``konch.parse_args()``. ``konch`` uses `docopt`_ for arguments parsing.
 
 
-
 .. code-block:: python
 
     import konch
@@ -402,66 +401,6 @@ You can also use shell objects directly:
 
     my_shell = konch.AutoShell(context={"foo": 42}, banner="My foo shell")
     my_shell.start()
-
-
-Integrating with setuptools / ``python setup.py shell``
-=======================================================
-
-You can integrate konch into your setuptools-based project using
-the following ``Command`` class.
-
-.. code-block:: python
-
-    # setup.py
-    import shlex
-    from setuptools import Command
-
-
-    class Shell(Command):
-        user_options = [
-            ("name=", "n", "Named config to use."),
-            ("shell=", "s", "Shell to use."),
-            ("file=", "f", "File path of konch config file to execute."),
-        ]
-
-        def initialize_options(self):
-            self.name = None
-            self.shell = None
-            self.file = None
-
-        def finalize_options(self):
-            pass
-
-        def run(self):
-            import konch
-
-            argv = []
-            for each in ("name", "shell", "file"):
-                opt = getattr(self, each)
-                if opt:
-                    argv.append(f"--{each}={opt}")
-            konch.main(argv)
-
-
-    setup(
-        # ...,
-        cmdclass={"shell": Shell}
-    )
-
-
-You can now run:
-
-.. code-block:: bash
-
-   $ python setup.py shell
-
-
-You can also pass a string of arguments:
-
-
-.. code-block:: bash
- 
-   $ python setup.py shell -a "--shell ipy"
 
 ..
 
