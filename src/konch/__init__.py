@@ -34,6 +34,7 @@ Environment variables:
 """
 import code
 import hashlib
+import importlib.metadata
 import json
 import logging
 import os
@@ -48,8 +49,6 @@ from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
 from .docopt import docopt
-
-__version__ = "4.5.0"
 
 logger = logging.getLogger(__name__)
 
@@ -386,7 +385,7 @@ def configure_ipython_prompt(
     if IPython.version_info[0] >= 5:  # Custom prompt API changed in IPython 5.0
         from pygments.token import Token
 
-        # https://ipython.readthedocs.io/en/stable/config/details.html#custom-prompts  # noqa: B950
+        # https://ipython.readthedocs.io/en/stable/config/details.html#custom-prompts
         class CustomPrompt(IPython.terminal.prompts.Prompts):
             def in_prompt_tokens(self, *args, **kwargs):
                 if prompt is None:
@@ -451,18 +450,18 @@ class IPythonShell(Shell):
     def check_availability(self) -> bool:
         try:
             import IPython  # noqa: F401
-        except ImportError:
-            raise ShellNotAvailableError("IPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("IPython shell not available.") from error
         return True
 
     def start(self) -> None:
         try:
             from IPython import start_ipython
             from traitlets.config.loader import Config as IPyConfig
-        except ImportError:
+        except ImportError as error:
             raise ShellNotAvailableError(
                 "IPython shell not available " "or IPython version not supported."
-            )
+            ) from error
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the
         # banner directly, so we write it to stdout before starting the IPython app
@@ -509,15 +508,15 @@ class PtPythonShell(Shell):
     def check_availability(self) -> bool:
         try:
             import ptpython  # noqa: F401
-        except ImportError:
-            raise ShellNotAvailableError("PtPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("PtPython shell not available.") from error
         return True
 
     def start(self) -> None:
         try:
             from ptpython.repl import embed, run_config
-        except ImportError:
-            raise ShellNotAvailableError("PtPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("PtPython shell not available.") from error
         print(self.banner)
 
         config_dir = Path("~/.ptpython/").expanduser()
@@ -556,8 +555,8 @@ class PtIPythonShell(PtPythonShell):
         try:
             import IPython  # noqa: F401
             import ptpython.ipython  # noqa: F401
-        except ImportError:
-            raise ShellNotAvailableError("PtIPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("PtIPython shell not available.") from error
         return True
 
     def start(self) -> None:
@@ -565,8 +564,8 @@ class PtIPythonShell(PtPythonShell):
             from IPython.terminal.ipapp import load_default_config
             from ptpython.ipython import embed
             from ptpython.repl import run_config
-        except ImportError:
-            raise ShellNotAvailableError("PtIPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("PtIPython shell not available.") from error
 
         config_dir = Path("~/.ptpython/").expanduser()
 
@@ -611,15 +610,15 @@ class BPythonShell(Shell):
     def check_availability(self) -> bool:
         try:
             import bpython  # noqa: F401
-        except ImportError:
-            raise ShellNotAvailableError("BPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("BPython shell not available.") from error
         return True
 
     def start(self) -> None:
         try:
             from bpython import embed
-        except ImportError:
-            raise ShellNotAvailableError("BPython shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError("BPython shell not available.") from error
         if self.prompt:
             warnings.warn("Custom prompts not supported by BPythonShell.", stacklevel=2)
         if self.output:
@@ -636,15 +635,19 @@ class BPythonCursesShell(Shell):
     def check_availability(self) -> bool:
         try:
             import bpython.cli  # noqa: F401
-        except ImportError:
-            raise ShellNotAvailableError("BPython Curses shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError(
+                "BPython Curses shell not available."
+            ) from error
         return True
 
     def start(self) -> None:
         try:
             from bpython.cli import main
-        except ImportError:
-            raise ShellNotAvailableError("BPython Curses shell not available.")
+        except ImportError as error:
+            raise ShellNotAvailableError(
+                "BPython Curses shell not available."
+            ) from error
         if self.prompt:
             warnings.warn(
                 "Custom prompts not supported by BPython Curses shell.", stacklevel=2
@@ -1163,7 +1166,7 @@ def parse_args(argv: typing.Optional[typing.Sequence] = None) -> typing.Dict[str
     """Exposes the docopt command-line arguments parser.
     Return a dictionary of arguments.
     """
-    return docopt(__doc__, argv=argv, version=__version__)
+    return docopt(__doc__, argv=argv, version=importlib.metadata.version("konch"))
 
 
 def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:

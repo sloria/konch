@@ -1,6 +1,7 @@
 # vi: set ft=python :
-import konch
 import requests
+
+import konch
 
 konch.config(
     {

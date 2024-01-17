@@ -1,9 +1,7 @@
 import datetime as dt
-import sys
+import importlib.metadata
 import os
-
-sys.path.insert(0, os.path.abspath(".."))
-import konch  # noqa: 402
+import sys
 
 sys.path.append(os.path.abspath("_themes"))
 
@@ -21,7 +19,7 @@ master_doc = "index"
 project = "konch"
 copyright = f"2014-{dt.datetime.utcnow():%Y}"
 
-version = release = konch.__version__
+version = release = importlib.metadata.version("konch")
 
 exclude_patterns = ["_build"]
 
