@@ -1,3 +1,4 @@
+import importlib.metadata
 import os
 import sys
 from pathlib import Path
@@ -388,10 +389,11 @@ def test_custom_prompt(fileenv):
 
 
 def test_version(env):
+    konch_version = importlib.metadata.version("konch")
     res = env.run("konch", "--version")
-    assert konch.__version__ in res.stdout
+    assert konch_version in res.stdout
     res = env.run("konch", "-v")
-    assert konch.__version__ in res.stdout
+    assert konch_version in res.stdout
 
 
 TEST_CONFIG_WITH_NAMES = """
