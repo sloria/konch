@@ -1,4 +1,3 @@
-import datetime as dt
 import importlib.metadata
 import os
 import sys
@@ -17,7 +16,6 @@ source_suffix = ".rst"
 master_doc = "index"
 
 project = "konch"
-copyright = f"2014-{dt.datetime.utcnow():%Y}"
 
 version = release = importlib.metadata.version("konch")
 
