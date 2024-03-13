@@ -32,6 +32,7 @@ Environment variables:
     Falls back to $VISUAL then $EDITOR.
   NO_COLOR: Disable ANSI colors.
 """
+
 import code
 import hashlib
 import importlib.metadata
