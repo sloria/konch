@@ -51,7 +51,7 @@ exclude = ["docs/_build/", "tests/test-output"]
 src = ["src"]
 fix = true
 show-fixes = true
-show-source = true
+output-format = "full"
 
 [tool.ruff.lint]
 select = [

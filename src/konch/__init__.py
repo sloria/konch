@@ -1007,13 +1007,13 @@ def resolve_path(filename: Path) -> typing.Union[Path, None]:
 
 def get_editor() -> str:
     for key in "KONCH_EDITOR", "VISUAL", "EDITOR":
-        ret = os.environ.get(key)
-        if ret:
-            return ret
+        rv = os.environ.get(key)
+        if rv:
+            return rv
     if sys.platform.startswith("win"):
         return "notepad"
-    for editor in "vim", "nano":
-        if os.system("which %s &> /dev/null" % editor) == 0:
+    for editor in "sensible-editor", "vim", "nano":
+        if os.system(f"which {editor} >/dev/null 2>&1") == 0:
             return editor
     return "vi"
 
