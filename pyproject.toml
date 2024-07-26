@@ -53,7 +53,11 @@ fix = true
 show-fixes = true
 output-format = "full"
 
+[tool.ruff.format]
+docstring-code-format = true
+
 [tool.ruff.lint]
+ignore = ["E203", "E266", "E501", "E731"]
 select = [
   "B",  # flake8-bugbear
   "E",  # pycodestyle error
@@ -62,6 +66,9 @@ select = [
   "UP", # pyupgrade
   "W",  # pycodestyle warning
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E721"]
 
 [tool.mypy]
 ignore_missing_imports = true
