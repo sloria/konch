@@ -48,12 +48,7 @@ Install/Upgrade
 
     $ pip install -U konch
 
-Supports Python>=3.8. There are no external dependencies.
-
-.. note::
-
-   If you are using Python 2, ``konch<4.0`` will be installed with the
-   above command.
+Supports Python>=3.9. There are no external dependencies.
 
 Usage
 =====
