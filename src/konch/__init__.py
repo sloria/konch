@@ -77,7 +77,7 @@ class KonchrcChangedError(KonchrcNotAuthorizedError):
 
 
 class AuthFile:
-    def __init__(self, data: typing.Dict[str, str]) -> None:
+    def __init__(self, data: dict[str, str]) -> None:
         self.data = data
 
     def __repr__(self) -> str:
@@ -142,7 +142,7 @@ class AuthFile:
 
     def __exit__(
         self,
-        exc_type: typing.Type[Exception],
+        exc_type: type[Exception],
         exc_value: Exception,
         exc_traceback: types.TracebackType,
     ) -> None:
@@ -241,7 +241,7 @@ def _hide_formatter(context: Context) -> str:
     return ""
 
 
-CONTEXT_FORMATTERS: typing.Dict[str, Formatter] = {
+CONTEXT_FORMATTERS: dict[str, Formatter] = {
     "full": _full_formatter,
     "short": _short_formatter,
     "hide": _hide_formatter,
@@ -426,7 +426,7 @@ class IPythonShell(Shell):
 
     def __init__(
         self,
-        ipy_extensions: typing.Optional[typing.List[str]] = None,
+        ipy_extensions: typing.Optional[list[str]] = None,
         ipy_autoreload: bool = False,
         ipy_colors: typing.Optional[str] = None,
         ipy_highlighting_style: typing.Optional[str] = None,
@@ -535,7 +535,7 @@ class PtPythonShell(Shell):
 
         embed(
             globals=self.context,
-            history_filename=config_dir / "history",
+            history_filename=str(config_dir / "history"),
             vi_mode=self.ptpy_vi_mode,
             startup_paths=startup_paths,
             configure=configure,
@@ -547,7 +547,7 @@ class PtIPythonShell(PtPythonShell):
     banner_template: str = "{text}\n{context}"
 
     def __init__(
-        self, ipy_extensions: typing.Optional[typing.List[str]] = None, *args, **kwargs
+        self, ipy_extensions: typing.Optional[list[str]] = None, *args, **kwargs
     ) -> None:
         self.ipy_extensions = ipy_extensions or []
         PtPythonShell.__init__(self, *args, **kwargs)
@@ -709,7 +709,7 @@ class AutoShell(Shell):
         return shell.start()
 
 
-CONCHES: typing.List[str] = [
+CONCHES: list[str] = [
     '"My conch told me to come save you guys."\n"Hooray for the magic conches!"',
     '"All hail the Magic Conch!"',
     '"Hooray for the magic conches!"',
@@ -755,7 +755,7 @@ class Config(dict):
         self,
         context: typing.Optional[Context] = None,
         banner: typing.Optional[str] = None,
-        shell: typing.Type[Shell] = AutoShell,
+        shell: type[Shell] = AutoShell,
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
         context_format: str = "full",
@@ -792,7 +792,7 @@ class Config(dict):
                 self[key] = d[key]
 
 
-SHELL_MAP: typing.Dict[str, typing.Type[Shell]] = {
+SHELL_MAP: dict[str, type[Shell]] = {
     "ipy": IPythonShell,
     "ipython": IPythonShell,
     "bpy": BPythonShell,
@@ -817,7 +817,7 @@ _config_registry = {"default": _cfg}
 def start(
     context: typing.Optional[typing.Mapping] = None,
     banner: typing.Optional[str] = None,
-    shell: typing.Type[Shell] = AutoShell,
+    shell: type[Shell] = AutoShell,
     prompt: typing.Optional[str] = None,
     output: typing.Optional[str] = None,
     context_format: str = "full",
@@ -1163,7 +1163,7 @@ def deny_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     sys.exit(0)
 
 
-def parse_args(argv: typing.Optional[typing.Sequence] = None) -> typing.Dict[str, str]:
+def parse_args(argv: typing.Optional[typing.Sequence] = None) -> dict[str, str]:
     """Exposes the docopt command-line arguments parser.
     Return a dictionary of arguments.
     """

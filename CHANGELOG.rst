@@ -8,6 +8,11 @@ Changelog
 * *Backwards-incompatible*: Remove ``konch.__version__`` attribute.
   Use ``importlib.metadata.version("konch")`` instead.
 
+Other changes:
+
+* Drop support for Python 3.8 (EOL).
+* Test against Python 3.13.
+
 
 4.5.0 (2024-01-10)
 ------------------
