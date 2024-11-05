@@ -5,8 +5,9 @@ Changelog
 5.0.0 (unreleased)
 ------------------
 
-* *Backwards-incompatible*: Remove ``konch.__version__`` attribute.
-  Use ``importlib.metadata.version("konch")`` instead.
+Bug fixes:
+
+* Fix typing of ``context`` parameter to allow callables.
 
 Other changes:
 
@@ -14,7 +15,8 @@ Other changes:
 * Test against Python 3.13.
 * Remove unnecessary tabcomplete code from ``PythonShell``, 
   since tab completion is enabled by default.
-
+* *Backwards-incompatible*: Remove ``konch.__version__`` attribute.
+  Use ``importlib.metadata.version("konch")`` instead.
 
 4.5.0 (2024-01-10)
 ------------------

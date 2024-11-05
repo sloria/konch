@@ -324,7 +324,7 @@ class Shell:
 
     def __init__(
         self,
-        context: Context,
+        context: Context | typing.Callable[[], Context],
         banner: typing.Optional[str] = None,
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
