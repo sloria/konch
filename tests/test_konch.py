@@ -1,5 +1,6 @@
 import importlib.metadata
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -13,8 +14,15 @@ try:
     import ptpython  # noqa: F401
 except ImportError:
     HAS_PTPYTHON = False
+
+
 else:
     HAS_PTPYTHON = True
+
+
+def strip_ansi(text: str) -> str:
+    ansi_escape = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
+    return ansi_escape.sub("", text)
 
 
 def assert_in_output(s, res, message=None):
@@ -55,10 +63,10 @@ def test_full_formatter():
 
     context = {"foo": Foo(), "bar": 42}
 
-    assert (
-        konch.format_context(context, formatter="full")
-        == "\nContext:\nbar: 42\nfoo: <Foo>"
-    )
+    result = konch.format_context(context, formatter="full")
+    result = strip_ansi(result) if HAS_PTPYTHON else result
+
+    assert result == "\nContext:\nbar: 42\nfoo: <Foo>"
 
 
 def test_short_formatter():
@@ -68,7 +76,10 @@ def test_short_formatter():
 
     context = {"foo": Foo(), "bar": 42}
 
-    assert konch.format_context(context, formatter="short") == "\nContext:\nbar, foo"
+    result = konch.format_context(context, formatter="short")
+    result = strip_ansi(result) if HAS_PTPYTHON else result
+
+    assert result == "\nContext:\nbar, foo"
 
 
 def test_custom_formatter():
