@@ -69,6 +69,7 @@ venv
 
 # pytest
 .pytest_cache
+tests/test-output
 
 # Other
 .directory

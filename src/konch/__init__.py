@@ -324,7 +324,7 @@ class Shell:
 
     def __init__(
         self,
-        context: Context | typing.Callable[[], Context],
+        context: typing.Union[Context, typing.Callable[[], Context]],
         banner: typing.Optional[str] = None,
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
@@ -803,7 +803,9 @@ _config_registry = {"default": _cfg}
 
 
 def start(
-    context: typing.Optional[typing.Mapping] = None,
+    context: typing.Optional[
+        typing.Union[Context, typing.Callable[[], Context]]
+    ] = None,
     banner: typing.Optional[str] = None,
     shell: type[Shell] = AutoShell,
     prompt: typing.Optional[str] = None,
