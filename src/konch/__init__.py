@@ -356,18 +356,6 @@ class PythonShell(Shell):
         return True
 
     def start(self) -> None:
-        try:
-            import readline
-        except ImportError:
-            pass
-        else:
-            # We don't have to wrap the following import in a 'try', because
-            # we already know 'readline' was imported successfully.
-            import rlcompleter
-
-            readline.set_completer(rlcompleter.Completer(self.context).complete)
-            readline.parse_and_bind("tab:complete")
-
         if self.prompt:
             sys.ps1 = self.prompt
         if self.output:

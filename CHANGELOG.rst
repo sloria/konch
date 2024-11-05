@@ -12,6 +12,8 @@ Other changes:
 
 * Drop support for Python 3.8 (EOL).
 * Test against Python 3.13.
+* Remove unnecessary tabcomplete code from ``PythonShell``, 
+  since tab completion is enabled by default.
 
 
 4.5.0 (2024-01-10)
