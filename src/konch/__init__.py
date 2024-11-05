@@ -329,7 +329,6 @@ class Shell:
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
         context_format: ContextFormat = "full",
-        **kwargs: typing.Any,
     ) -> None:
         self.context = context() if callable(context) else context
         self.context_format = context_format
