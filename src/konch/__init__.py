@@ -214,7 +214,7 @@ def print_warning(text: str) -> None:
     return sprint(f"{prefix}: {text}", file=sys.stderr)
 
 
-Context = typing.Mapping[str, typing.Any]
+Context = dict[str, typing.Any]
 Formatter = typing.Callable[[Context], str]
 ContextFormat = typing.Union[str, Formatter]
 

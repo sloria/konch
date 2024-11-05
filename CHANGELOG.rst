@@ -5,9 +5,10 @@ Changelog
 5.0.0 (unreleased)
 ------------------
 
-Bug fixes:
+Typing:
 
 * Fix typing of ``context`` parameter to allow callables.
+* Restrict ``Context`` type to ``dict[str, Any]``.
 
 Other changes:
 
