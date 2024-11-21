@@ -329,6 +329,9 @@ class Shell:
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
         context_format: ContextFormat = "full",
+        # XXX: kwargs is unused but is needed for AutoShell to pass through kwargs
+        # to other subclasses.
+        **kwargs,
     ) -> None:
         self.context = context() if callable(context) else context
         self.context_format = context_format

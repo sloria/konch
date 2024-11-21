@@ -2,6 +2,15 @@
 Changelog
 *********
 
+5.0.1 (unreleased)
+------------------
+
+Bug fixes:
+
+* Fix bug that caused: ``TypeError: Shell.__init__() got an unexpected keyword argument``
+  when using ``konch.start()`` or ``konch.AutoShell`` with
+  shell-specific keyword arguments (:issue:`sloria/flask-konch#41`).
+
 5.0.0 (2024-11-05)
 ------------------
 

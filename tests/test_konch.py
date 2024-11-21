@@ -552,6 +552,12 @@ def test_resolve_path(folderenv):
     assert konch.resolve_path(".konchrc") == fpath
 
 
+def test_autoshell_takes_all_kwargs():
+    assert konch.AutoShell(
+        context={"foo": 42}, banner="bar", ptpy_vi_mode=True, ipy_autoreload=True
+    )
+
+
 class TestAuthFile:
     @pytest.fixture()
     def auth_file(self, env):
