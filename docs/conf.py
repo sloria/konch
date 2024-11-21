@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath("_themes"))
 
 extensions = ["sphinx.ext.autodoc", "sphinx_issues"]
 
-issues_github_path = "sloria/doitlive"
+issues_github_path = "sloria/konch"
 
 templates_path = ["_templates"]
 
