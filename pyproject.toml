@@ -1,6 +1,6 @@
 [project]
 name = "konch"
-version = "5.0.1"
+version = "6.0.0"
 description = "CLI and configuration utility for the Python shell, optimized for simplicity and productivity."
 readme = "README.rst"
 license = { file = "LICENSE" }
