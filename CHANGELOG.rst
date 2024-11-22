@@ -10,6 +10,10 @@ Typing:
 * Add more strict typing for ``konch.config`` and ``konch.named_config``
   so that auto-completion works in editors (:pr:`264`).
 
+Other changes:
+
+* Explicitly support IPython>=8.0.0 and ptpython>=3.0.0.
+
 5.0.1 (2024-11-21)
 ------------------
 
