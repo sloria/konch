@@ -215,8 +215,11 @@ def print_warning(text: str) -> None:
 
 
 Context = dict[str, typing.Any]
+ContextArg = typing.Union[
+    Context, typing.Callable[[], Context], typing.Iterable[typing.Any]
+]
 Formatter = typing.Callable[[Context], str]
-ContextFormat = typing.Union[str, Formatter]
+ContextFormat = typing.Union[typing.Literal["full", "short", "hide"], Formatter]
 
 
 def _full_formatter(context: Context) -> str:
@@ -296,7 +299,7 @@ def get_name(obj: typing.Any) -> str:
     return fullname.split(".")[-1]
 
 
-def context_list2dict(context_list: typing.Sequence[typing.Any]) -> Context:
+def context_list2dict(context_list: typing.Iterable[typing.Any]) -> Context:
     """Converts a list of objects (functions, classes, or modules) to a
     dictionary mapping the object names to the objects.
     """
@@ -324,7 +327,7 @@ class Shell:
 
     def __init__(
         self,
-        context: typing.Union[Context, typing.Callable[[], Context]],
+        context: ContextArg,
         banner: typing.Optional[str] = None,
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
@@ -333,7 +336,7 @@ class Shell:
         # to other subclasses.
         **kwargs,
     ) -> None:
-        self.context = context() if callable(context) else context
+        self.context = context() if callable(context) else Config.transform_val(context)
         self.context_format = context_format
         self.banner = make_banner(
             banner,
@@ -735,6 +738,42 @@ def speak() -> str:
     return random.choice(CONCHES)
 
 
+# NOTE: Can't dynamically create this type because mypy won't recognize
+# expressions in Literal: https://mypy.readthedocs.io/en/stable/literal_types.html#limitations
+ShellName = typing.Literal[
+    "ipy",
+    "ipython",
+    "bpy",
+    "bpython",
+    "bpyc",
+    "bpython-curses",
+    "py",
+    "python",
+    "auto",
+    "ptpy",
+    "ptpython",
+    "ptipy",
+    "ptipython",
+]
+SHELL_MAP: dict[ShellName, type[Shell]] = {
+    "ipy": IPythonShell,
+    "ipython": IPythonShell,
+    "bpy": BPythonShell,
+    "bpython": BPythonShell,
+    "bpyc": BPythonCursesShell,
+    "bpython-curses": BPythonCursesShell,
+    "py": PythonShell,
+    "python": PythonShell,
+    "auto": AutoShell,
+    "ptpy": PtPythonShell,
+    "ptpython": PtPythonShell,
+    "ptipy": PtIPythonShell,
+    "ptipython": PtIPythonShell,
+}
+
+ShellArg = typing.Union[type[Shell], ShellName]
+
+
 class Config(dict):
     """A dict-like config object. Behaves like a normal dict except that
     the ``context`` will always be converted from a list to a dict.
@@ -743,12 +782,12 @@ class Config(dict):
 
     def __init__(
         self,
-        context: typing.Optional[Context] = None,
+        context: typing.Optional[ContextArg] = None,
         banner: typing.Optional[str] = None,
-        shell: type[Shell] = AutoShell,
+        shell: ShellArg = AutoShell,
         prompt: typing.Optional[str] = None,
         output: typing.Optional[str] = None,
-        context_format: str = "full",
+        context_format: ContextFormat = "full",
         **kwargs: typing.Any,
     ) -> None:
         ctx = Config.transform_val(context) or {}
@@ -782,37 +821,32 @@ class Config(dict):
                 self[key] = d[key]
 
 
-SHELL_MAP: dict[str, type[Shell]] = {
-    "ipy": IPythonShell,
-    "ipython": IPythonShell,
-    "bpy": BPythonShell,
-    "bpython": BPythonShell,
-    "bpyc": BPythonCursesShell,
-    "bpython-curses": BPythonCursesShell,
-    "py": PythonShell,
-    "python": PythonShell,
-    "auto": AutoShell,
-    "ptpy": PtPythonShell,
-    "ptpython": PtPythonShell,
-    "ptipy": PtIPythonShell,
-    "ptipython": PtIPythonShell,
-}
-
-
 # _cfg and _config_registry are singletons that may be mutated in a .konchrc file
 _cfg = Config()
 _config_registry = {"default": _cfg}
 
 
+class ConfigDict(typing.TypedDict, total=False):
+    context: ContextArg
+    banner: str
+    shell: ShellArg
+    prompt: str
+    output: str
+    context_format: ContextFormat
+    ipy_extensions: list[str]
+    ipy_autoreload: typing.Union[bool, int]
+    ipy_colors: str
+    ipy_highlighting_style: str
+    ptpy_vi_mode: bool
+
+
 def start(
-    context: typing.Optional[
-        typing.Union[Context, typing.Callable[[], Context]]
-    ] = None,
+    context: typing.Optional[ContextArg] = None,
     banner: typing.Optional[str] = None,
-    shell: type[Shell] = AutoShell,
+    shell: ShellArg = AutoShell,
     prompt: typing.Optional[str] = None,
     output: typing.Optional[str] = None,
-    context_format: str = "full",
+    context_format: ContextFormat = "full",
     **kwargs: typing.Any,
 ) -> None:
     """Start up the konch shell. Takes the same parameters as Shell.__init__."""
@@ -839,7 +873,7 @@ def start(
     ).start()
 
 
-def config(config_dict: typing.Mapping) -> Config:
+def config(config_dict: ConfigDict) -> Config:
     """Configures the konch shell. This function should be called in a
     .konchrc file.
 
@@ -851,7 +885,7 @@ def config(config_dict: typing.Mapping) -> Config:
     return _cfg
 
 
-def named_config(name: str, config_dict: typing.Mapping) -> None:
+def named_config(name: str, config_dict: ConfigDict) -> None:
     """Adds a named config to the config registry. The first argument
     may either be a string or a collection of strings.
 
@@ -1201,7 +1235,9 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
     # Allow default shell to be overriden by command-line argument
     shell_name = args["--shell"]
     if shell_name:
-        config_dict["shell"] = SHELL_MAP.get(shell_name.lower(), AutoShell)
+        config_dict["shell"] = SHELL_MAP.get(
+            typing.cast(ShellName, shell_name.lower()), AutoShell
+        )
     logger.debug(f"Starting with config {config_dict}")
     start(**config_dict)
 

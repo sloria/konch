@@ -21,4 +21,5 @@ repos:
   rev: v1.13.0
   hooks:
   - id: mypy
-    exclude: example_rcfiles/
+    # For example_rcfiles/konch_requests.py
+    additional_dependencies: [types-requests==2.32.0.20241016]

@@ -1,10 +1,11 @@
 # vi: set ft=python :
 from pathlib import Path
 
-import konch
-import IPython
 import bpython
+import IPython
 import ptpython
+
+import konch
 
 konch.config(
     {
