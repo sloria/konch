@@ -3,7 +3,7 @@ ci:
 exclude: docopt.py
 repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.7.2
+  rev: v0.8.0
   hooks:
     - id: ruff
     - id: ruff-format
