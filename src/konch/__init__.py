@@ -33,6 +33,8 @@ Environment variables:
   NO_COLOR: Disable ANSI colors.
 """
 
+from __future__ import annotations
+
 import code
 import hashlib
 import importlib.metadata
@@ -84,7 +86,7 @@ class AuthFile:
         return f"AuthFile({self.data!r})"
 
     @classmethod
-    def load(cls, path: typing.Optional[Path] = None) -> "AuthFile":
+    def load(cls, path: Path | None = None) -> AuthFile:
         filepath = path or cls.get_path()
         try:
             with Path(filepath).open("r", encoding="utf-8") as fp:
@@ -112,9 +114,7 @@ class AuthFile:
         except KeyError:
             pass
 
-    def check(
-        self, filepath: typing.Union[Path, None], raise_error: bool = True
-    ) -> bool:
+    def check(self, filepath: Path | None, raise_error: bool = True) -> bool:
         if not filepath:
             return False
         if str(filepath.resolve()) not in self.data:
@@ -137,7 +137,7 @@ class AuthFile:
         with Path(filepath).open("w", encoding="utf-8") as fp:
             json.dump(self.data, fp)
 
-    def __enter__(self) -> "AuthFile":
+    def __enter__(self) -> AuthFile:
         return self
 
     def __exit__(
@@ -181,7 +181,7 @@ RESET_ALL = 0
 
 def style(
     text: str,
-    fg: typing.Optional[int] = None,
+    fg: int | None = None,
     *,
     bold: bool = False,
     file: typing.IO = sys.stdout,
@@ -251,9 +251,7 @@ CONTEXT_FORMATTERS: dict[str, Formatter] = {
 }
 
 
-def format_context(
-    context: Context, formatter: typing.Union[str, Formatter] = "full"
-) -> str:
+def format_context(context: Context, formatter: str | Formatter = "full") -> str:
     """Output the a context dictionary as a string."""
     if not context:
         return ""
@@ -276,9 +274,9 @@ BANNER_TEMPLATE = """{version}
 
 
 def make_banner(
-    text: typing.Optional[str] = None,
-    context: typing.Optional[Context] = None,
-    banner_template: typing.Optional[str] = None,
+    text: str | None = None,
+    context: Context | None = None,
+    banner_template: str | None = None,
     context_format: ContextFormat = "full",
 ) -> str:
     """Generates a full banner with version info, the given text, and a
@@ -328,9 +326,9 @@ class Shell:
     def __init__(
         self,
         context: ContextArg,
-        banner: typing.Optional[str] = None,
-        prompt: typing.Optional[str] = None,
-        output: typing.Optional[str] = None,
+        banner: str | None = None,
+        prompt: str | None = None,
+        output: str | None = None,
         context_format: ContextFormat = "full",
         # XXX: kwargs is unused but is needed for AutoShell to pass through kwargs
         # to other subclasses.
@@ -372,7 +370,7 @@ class PythonShell(Shell):
 
 
 def configure_ipython_prompt(
-    config, prompt: typing.Optional[str] = None, output: typing.Optional[str] = None
+    config, prompt: str | None = None, output: str | None = None
 ) -> None:
     import IPython
 
@@ -419,10 +417,10 @@ class IPythonShell(Shell):
 
     def __init__(
         self,
-        ipy_extensions: typing.Optional[list[str]] = None,
+        ipy_extensions: list[str] | None = None,
         ipy_autoreload: bool = False,
-        ipy_colors: typing.Optional[str] = None,
-        ipy_highlighting_style: typing.Optional[str] = None,
+        ipy_colors: str | None = None,
+        ipy_highlighting_style: str | None = None,
         *args: typing.Any,
         **kwargs: typing.Any,
     ):
@@ -540,7 +538,7 @@ class PtIPythonShell(PtPythonShell):
     banner_template: str = "{text}\n{context}"
 
     def __init__(
-        self, ipy_extensions: typing.Optional[list[str]] = None, *args, **kwargs
+        self, ipy_extensions: list[str] | None = None, *args, **kwargs
     ) -> None:
         self.ipy_extensions = ipy_extensions or []
         PtPythonShell.__init__(self, *args, **kwargs)
@@ -782,11 +780,11 @@ class Config(dict):
 
     def __init__(
         self,
-        context: typing.Optional[ContextArg] = None,
-        banner: typing.Optional[str] = None,
+        context: ContextArg | None = None,
+        banner: str | None = None,
         shell: ShellArg = AutoShell,
-        prompt: typing.Optional[str] = None,
-        output: typing.Optional[str] = None,
+        prompt: str | None = None,
+        output: str | None = None,
         context_format: ContextFormat = "full",
         **kwargs: typing.Any,
     ) -> None:
@@ -834,18 +832,18 @@ class ConfigDict(typing.TypedDict, total=False):
     output: str
     context_format: ContextFormat
     ipy_extensions: list[str]
-    ipy_autoreload: typing.Union[bool, int]
+    ipy_autoreload: bool | int
     ipy_colors: str
     ipy_highlighting_style: str
     ptpy_vi_mode: bool
 
 
 def start(
-    context: typing.Optional[ContextArg] = None,
-    banner: typing.Optional[str] = None,
+    context: ContextArg | None = None,
+    banner: str | None = None,
     shell: ShellArg = AutoShell,
-    prompt: typing.Optional[str] = None,
-    output: typing.Optional[str] = None,
+    prompt: str | None = None,
+    output: str | None = None,
     context_format: ContextFormat = "full",
     **kwargs: typing.Any,
 ) -> None:
@@ -950,8 +948,8 @@ def confirm(text: str, default: bool = False) -> bool:
 
 
 def use_file(
-    filename: typing.Union[Path, str, None], trust: bool = False
-) -> typing.Union[types.ModuleType, None]:
+    filename: Path | str | None, trust: bool = False
+) -> types.ModuleType | None:
     """Load filename as a python file. Import ``filename`` and return it
     as a module.
     """
@@ -1014,7 +1012,7 @@ def use_file(
     return None
 
 
-def resolve_path(filename: Path) -> typing.Union[Path, None]:
+def resolve_path(filename: Path) -> Path | None:
     """Find a file by walking up parent directories until the file is found.
     Return the absolute path of the file.
     """
@@ -1044,9 +1042,7 @@ def get_editor() -> str:
     return "vi"
 
 
-def edit_file(
-    filename: typing.Optional[Path], editor: typing.Optional[str] = None
-) -> None:
+def edit_file(filename: Path | None, editor: str | None = None) -> None:
     if not filename:
         print_error("filename not passed.")
         sys.exit(1)
@@ -1121,7 +1117,7 @@ def init_config(config_file: Path) -> typing.NoReturn:
 
 
 def edit_config(
-    config_file: typing.Optional[Path] = None, editor: typing.Optional[str] = None
+    config_file: Path | None = None, editor: str | None = None
 ) -> typing.NoReturn:
     filename = config_file or resolve_path(CONFIG_FILE)
     if not filename:
@@ -1142,8 +1138,8 @@ def edit_config(
     sys.exit(0)
 
 
-def allow_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
-    filename: typing.Union[Path, None]
+def allow_config(config_file: Path | None = None) -> typing.NoReturn:
+    filename: Path | None
     if config_file and config_file.is_dir():
         filename = Path(config_file) / CONFIG_FILE
     else:
@@ -1168,8 +1164,8 @@ def allow_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     sys.exit(0)
 
 
-def deny_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
-    filename: typing.Union[Path, None]
+def deny_config(config_file: Path | None = None) -> typing.NoReturn:
+    filename: Path | None
     if config_file and config_file.is_dir():
         filename = Path(config_file) / CONFIG_FILE
     else:
@@ -1189,14 +1185,14 @@ def deny_config(config_file: typing.Optional[Path] = None) -> typing.NoReturn:
     sys.exit(0)
 
 
-def parse_args(argv: typing.Optional[typing.Sequence] = None) -> dict[str, str]:
+def parse_args(argv: typing.Sequence | None = None) -> dict[str, str]:
     """Exposes the docopt command-line arguments parser.
     Return a dictionary of arguments.
     """
     return docopt(__doc__, argv=argv, version=importlib.metadata.version("konch"))
 
 
-def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
+def main(argv: typing.Sequence | None = None) -> typing.NoReturn:
     """Main entry point for the konch CLI."""
     args = parse_args(argv)
 
@@ -1206,7 +1202,7 @@ def main(argv: typing.Optional[typing.Sequence] = None) -> typing.NoReturn:
         )
     logger.debug(args)
 
-    config_file: typing.Union[Path, None]
+    config_file: Path | None
     if args["init"]:
         config_file = Path(args["<config_file>"] or CONFIG_FILE)
         init_config(config_file)
