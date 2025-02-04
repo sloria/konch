@@ -452,7 +452,7 @@ class IPythonShell(Shell):
             from traitlets.config.loader import Config as IPyConfig
         except ImportError as error:
             raise ShellNotAvailableError(
-                "IPython shell not available " "or IPython version not supported."
+                "IPython shell not available or IPython version not supported."
             ) from error
         # Hack to show custom banner
         # TerminalIPythonApp/start_app doesn't allow you to customize the
