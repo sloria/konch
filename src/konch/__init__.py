@@ -511,7 +511,28 @@ class PtPythonShell(Shell):
             raise ShellNotAvailableError("PtPython shell not available.") from error
         print(self.banner)
 
-        config_dir = Path("~/.ptpython/").expanduser()
+        # Determine config directory
+        config_dirs = [
+            Path(os.environ.get("XDG_CONFIG_HOME", "~/.config")) / "ptpython",
+            Path("~/Library/Application Support/ptpython"),
+            Path("~/.ptpython"),
+        ]
+        # Use the first config directory that exists
+        config_dir = next(
+            (d for d in (p.expanduser() for p in config_dirs) if d.exists()), None
+        )
+
+        # Determine history directory
+        history_dirs = [
+            Path(os.environ.get("XDG_DATA_HOME", "~/.local/share")) / "ptpython",
+            Path("~/Library/Application Support/ptpython"),
+            Path("~/.ptpython"),
+        ]
+        # Use the first history directory that exists
+        history_dir = next(
+            (d for d in (p.expanduser() for p in history_dirs) if d.exists()), None
+        )
+        history_filename = str(history_dir / "history") if history_dir else None
 
         # Startup path
         startup_paths = []
@@ -520,13 +541,14 @@ class PtPythonShell(Shell):
 
         # Apply config file
         def configure(repl):
-            path = config_dir / "config.py"
-            if path.exists():
-                run_config(repl, str(path))
+            if config_dir is not None:
+                path = config_dir / "config.py"
+                if path.exists():
+                    run_config(repl, str(path))
 
         embed(
             globals=self.context,
-            history_filename=str(config_dir / "history"),
+            history_filename=history_filename,
             vi_mode=self.ptpy_vi_mode,
             startup_paths=startup_paths,
             configure=configure,
@@ -559,13 +581,35 @@ class PtIPythonShell(PtPythonShell):
         except ImportError as error:
             raise ShellNotAvailableError("PtIPython shell not available.") from error
 
-        config_dir = Path("~/.ptpython/").expanduser()
+        # Determine config directory
+        config_dirs = [
+            Path(os.environ.get("XDG_CONFIG_HOME", "~/.config")) / "ptpython",
+            Path("~/Library/Application Support/ptpython"),
+            Path("~/.ptpython"),
+        ]
+        # Use the first config directory that exists
+        config_dir = next(
+            (d for d in (p.expanduser() for p in config_dirs) if d.exists()), None
+        )
+
+        # Determine history directory
+        history_dirs = [
+            Path(os.environ.get("XDG_DATA_HOME", "~/.local/share")) / "ptpython",
+            Path("~/Library/Application Support/ptpython"),
+            Path("~/.ptpython"),
+        ]
+        # Use the first history directory that exists
+        history_dir = next(
+            (d for d in (p.expanduser() for p in history_dirs) if d.exists()), None
+        )
+        history_filename = str(history_dir / "history") if history_dir else None
 
         # Apply config file
         def configure(repl):
-            path = config_dir / "config.py"
-            if path.exists():
-                run_config(repl, str(path))
+            if config_dir is not None:
+                path = config_dir / "config.py"
+                if path.exists():
+                    run_config(repl, str(path))
 
         # Startup path
         startup_paths = []
@@ -588,7 +632,7 @@ class PtIPythonShell(PtPythonShell):
         embed(
             config=ipy_config,
             configure=configure,
-            history_filename=config_dir / "history",
+            history_filename=history_filename,
             user_ns=self.context,
             header=self.banner,
             vi_mode=self.ptpy_vi_mode,
