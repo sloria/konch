@@ -2,6 +2,14 @@
 Changelog
 *********
 
+unreleased
+----------
+
+Bug fixes:
+
+* Load ptpython config and history from new location as of ptpython 3.0.0 (:issue:`278`).
+  Thanks :user:`notdaniel` for the PR.
+
 6.0.0 (2024-11-22)
 ------------------
 

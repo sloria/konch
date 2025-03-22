@@ -51,6 +51,8 @@ from collections.abc import Iterable
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
 
+from platformdirs import user_config_dir, user_data_dir
+
 from .docopt import docopt
 
 logger = logging.getLogger(__name__)
@@ -511,7 +513,8 @@ class PtPythonShell(Shell):
             raise ShellNotAvailableError("PtPython shell not available.") from error
         print(self.banner)
 
-        config_dir = Path("~/.ptpython/").expanduser()
+        config_file = self.get_config_file()
+        history_file = self.get_history_file()
 
         # Startup path
         startup_paths = []
@@ -520,17 +523,49 @@ class PtPythonShell(Shell):
 
         # Apply config file
         def configure(repl):
-            path = config_dir / "config.py"
-            if path.exists():
-                run_config(repl, str(path))
+            if config_file.exists():
+                run_config(repl, str(config_file))
 
         embed(
             globals=self.context,
-            history_filename=str(config_dir / "history"),
+            history_filename=str(history_file) if history_file else None,
             vi_mode=self.ptpy_vi_mode,
             startup_paths=startup_paths,
             configure=configure,
         )
+        return None
+
+    @staticmethod
+    def get_config_file() -> Path:
+        config_dir = os.environ.get(
+            "PTPYTHON_CONFIG_HOME",
+            user_config_dir("ptpython", "prompt_toolkit"),
+        )
+        config_file = Path(config_dir) / "config.py"
+        legacy_config_file = Path.home() / ".ptpython" / "config.py"
+        if legacy_config_file.exists():
+            warnings.warn(
+                "`~/.ptpython/config.py` is deprecated. Please move it to the new location: "
+                f"{config_file}",
+                stacklevel=2,
+            )
+            return legacy_config_file
+        return config_file
+
+    @staticmethod
+    def get_history_file() -> Path | None:
+        data_dir = user_data_dir("ptpython", "prompt_toolkit")
+        history_file = Path(data_dir) / "history"
+        legacy_history_file = Path.home() / ".ptpython" / "history"
+        if legacy_history_file.exists():
+            warnings.warn(
+                "`~/.ptpython/history` is deprecated. Please move it to the new location: "
+                f"{history_file}",
+                stacklevel=2,
+            )
+            return legacy_history_file
+        if history_file.exists():
+            return history_file
         return None
 
 
@@ -559,13 +594,13 @@ class PtIPythonShell(PtPythonShell):
         except ImportError as error:
             raise ShellNotAvailableError("PtIPython shell not available.") from error
 
-        config_dir = Path("~/.ptpython/").expanduser()
+        config_file = self.get_config_file()
+        history_file = self.get_history_file()
 
         # Apply config file
         def configure(repl):
-            path = config_dir / "config.py"
-            if path.exists():
-                run_config(repl, str(path))
+            if config_file.exists():
+                run_config(repl, str(config_file))
 
         # Startup path
         startup_paths = []
@@ -588,7 +623,7 @@ class PtIPythonShell(PtPythonShell):
         embed(
             config=ipy_config,
             configure=configure,
-            history_filename=config_dir / "history",
+            history_filename=str(history_file) if history_file else None,
             user_ns=self.context,
             header=self.banner,
             vi_mode=self.ptpy_vi_mode,
@@ -1243,4 +1278,5 @@ def main(argv: typing.Sequence | None = None) -> typing.NoReturn:
 
 
 if __name__ == "__main__":
+    main()
     main()

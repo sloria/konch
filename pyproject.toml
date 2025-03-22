@@ -18,6 +18,7 @@ classifiers = [
   "Topic :: System :: Shells",
 ]
 requires-python = ">=3.9"
+dependencies = ["platformdirs>=4.3.7"]
 
 [project.scripts]
 konch = "konch:main"
