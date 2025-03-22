@@ -22,7 +22,6 @@ Configures your Python shell
 
 - **Automatically import** any object upon startup
 - **Simple**, per-project configuration in a single file (it's just Python code)
-- **No external dependencies**
 - Uses **IPython**, **BPython**, or **ptpython** if available, and falls back to built-in interpreter
 - Automatically load **IPython extensions**
 
