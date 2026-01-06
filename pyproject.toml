@@ -30,7 +30,7 @@ Source = "https://github.com/sloria/konch/"
 
 [project.optional-dependencies]
 dev = ["konch[tests]", "ptpython", "tox"]
-docs = ["sphinx==8.2.3", "sphinx-issues==5.0.1"]
+docs = ["sphinx==9.1.0", "sphinx-issues==5.0.1"]
 tests = ["pytest", "scripttest==2.0.post1", "ipython>=8.0.0", "bpython>=0.24"]
 
 [build-system]
