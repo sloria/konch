@@ -2,6 +2,10 @@
 konch
 *****
 
+.. image:: _static/konch.png
+   :alt: konch
+   :align: center
+
 .. container:: release
 
    Release v\ |version|
