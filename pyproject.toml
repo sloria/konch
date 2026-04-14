@@ -1,10 +1,10 @@
 [project]
 name = "konch"
-version = "6.0.1"
+version = "6.1.0"
 description = "CLI and configuration utility for the Python shell, optimized for simplicity and productivity."
 readme = "README.rst"
 license = "MIT"
-maintainers = [{ name = "Steven Loria", email = "sloria1@gmail.com" }]
+maintainers = [{ name = "Steven Loria", email = "oss@stevenloria.com" }]
 classifiers = [
   "Intended Audience :: Developers",
   "Natural Language :: English",
