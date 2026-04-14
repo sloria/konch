@@ -27,13 +27,8 @@ Changelog = "https://konch.readthedocs.io/en/latest/changelog.html"
 Issues = "https://github.com/sloria/konch/issues"
 Source = "https://github.com/sloria/konch/"
 
-[project.optional-dependencies]
-docs = [
-  "sphinx==9.1.0; python_version>='3.12'",
-  "sphinx-issues==5.0.1; python_version>='3.12'",
-]
-
 [dependency-groups]
+docs = ["sphinx", "sphinx-issues"]
 tests = ["pytest", "scripttest==2.0.post1", "ipython>=8.0.0", "bpython>=0.24"]
 dev = [
   { include-group = "tests" },
