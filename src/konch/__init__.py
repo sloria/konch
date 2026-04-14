@@ -216,12 +216,12 @@ def print_warning(text: str) -> None:
     return sprint(f"{prefix}: {text}", file=sys.stderr)
 
 
-Context = dict[str, typing.Any]
-ContextArg = typing.Union[
-    Context, typing.Callable[[], Context], typing.Iterable[typing.Any]
-]
-Formatter = typing.Callable[[Context], str]
-ContextFormat = typing.Union[typing.Literal["full", "short", "hide"], Formatter]
+Context: typing.TypeAlias = dict[str, typing.Any]
+ContextArg: typing.TypeAlias = (
+    Context | typing.Callable[[], Context] | typing.Iterable[typing.Any]
+)
+Formatter: typing.TypeAlias = typing.Callable[[Context], str]
+ContextFormat: typing.TypeAlias = typing.Literal["full", "short", "hide"] | Formatter
 
 
 def _full_formatter(context: Context) -> str:
@@ -804,7 +804,7 @@ SHELL_MAP: dict[ShellName, type[Shell]] = {
     "ptipython": PtIPythonShell,
 }
 
-ShellArg = typing.Union[type[Shell], ShellName]
+ShellArg = type[Shell] | ShellName
 
 
 class Config(dict):

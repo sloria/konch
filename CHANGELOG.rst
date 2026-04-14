@@ -2,6 +2,14 @@
 Changelog
 *********
 
+unreleased
+----------
+
+Other changes:
+
+* Support Python 3.14.
+* Drop support for Python 3.9 (EOL).
+
 6.0.1 (2025-03-22)
 ------------------
 
