@@ -5,6 +5,11 @@ Changelog
 unreleased
 ----------
 
+Bug fixes:
+
+* Update vendorized docopt to address ``SyntaxWarning`` on Python>=3.13 (:issue:`305`).
+  Thanks :user:`Marcin-Szadkowski` for reporting.
+
 Other changes:
 
 * Support Python 3.14.
