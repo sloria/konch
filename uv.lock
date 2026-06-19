@@ -660,6 +660,9 @@ docs = [
     { name = "sphinx", version = "9.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "sphinx-issues" },
 ]
+lint = [
+    { name = "pre-commit" },
+]
 tests = [
     { name = "bpython" },
     { name = "ipython", version = "8.39.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -686,6 +689,7 @@ docs = [
     { name = "sphinx" },
     { name = "sphinx-issues" },
 ]
+lint = [{ name = "pre-commit", specifier = ">=4.0,<5.0" }]
 tests = [
     { name = "bpython", specifier = ">=0.24" },
     { name = "ipython", specifier = ">=8.0.0" },
