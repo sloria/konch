@@ -3,17 +3,17 @@ ci:
 exclude: docopt.py
 repos:
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.15.15
+  rev: v0.15.20
   hooks:
     - id: ruff
     - id: ruff-format
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.37.2
+  rev: 0.37.4
   hooks:
     - id: check-github-workflows
     - id: check-readthedocs
 - repo: https://github.com/zizmorcore/zizmor-pre-commit
-  rev: v1.25.2
+  rev: v1.26.1
   hooks:
     - id: zizmor
 - repo: https://github.com/asottile/blacken-docs
@@ -22,7 +22,7 @@ repos:
   - id: blacken-docs
     additional_dependencies: [black==24.10.0]
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.11.17
+  rev: 0.11.26
   hooks:
     - id: uv-lock
 - repo: https://github.com/pre-commit/mirrors-mypy
