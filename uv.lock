@@ -662,7 +662,7 @@ dev = [
     { name = "pre-commit", specifier = ">=4.0,<5.0" },
     { name = "ptpython" },
     { name = "pytest" },
-    { name = "scripttest", specifier = "==2.0.post1" },
+    { name = "scripttest", specifier = "==3.0" },
     { name = "tox" },
     { name = "tox-uv" },
 ]
@@ -675,7 +675,7 @@ tests = [
     { name = "bpython", specifier = ">=0.24" },
     { name = "ipython", specifier = ">=8.0.0" },
     { name = "pytest" },
-    { name = "scripttest", specifier = "==2.0.post1" },
+    { name = "scripttest", specifier = "==3.0" },
 ]
 
 [[package]]
@@ -1072,11 +1072,11 @@ wheels = [
 
 [[package]]
 name = "scripttest"
-version = "2.0.post1"
+version = "3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/6b/75/40225296f18bcd24c95258f3a01fce7e4a014b67141209846d794c3bb694/scripttest-2.0.post1.tar.gz", hash = "sha256:a6067f1feadf4b2ed3e594b0b32e41589640e7fa3974765aa63d508520c0bfdc", size = 16203, upload-time = "2025-04-09T20:06:34.35Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/15/4400839ca2813a77b4110351d1de9956966f74fa5ae702c2faf7fd86ae0d/scripttest-3.0.tar.gz", hash = "sha256:d40e8859d71b1d4918e1d918c667bce05928286f2cbd09cfb7a6cc1f3f308ad0", size = 15813, upload-time = "2026-07-08T20:10:12.47Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/97/84/5435e29eb508955dfd3caeefa193f0ddd09f5b0b4ddc3f9fc17819776a1b/scripttest-2.0.post1-py3-none-any.whl", hash = "sha256:ec818fd362d5ee0321e000ea43c0540020336771f5168bd591ddd5b37258ca06", size = 7462, upload-time = "2025-04-09T20:06:30.914Z" },
+    { url = "https://files.pythonhosted.org/packages/4e/3d/3b2d6b66631584fe61a70a167774b6bd97070c662065f323599fd4b081cc/scripttest-3.0-py3-none-any.whl", hash = "sha256:d8140a72bd17dc7ecdbdd667c91e155f48e16ceba53bcfa7d470531a48800031", size = 8486, upload-time = "2026-07-08T20:10:11.499Z" },
 ]
 
 [[package]]
