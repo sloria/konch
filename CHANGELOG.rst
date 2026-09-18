@@ -2,6 +2,13 @@
 Changelog
 *********
 
+6.1.1 (unreleased)
+------------------
+
+Bug fixes:
+
+* Fix compatibility with IPython>=9.17.
+
 6.1.0 (2026-04-14)
 ------------------
 
