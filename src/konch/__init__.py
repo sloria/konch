@@ -377,10 +377,11 @@ def configure_ipython_prompt(
     import IPython
 
     if IPython.version_info[0] >= 5:  # Custom prompt API changed in IPython 5.0
+        from IPython.terminal.prompts import Prompts
         from pygments.token import Token
 
         # https://ipython.readthedocs.io/en/stable/config/details.html#custom-prompts
-        class CustomPrompt(IPython.terminal.prompts.Prompts):
+        class CustomPrompt(Prompts):
             def in_prompt_tokens(self, *args, **kwargs):
                 if prompt is None:
                     return super().in_prompt_tokens(*args, **kwargs)
