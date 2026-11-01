@@ -189,6 +189,7 @@ Configuration
   ``autoreload`` extension.
 - ``ipy_colors``: (IPython only) Color scheme.
 - ``ipy_highlighting_style``: (IPython only) Syntax highlighting style.
+- ``ipy_exec_lines``: (IPython only) extra ``exec_lines`` to run.
 - ``ptpy_vi_mode``: (ptpython and ptipython only) Whether to enable vim
   bindings.
 
@@ -281,6 +282,13 @@ The ``ipy_colors`` and ``ipy_highlighting_style`` options are used to configure 
 
 
 See the IPython docs for more information and valid values for these options: https://ipython.readthedocs.io/en/stable/config/details.html#terminal-colors
+
+Exec Lines
+----------
+
+The ``ipy_exec_lines`` option is used to run additional lines of code at IPython startup.
+Such code runs after **konch** performs its own startup.
+
 
 ptpython support
 ================

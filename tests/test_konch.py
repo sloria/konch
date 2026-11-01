@@ -430,6 +430,10 @@ konch.named_config(['conf3', 'c3'], {
     },
     'banner': 'Conf3',
 })
+
+konch.named_config('exec_lines', {
+    'ipy_exec_lines': ['print("exec_lines successful")'],
+})
 """
 
 
@@ -543,6 +547,11 @@ def test_context_list_with_nameless_object_returns_error(nameless_env):
     assert "Use a context dictionary instead" in res.stderr
 
 
+def test_exec_lines(names_env):
+    res = names_env.run("konch", "-n", "exec_lines", "-s", "ipython", expect_stderr=True)
+    assert_in_output("exec_lines successful", res)
+
+
 def test_resolve_path(folderenv):
     folderenv.run("konch", "init")
     fpath = (Path(folderenv.base_path) / ".konchrc").resolve()
@@ -556,6 +565,8 @@ def test_autoshell_takes_all_kwargs():
     assert konch.AutoShell(
         context={"foo": 42}, banner="bar", ptpy_vi_mode=True, ipy_autoreload=True
     )
+
+
 
 
 class TestAuthFile:
