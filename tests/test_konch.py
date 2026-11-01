@@ -548,7 +548,9 @@ def test_context_list_with_nameless_object_returns_error(nameless_env):
 
 
 def test_exec_lines(names_env):
-    res = names_env.run("konch", "-n", "exec_lines", "-s", "ipython", expect_stderr=True)
+    res = names_env.run(
+        "konch", "-n", "exec_lines", "-s", "ipython", expect_stderr=True
+    )
     assert_in_output("exec_lines successful", res)
 
 
@@ -565,8 +567,6 @@ def test_autoshell_takes_all_kwargs():
     assert konch.AutoShell(
         context={"foo": 42}, banner="bar", ptpy_vi_mode=True, ipy_autoreload=True
     )
-
-
 
 
 class TestAuthFile:
