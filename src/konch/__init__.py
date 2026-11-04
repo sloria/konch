@@ -424,6 +424,7 @@ class IPythonShell(Shell):
         ipy_autoreload: bool = False,
         ipy_colors: str | None = None,
         ipy_highlighting_style: str | None = None,
+        ipy_exec_lines: list[str] | None = None,
         *args: typing.Any,
         **kwargs: typing.Any,
     ):
@@ -431,6 +432,7 @@ class IPythonShell(Shell):
         self.ipy_autoreload = ipy_autoreload
         self.ipy_colors = ipy_colors
         self.ipy_highlighting_style = ipy_highlighting_style
+        self.ipy_exec_lines = ipy_exec_lines or []
         Shell.__init__(self, *args, **kwargs)
 
     @staticmethod
@@ -489,7 +491,7 @@ class IPythonShell(Shell):
             user_ns=self.context,
             config=ipy_config,
             extensions=self.ipy_extensions or [],
-            exec_lines=exec_lines,
+            exec_lines=exec_lines + self.ipy_exec_lines,
             argv=[],
         )
         return None

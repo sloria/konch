@@ -430,6 +430,10 @@ konch.named_config(['conf3', 'c3'], {
     },
     'banner': 'Conf3',
 })
+
+konch.named_config('exec_lines', {
+    'ipy_exec_lines': ['print("exec_lines successful")'],
+})
 """
 
 
@@ -541,6 +545,13 @@ def test_context_list_with_nameless_object_returns_error(nameless_env):
     assert res.returncode == 1
     assert "has no __name__" in res.stderr
     assert "Use a context dictionary instead" in res.stderr
+
+
+def test_exec_lines(names_env):
+    res = names_env.run(
+        "konch", "-n", "exec_lines", "-s", "ipython", expect_stderr=True
+    )
+    assert_in_output("exec_lines successful", res)
 
 
 def test_resolve_path(folderenv):
