@@ -307,7 +307,12 @@ def context_list2dict(context_list: typing.Iterable[typing.Any]) -> Context:
 
 
 def _relpath(p: Path) -> Path:
-    return p.resolve().relative_to(Path.cwd())
+    try:
+        return p.resolve().relative_to(Path.cwd())
+    except ValueError:
+        # Path is outside the current working directory (or on another
+        # drive), so there is no relative path; use the absolute path.
+        return p.resolve()
 
 
 class Shell:
