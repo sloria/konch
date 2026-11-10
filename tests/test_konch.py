@@ -276,6 +276,25 @@ def test_edit_file_not_found(env, request):
     assert "konch init" in res.stderr
 
 
+def test_edit_file_not_found_outside_cwd(env, request):
+    # A missing config path outside the cwd must report a clean error,
+    # not crash with a ValueError traceback from _relpath.
+    missing = Path(env.base_path).parent / "outside-konchrc-missing"
+    res = env.run("konch", "edit", str(missing), expect_error=True)
+    assert res.returncode == 1
+    assert "does not exist" in res.stderr
+    assert "Traceback" not in res.stderr
+
+
+def test_relpath_inside_cwd():
+    assert konch._relpath(Path("somefile")) == Path("somefile")
+
+
+def test_relpath_outside_cwd(tmp_path):
+    outside = tmp_path / "outside-konchrc"
+    assert konch._relpath(outside) == outside.resolve()
+
+
 @pytest.mark.skipif(HAS_PTPYTHON, reason="test incompatible with ptpython")
 def test_edit_with_filename(env, request):
     env.run("konch", "init", "myfile")
